@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Feedback</title>
+</head>
+<body>
+    <h2>Submit Your Feedback</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label>Rating (1-5):</label>
+        <input type="number" name="rating" min="1" max="5" required>
+
+        <label>Comments:</label>
+        <textarea name="comments" required></textarea>
+
+        <button type="submit">Submit Feedback</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Events - CharityConnect</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container mt-4">
+    <h2>Upcoming Events</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Event Type</th>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Location</th>
+          <th>Status</th>
+          <th>Sponsor</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for event in events %}
+        <tr>
+          <td>{{ event.event_type }}</td>
+          <td>{{ event.event_date }}</td>
+          <td>{{ event.description }}</td>
+          <td>{{ event.location }}</td>
+          <td>{{ event.event_status }}</td>
+          <td>
+            <a href="{% url 'sponsor_event' event.event_id %}" class="btn btn-primary btn-sm">
+              Sponsor
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6">No events found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="{% url 'user_home' %}" class="btn btn-secondary">Back to Dashboard</a>
+  </div>
+</body>
+</html>

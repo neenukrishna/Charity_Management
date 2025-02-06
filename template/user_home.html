@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Dashboard - CharityConnect</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --secondary-color: #10b981;
+      --accent-color: #f59e0b;
+      --dark-color: #1e293b;
+      --light-color: #f8fafc;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light-color);
+      padding-top: 80px;
+    }
+    /* Enhanced Navbar */
+    .navbar {
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(10px);
+    }
+    .navbar-brand {
+      font-weight: 700;
+      color: var(--dark-color) !important;
+    }
+    .nav-link {
+      color: var(--dark-color) !important;
+      font-weight: 500;
+    }
+    /* Dashboard Hero */
+    .dashboard-hero {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.95) 0%, rgba(16, 185, 129, 0.95) 100%);
+      padding: 120px 0 80px;
+      color: white;
+      text-align: center;
+    }
+    /* Service Cards */
+    .service-card {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      margin-bottom: 1rem;
+    }
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .card-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--primary-color);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      margin: -32px auto 20px;
+    }
+    /* Footer */
+    .main-footer {
+      background: var(--dark-color);
+      color: #94a3b8;
+      padding: 40px 0;
+    }
+    .footer-link {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .footer-link:hover {
+      color: var(--secondary-color);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'user_home' %}">
+        <i class="fas fa-hands-helping me-2"></i>CharityConnect
+      </a>
+      <div class="d-flex align-items-center">
+        <div class="dropdown">
+          <a class="btn btn-light rounded-circle p-2" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-user"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" href="{% url 'profile' %}">
+                <i class="fas fa-user-circle me-2"></i>Profile
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Hero -->
+  <section class="dashboard-hero">
+    <div class="container">
+      <h1 class="display-5 fw-bold mb-3">Welcome Back, {{ request.user.fullname }}!</h1>
+      <div class="d-flex justify-content-center gap-3 mb-4">
+        <div class="badge bg-white text-dark px-3 py-2 rounded-pill">
+          <i class="fas fa-star me-2 text-warning"></i>Gold Member
+        </div>
+        <div class="badge bg-white text-dark px-3 py-2 rounded-pill">
+          <i class="fas fa-hand-holding-heart me-2 text-danger"></i>245 Points
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- User Functions -->
+  <section class="py-5">
+    <div class="container">
+      <h3 class="fw-bold mb-5">User Functions</h3>
+      <div class="row g-4">
+        <!-- View Upcoming Events -->
+        <div class="col-md-4">
+          <div class="service-card">
+            <div class="card-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h4 class="fw-bold mb-3">View Upcoming Events</h4>
+            <p class="text-muted mb-4">See details of upcoming charity events.</p>
+            <a href="{% url 'view_events' %}" class="btn btn-primary w-100 mb-3">View Events</a>
+          </div>
+        </div>
+        <!-- Sponsor an Event -->
+        <div class="col-md-4">
+          <div class="service-card">
+            <div class="card-icon text-success">
+              <i class="fas fa-hand-holding-usd"></i>
+            </div>
+            <h4 class="fw-bold mb-3">Sponsor an Event</h4>
+            <p class="text-muted mb-4">Help us by sponsoring an event.</p>
+            <!-- Instead of linking directly to sponsor_event without an argument,
+                 we redirect to view_events page so that user can select an event to sponsor -->
+            <a href="{% url 'view_events' %}" class="btn btn-primary w-100 mb-3">Sponsor Now</a>
+          </div>
+        </div>
+        <!-- Make a Donation -->
+        <div class="col-md-4">
+          <div class="service-card">
+            <div class="card-icon text-warning">
+              <i class="fas fa-donate"></i>
+            </div>
+            <h4 class="fw-bold mb-3">Make a Donation</h4>
+            <p class="text-muted mb-4">Donate cash, food, or essentials.</p>
+            <a href="{% url 'make_donation' %}" class="btn btn-primary w-100 mb-3">Donate Now</a>
+          </div>
+        </div>
+        <!-- Emergency Support Requests -->
+        <div class="col-md-4">
+          <div class="service-card">
+            <div class="card-icon text-danger">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h4 class="fw-bold mb-3">Emergency Support Requests</h4>
+            <p class="text-muted mb-4">Submit emergency support requests for immediate assistance.</p>
+            <a href="{% url 'request_emergency_support' %}" class="btn btn-primary w-100 mb-3">Request Support</a>
+          </div>
+        </div>
+        <!-- Blood Donation Registration -->
+        <div class="col-md-4">
+          <div class="service-card">
+            <div class="card-icon text-info">
+              <i class="fas fa-tint"></i>
+            </div>
+            <h4 class="fw-bold mb-3">Blood Donation Registration</h4>
+            <p class="text-muted mb-4">Register for blood donation and view upcoming drives.</p>
+            <a href="{% url 'register_blood_donation' %}" class="btn btn-primary w-100 mb-3">Register Now</a>
+          </div>
+        </div>
+        <!-- Chat with Admin -->
+        <div class="col-md-4">
+          <div class="service-card">
+            <div class="card-icon text-secondary">
+              <i class="fas fa-comment-dots"></i>
+            </div>
+            <h4 class="fw-bold mb-3">Chat with Admin</h4>
+            <p class="text-muted mb-4">Directly communicate with the admin for queries or support.</p>
+            <a href="#" class="btn btn-primary w-100 mb-3">Chat Now</a>
+          </div>
+        </div>
+        <!-- Submit Feedback -->
+        <div class="col-md-4">
+          <div class="service-card">
+            <div class="card-icon text-warning">
+              <i class="fas fa-comments"></i>
+            </div>
+            <h4 class="fw-bold mb-3">Submit Feedback</h4>
+            <p class="text-muted mb-4">Send feedback and view responses.</p>
+            <a href="{% url 'submit_feedback' %}" class="btn btn-primary w-100 mb-3">Submit Feedback</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container py-5">
+      <div class="row g-5">
+        <div class="col-md-6">
+          <h5>About CharityConnect</h5>
+          <p>Connecting hearts and resources to make a meaningful impact in the lives of those who need it most.</p>
+        </div>
+        <div class="col-md-3">
+          <h5>Resources</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="footer-link">Blog</a></li>
+            <li><a href="#" class="footer-link">FAQ</a></li>
+            <li><a href="#" class="footer-link">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h5>Follow Us</h5>
+          <div class="d-flex gap-3">
+            <a href="#" class="footer-link"><i class="fab fa-facebook-f fa-lg"></i></a>
+            <a href="#" class="footer-link"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="#" class="footer-link"><i class="fab fa-instagram fa-lg"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-5">
+        <small>&copy; 2023 CharityConnect. All rights reserved.</small>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

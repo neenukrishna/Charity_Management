@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donation Registration</title>
+</head>
+<body>
+    <h2>Register as a Blood Donor</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label>Full Name:</label>
+        <input type="text" name="full_name" required>
+        
+        <label>Blood Group:</label>
+        <input type="text" name="blood_group" required>
+        
+        <label>Email:</label>
+        <input type="email" name="email" required>
+
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>

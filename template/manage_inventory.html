@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Inventory</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Resources & Inventory Management</h2>
+
+        <!-- Add Inventory Button -->
+        <a href="{% url 'add_inventory' %}" class="btn btn-primary mb-3">
+            <i class="fas fa-plus me-2"></i>Add Inventory
+        </a>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Donation</th>
+                    <th>Total Quantity</th>
+                    <th>Allocated Quantity</th>
+                    <th>Beneficiary</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in inventory_items %}
+                <tr>
+                    <td>{{ item.donation.donation_type }}</td>
+                    <td>{{ item.total_quantity }}</td>
+                    <td>{{ item.allocated_quantity }}</td>
+                    <td>{{ item.beneficiary.user.fullname }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No inventory records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</body>
+</html>

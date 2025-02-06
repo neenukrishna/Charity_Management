@@ -1,0 +1,177 @@
+<!-------------------
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+</head>
+<body>
+    <h2>Register</h2>
+    {% for message in messages %}
+        <p style="color: red;">{{ message }}</p>
+    {% endfor %}
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="fullname" placeholder="Full Name" required><br>
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="text" name="phone" placeholder="Phone" required><br>
+        <input type="date" name="dob" placeholder="Date of Birth" required><br>
+        <input type="text" name="place" placeholder="Place" required><br>
+        <input type="text" name="post" placeholder="Post" required><br>
+        <input type="text" name="pin" placeholder="PIN" required><br>
+        <input type="text" name="district" placeholder="District" required><br>
+        <select name="gender" required>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select><br>
+        <select name="user_type" required>
+            <option value="">Select User Type</option>
+            <option value="donor">Donor</option>
+            <option value="beneficiary">Beneficiary</option>
+        </select><br>
+        <input type="text" name="username" placeholder="Username" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required><br>
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+</body>
+</html>
+---------->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - CharityConnect</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      min-height: 80vh;
+    }
+    .col-left, .col-right {
+      padding: 20px;
+    }
+    .col-left {
+      flex: 1 1 40%;
+      background: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+      background-size: cover;
+    }
+    .col-right {
+      flex: 1 1 60%;
+      background-color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .messages {
+      margin-bottom: 20px;
+    }
+    .messages p {
+      color: red;
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    input, select, button {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    a {
+      color: #007bff;
+      text-decoration: none;
+      text-align: center;
+      display: block;
+      margin-top: 10px;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .col-left, .col-right {
+        flex: 1 1 100%;
+      }
+      .col-left {
+        min-height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Left Column: Charity-themed Image -->
+    <div class="col-left"></div>
+
+    <!-- Right Column: Registration Form -->
+    <div class="col-right">
+      <h2>REGISTER</h2>
+      <div class="messages">
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
+      </div>
+      <form method="POST">
+        {% csrf_token %}
+        <select name="user_type" required>
+            <option value="">Select User Type</option>
+            <option value="donor">Donor</option>
+            <option value="beneficiary">Beneficiary</option>
+          </select>
+        <input type="text" name="fullname" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="phone" placeholder="Phone" required>
+        <input type="date" name="dob" placeholder="Date of Birth" required>
+        <input type="text" name="place" placeholder="Place" required>
+        <input type="text" name="post" placeholder="Post" required>
+        <input type="text" name="pin" placeholder="PIN" required>
+        <input type="text" name="district" placeholder="District" required>
+        <select name="gender" required>
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+        
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+        <button type="submit">Register</button>
+      </form>
+      <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+    </div>
+  </div>
+</body>
+</html>

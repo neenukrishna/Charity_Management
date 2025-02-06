@@ -1,0 +1,590 @@
+<!-----------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CharityConnect - Empowering Communities</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #2A5CAA;
+      --secondary-color: #28A745;
+      --accent-color: #FF6B6B;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      line-height: 1.6;
+      /* Add top padding so content is not hidden behind the fixed navbar */
+      padding-top: 70px;
+    }
+    
+    h1, h2, h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+    }
+    
+    .hero-section {
+      background: linear-gradient(rgba(42, 92, 170, 0.8), rgba(42, 92, 170, 0.8)),
+                  url('https://images.unsplash.com/photo-1593113598332-cd288d649433?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      color: white;
+    }
+    
+    .feature-card {
+      transition: transform 0.3s ease;
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .icon-wrapper {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: -40px auto 20px;
+    }
+    
+    .stats-section {
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                  url('https://images.unsplash.com/photo-1583339522870-0d8e306d5b72');
+      background-size: cover;
+      color: white;
+      padding: 100px 0;
+    }
+    
+    .btn-cta {
+      background: var(--secondary-color);
+      color: white;
+      padding: 15px 40px;
+      border-radius: 30px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-cta:hover {
+      transform: scale(1.05);
+      background: #218838;
+      color: white;
+    }
+    
+    .nav-link {
+      color: white !important;
+      font-weight: 500;
+      margin: 0 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link:hover {
+      color: var(--secondary-color) !important;
+    }
+  </style>
+</head>
+<body>
+
+  
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand fs-3" href="#">
+        <i class="fas fa-hands-helping me-2"></i>CharityConnect
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#causes">Causes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contact">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-cta ms-3" href="login/">Login</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-section" id="home">
+    <div class="container text-center">
+      <h1 class="display-3 mb-4">Transforming Lives Through Compassion</h1>
+      <p class="lead mb-5">Join our mission to create sustainable change in communities worldwide</p>
+      <div class="d-flex gap-3 justify-content-center">
+        <a href="login" class="btn btn-cta btn-lg">Donate Now</a>
+        <a href="add_volunteer" class="btn btn-outline-light btn-lg">Become Volunteer</a>
+      </div>
+    </div>
+  </section>
+
+  
+  <section class="py-5 bg-light">
+    <div class="container py-5">
+      <div class="text-center mb-5">
+        <h2 class="mb-3">How We Make Impact</h2>
+        <p class="text-muted">Your support enables us to deliver essential services</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-hand-holding-medical fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Emergency Relief</h4>
+            <p class="text-muted">Providing immediate assistance during crises and natural disasters</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-book-open fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Education Programs</h4>
+            <p class="text-muted">Supporting access to quality education for underprivileged children</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-heartbeat fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Healthcare Support</h4>
+            <p class="text-muted">Delivering medical care and health education to remote communities</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="stats-section">
+    <div class="container text-center">
+      <div class="row g-5">
+        <div class="col-md-3">
+          <h3 class="display-4">250K+</h3>
+          <p>Lives Impacted</p>
+        </div>
+        <div class="col-md-3">
+          <h3 class="display-4">85+</h3>
+          <p>Active Programs</p>
+        </div>
+        <div class="col-md-3">
+          <h3 class="display-4">1.2M+</h3>
+          <p>Meals Provided</p>
+        </div>
+        <div class="col-md-3">
+          <h3 class="display-4">40+</h3>
+          <p>Countries Reached</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <section class="py-5 bg-primary">
+    <div class="container text-center text-white py-5">
+      <h2 class="mb-4">Ready to Make a Difference?</h2>
+      <p class="mb-5">Your contribution helps us continue our vital work</p>
+      <div class="d-flex gap-3 justify-content-center">
+        <a href="login" class="btn btn-light btn-lg px-5">Donate Now</a>
+        <a href="/contact" class="btn btn-outline-light btn-lg px-5">Contact Us</a>
+      </div>
+    </div>
+  </section>
+
+ 
+  <footer class="bg-dark text-white py-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <h4>About CharityConnect</h4>
+          <p class="text-muted">A non-profit organization dedicated to creating sustainable change through community empowerment.</p>
+        </div>
+        <div class="col-lg-4">
+          <h4>Quick Links</h4>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-decoration-none text-muted">Our Mission</a></li>
+            <li><a href="#" class="text-decoration-none text-muted">Financial Reports</a></li>
+            <li><a href="#" class="text-decoration-none text-muted">Careers</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h4>Stay Connected</h4>
+          <div class="d-flex gap-3">
+            <a href="#" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a>
+          </div>
+          <div class="input-group mt-3">
+            <input type="email" class="form-control" placeholder="Enter your email" />
+            <button class="btn btn-primary" type="button">Subscribe</button>
+          </div>
+        </div>
+      </div>
+      <hr class="mt-5" />
+      <p class="text-center text-muted mb-0">&copy; 2023 CharityConnect. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+------------->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CharityConnect - Empowering Communities</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --secondary-color: #10b981;
+      --accent-color: #f59e0b;
+      --dark-color: #1e293b;
+      --light-color: #f8fafc;
+    }
+  
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      background-color: var(--light-color);
+      padding-top: 70px;
+    }
+  
+    h1, h2, h3 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      color: var(--dark-color);
+    }
+  
+    .hero-section {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.95) 0%, rgba(16, 185, 129, 0.95) 100%),
+                  url('https://images.unsplash.com/photo-1593113598332-cd288d649433?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      color: white;
+    }
+  
+    .feature-card {
+      transition: transform 0.3s ease;
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      background: white;
+      border: 1px solid #e2e8f0;
+    }
+  
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+  
+    .icon-wrapper {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: -40px auto 20px;
+    }
+  
+    .btn-cta {
+      background: var(--secondary-color);
+      color: white;
+      padding: 15px 40px;
+      border-radius: 30px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+  
+    .btn-cta:hover {
+      transform: scale(1.05);
+      background: #059669;
+    }
+  
+    .navbar {
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(10px);
+    }
+  
+    .nav-link {
+      color: var(--dark-color) !important;
+      font-weight: 500;
+    }
+    .navbar-brand {
+      font-weight: 700;
+      color: var(--dark-color) !important;
+    }
+
+  
+    .nav-link:hover {
+      color: var(--primary-color) !important;
+    }
+  
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+  
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+  
+    .main-footer {
+      background: var(--dark-color);
+      color: #94a3b8;
+      position: relative;
+    }
+  
+    .footer-link {
+      color: #94a3b8;
+      transition: color 0.2s ease;
+    }
+  
+    .footer-link:hover {
+      color: var(--secondary-color);
+    }
+  </style>
+  
+</head>
+<body>
+
+  <!-- Fixed Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-hands-helping me-2"></i>CharityConnect
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#services">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#gallery">Gallery</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contact">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-cta ms-3" href="login/">Login</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="home">
+    <div class="container text-center">
+      <h1 class="display-3 mb-4">Transforming Lives Through Compassion</h1>
+      <p class="lead mb-5">Join our mission to create sustainable change in communities worldwide.</p>
+      <div class="d-flex gap-3 justify-content-center">
+        <a href="login/" class="btn btn-cta btn-lg">Donate Now</a>
+        <a href="volunteer/" class="btn btn-outline-light btn-lg">Become Volunteer</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="py-5" id="about">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6 mb-4 mb-md-0">
+          <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="About Us" class="img-fluid rounded">
+        </div>
+        <div class="col-md-6">
+          <h2>About CharityConnect</h2>
+          <p>CharityConnect is a non-profit organization dedicated to creating sustainable change. We empower communities through education, healthcare, emergency relief, and much more. Our mission is to improve the lives of those in need and build a better, more equitable future.</p>
+          <p>With dedicated volunteers and generous donors, we work tirelessly to bring hope and opportunity to underprivileged communities around the globe.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="py-5 bg-light" id="services">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2>Our Services</h2>
+        <p class="text-muted">We deliver a range of services to support and uplift communities.</p>
+      </div>
+      <div class="row g-4">
+        <!-- Service Card 1 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-hand-holding-medical fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Emergency Relief</h4>
+            <p class="text-muted">Rapid response to natural disasters and emergencies, ensuring immediate relief and support.</p>
+          </div>
+        </div>
+        <!-- Service Card 2 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-book-open fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Education Programs</h4>
+            <p class="text-muted">Providing educational resources and support to help underprivileged children and adults achieve their potential.</p>
+          </div>
+        </div>
+        <!-- Service Card 3 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-heartbeat fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Healthcare Support</h4>
+            <p class="text-muted">Offering medical care and health education to remote communities, promoting a healthier lifestyle.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section class="py-5" id="gallery">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2>Gallery</h2>
+        <p class="text-muted">Snapshots of our work in the community.</p>
+      </div>
+      <div class="row g-4 gallery">
+        <div class="col-md-4">
+          <img src="https://images.unsplash.com/photo-1605216906967-4b91589eb32d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery Image 1">
+        </div>
+        <div class="col-md-4">
+          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery Image 2">
+        </div>
+        <div class="col-md-4">
+          <img src="https://images.unsplash.com/photo-1581093588401-1ec76f6b7c74?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery Image 3">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="py-5 bg-primary" id="contact">
+    <div class="container text-white">
+      <div class="row">
+        <div class="col-md-6">
+          <h2>Contact Us</h2>
+          <p>We would love to hear from you. Whether you have a question about our work, need support, or want to get involved, please reach out!</p>
+          <ul class="list-unstyled">
+            <li><i class="fas fa-map-marker-alt me-2"></i>123 Charity Lane, Hope City, Country</li>
+            <li><i class="fas fa-phone me-2"></i>+1 (555) 123-4567</li>
+            <li><i class="fas fa-envelope me-2"></i>info@charityconnect.org</li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <h4>Send Us a Message</h4>
+          <form>
+            <div class="mb-3">
+              <input type="text" class="form-control" placeholder="Your Name" required>
+            </div>
+            <div class="mb-3">
+              <input type="email" class="form-control" placeholder="Your Email" required>
+            </div>
+            <div class="mb-3">
+              <textarea class="form-control" rows="4" placeholder="Your Message" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-light">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <h4>About CharityConnect</h4>
+          <p class="text-muted">We are committed to creating sustainable change by empowering communities through education, healthcare, and emergency relief.</p>
+        </div>
+        <div class="col-lg-4">
+          <h4>Quick Links</h4>
+          <ul class="list-unstyled">
+            <li><a href="#about" class="text-decoration-none text-muted">Our Mission</a></li>
+            <li><a href="#services" class="text-decoration-none text-muted">Programs</a></li>
+            <li><a href="#gallery" class="text-decoration-none text-muted">Gallery</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h4>Stay Connected</h4>
+          <div class="d-flex gap-3">
+            <a href="#" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a>
+          </div>
+          <div class="input-group mt-3">
+            <input type="email" class="form-control" placeholder="Enter your email" />
+            <button class="btn btn-primary" type="button">Subscribe</button>
+          </div>
+        </div>
+      </div>
+      <hr class="mt-5" />
+      <p class="text-center text-muted mb-0">&copy; 2023 CharityConnect. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
