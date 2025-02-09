@@ -20,6 +20,7 @@
 </html>
 ----------->
 
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,12 +28,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - CharityConnect</title>
+    
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans&display=swap" rel="stylesheet">
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         :root {
             --primary-color: #2A5CAA;
@@ -51,10 +56,6 @@
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
             overflow: hidden;
-        }
-        .login-img {
-            background: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
-            background-size: cover;
         }
         .login-form {
             padding: 40px;
@@ -83,19 +84,24 @@
             <div class="col-md-8">
                 <div class="card login-card">
                     <div class="row g-0">
-                        <!-- Left Side - Image (visible on md and up) -->
-                        <div class="col-md-6 login-img d-none d-md-block"></div>
+                        <!-- Left Side - Logo Image -->
+                        <div class="col-md-6 d-flex justify-content-center align-items-center bg-light">
+                            <img src="/media/logo7.jpg" alt="Charity Logo" class="img-fluid" style="max-width: 80%; height: auto;">
+                        </div>
+                        
                         <!-- Right Side - Login Form -->
                         <div class="col-md-6 login-form">
                             <div class="text-center mb-4">
                                 <h2>Login to CharityConnect</h2>
                                 <p>Please enter your credentials to continue</p>
                             </div>
+                            
                             {% for message in messages %}
                                 <div class="alert alert-danger" role="alert">
                                     {{ message }}
                                 </div>
                             {% endfor %}
+
                             <form method="POST">
                                 {% csrf_token %}
                                 <div class="mb-3">
@@ -124,9 +130,9 @@
                                     </p>
                                 </div>
                             </form>
-                        </div>
-                    </div>
-                </div>
+                        </div> <!-- End of Login Form -->
+                    </div> <!-- End of Row -->
+                </div> <!-- End of Card -->
             </div>
         </div>
     </div>

@@ -7,6 +7,9 @@ from .models import Donation,Event,Volunteer,BloodDonor, BeneficiarySupport, Pal
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import ChatMessage, CustomUser
 from django.contrib import messages
+from django.contrib.auth.hashers import make_password, check_password
+
+
 
 def home(request):
     return render(request, 'home.html')
@@ -19,6 +22,9 @@ def user_home(request):
 @login_required
 def profile(request):
     return render(request, 'profile.html')
+
+
+
 
 # User Registration View (Without Forms)
 def register(request):
@@ -59,21 +65,31 @@ def register(request):
     
     return render(request, 'register.html')
 
-# User Login View (Without Forms)
+
 def user_login(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email = request.POST.get('username')  # Using email instead of username
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
 
-        if user is not None:
-            login(request, user)
-            # Redirect admin users to the custom admin dashboard
-            if user.is_superuser:
-                return redirect('admin_dashboard')
-            return redirect('user_home')
-        else:
-            messages.error(request, "Invalid username or password!")
+        # Check if the user is a staff member
+        try:
+            staff = Staff.objects.get(email=email, status="Active")
+            if check_password(password, staff.password):  # Verify hashed password
+                request.session['staff_id'] = staff.staff_id  # Store staff session
+                request.session['staff_name'] = staff.full_name
+                return redirect('staff_dashboard')  # Redirect staff to dashboard
+            else:
+                messages.error(request, "Invalid email or password!")
+        except Staff.DoesNotExist:
+            # If not staff, check if it's a normal user
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                login(request, user)
+                if user.is_superuser:
+                    return redirect('admin_dashboard')
+                return redirect('user_home')
+            else:
+                messages.error(request, "Invalid username or password!")
 
     return render(request, 'login.html')
 
@@ -81,6 +97,15 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
+
+
+
+
+
+def staff_dashboard(request):
+    if 'staff_id' in request.session:
+        return render(request, 'staff_dashboard.html', {'staff_name': request.session['staff_name']})
+    return redirect('user_login')
 
 # Helper function to check if a user is an admin (superuser)
 def is_admin(user):
@@ -120,9 +145,9 @@ def manage_volunteers(request):
 @login_required
 @user_passes_test(is_admin)
 def manage_staff(request):
-    staff_members = CustomUser.objects.filter(user_type='staff')  # Query only staff users
+    # Order by staff_id instead of id
+    staff_members = Staff.objects.all().order_by('-staff_id')
     return render(request, 'manage_staff.html', {'staff_members': staff_members})
-
 
 # Manage Blood Donors
 @login_required
@@ -555,46 +580,57 @@ def send_feedback_reply(request, feedback_id):
         return redirect('manage_feedback')
 
     return redirect('manage_feedback')
+ # Make sure this is the correct model
 
-
-@login_required
-@user_passes_test(is_admin)
 def add_staff(request):
-    if request.method == 'POST':
-        # Get data from the form
-        role = request.POST.get('role')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        dob = request.POST.get('dob')
-        gender = request.POST.get('gender')
-        place = request.POST.get('place')
-        post = request.POST.get('post')
-        pin = request.POST.get('pin')
-        district = request.POST.get('district')
-        join_date = request.POST.get('join_date')
-        status = request.POST.get('status')
-
-        # Create the new staff record
-        Staff.objects.create(
+    if request.method == "POST":
+        # Extract data from the POST request
+        full_name = request.POST.get("fullname")
+        role = request.POST.get("role")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        dob = request.POST.get("dob")
+        gender = request.POST.get("gender")
+        place = request.POST.get("place")
+        post = request.POST.get("post")
+        district = request.POST.get("district")
+        pin = request.POST.get("pin")
+        join_date = request.POST.get("join_date")
+        status = request.POST.get("status")
+        
+        # Extract and compare passwords
+        raw_password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+        
+        # Validate that the passwords match
+        if raw_password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return render(request, "add_staff.html")
+        
+        # Hash the raw password using Django's built-in function
+        hashed_password = make_password(raw_password)
+        
+        # Create and save the Staff instance
+        staff = Staff(
+            full_name=full_name,
             role=role,
             email=email,
             phone=phone,
             dob=dob,
             gender=gender,
+            password=hashed_password,  # Store the hashed password
             place=place,
             post=post,
-            pin=pin,
             district=district,
+            pin=pin,
             join_date=join_date,
             status=status
         )
-
-        messages.success(request, "Staff added successfully!")
-        return redirect('manage_staff')  # Redirect to manage staff page
+        staff.save()
+        
+        return redirect("manage_staff")
     
-    return render(request, 'add_staff.html')  # Render the form for GET request
-
-
+    return render(request, "add_staff.html")
 
 @login_required
 def chat_view(request):
@@ -677,7 +713,7 @@ def make_donation(request):
         messages.success(request, "Thank you for your donation!")
         return redirect('user_home')  # Or wherever you want to redirect after donation.
     
-    return render(request, 'add_donation.html')
+    return render(request, 'donation.html')
 
 
 
@@ -714,3 +750,178 @@ def submit_feedback(request):
         # Process feedback form
         pass
     return render(request, 'submit_feedback.html')
+
+
+
+#-------------------------------------staff section----------------------------------------------------------------------------------
+def staff_dashboard(request):
+    # Check if the staff member is logged in.
+    if 'staff_id' not in request.session:
+        return redirect("login")
+    
+    # Retrieve the staff member’s details.
+    staff_member = Staff.objects.get(staff_id=request.session['staff_id'])
+    
+    return render(request, "staff_dashboard.html", {"staff_member": staff_member})
+
+
+# Profile Display View
+def staff_profile(request):
+    staff_id = request.session.get('staff_id')
+    if not staff_id:
+        messages.error(request, "You must be logged in to view your profile.")
+        return redirect('user_login')
+    staff_member = get_object_or_404(Staff, pk=staff_id)
+    return render(request, 'staff/staff_profile.html', {'staff_member': staff_member})
+
+# Update Profile View
+def update_profile(request):
+    staff_id = request.session.get('staff_id')
+    if not staff_id:
+        messages.error(request, "You must be logged in to update your profile.")
+        return redirect('user_login')
+    staff_member = get_object_or_404(Staff, pk=staff_id)
+    if request.method == "POST":
+        staff_member.full_name = request.POST.get('full_name')
+        staff_member.email = request.POST.get('email')
+        staff_member.phone = request.POST.get('phone')
+        # Update additional fields as needed...
+        staff_member.save()
+        messages.success(request, "Profile updated successfully!")
+        return redirect('staff/staff_profile')
+    return render(request, 'staff/update_staff.html', {'staff_member': staff_member})
+
+# Change Password View
+def change_password(request):
+    staff_id = request.session.get('staff_id')
+    if not staff_id:
+        messages.error(request, "You must be logged in to change your password.")
+        return redirect('user_login')
+    staff_member = get_object_or_404(Staff, pk=staff_id)
+    if request.method == "POST":
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        if new_password != confirm_password:
+            messages.error(request, "New password and confirm password do not match.")
+            return redirect('change_password_staff')
+        if not check_password(old_password, staff_member.password):
+            messages.error(request, "Old password is incorrect.")
+            return redirect('change_password_staff')
+        staff_member.password = make_password(new_password)
+        staff_member.save()
+        messages.success(request, "Password changed successfully!")
+        return redirect('staff_profile')
+    return render(request, 'staff/change_password_staff.html', {'staff_member': staff_member})
+
+
+#-------------------------------------home services------------------------------------------------------------------------------
+
+
+def hospital_without_hunger(request):
+    return render(request, 'home/meal.html')
+
+def grocery_assistance(request):
+    return render(request, 'home/grocery.html')
+
+def cancer_patient(request):
+    return render(request, 'home/cancer_patient.html')
+
+def beneficary_aid(request):
+    return render(request, 'home/beneficiary_aid.html')
+
+def palliative_program(request):
+    return render(request, 'home/palliative_program.html')
+
+def counselling(request):
+    return render(request, 'home/counseling.html')
+
+
+
+def volunteer(request):
+    if request.method == 'POST':
+        # Extract form data
+        full_name = request.POST.get('full_name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        dob = request.POST.get('dob')  # Format: YYYY-MM-DD
+        gender = request.POST.get('gender')
+        place = request.POST.get('place')
+        post = request.POST.get('post')
+        pin = request.POST.get('pin')
+        district = request.POST.get('district')
+        availability = request.POST.get('availability')  # Expecting "true" or "false" string
+        availability = True if availability and availability.lower() == 'true' else False
+
+        # Process file upload if provided
+        proof = request.FILES.get('proof')
+
+        # Create Volunteer instance; default status is "Pending"
+        volunteer_instance = Volunteer.objects.create(
+            full_name=full_name,
+            email=email,
+            phone=phone,
+            dob=dob,
+            gender=gender,
+            place=place,
+            post=post,
+            pin=pin,
+            district=district,
+            availability=availability,
+            status='Pending'
+        )
+
+        if proof:
+            volunteer_instance.proof = proof
+            volunteer_instance.save()
+
+        messages.success(request, "Your volunteer application has been submitted successfully!")
+        return redirect('volunteer_thankyou')
+    
+    # For GET requests, render the volunteer form page
+    return render(request, 'home/volunteer.html')
+
+
+def volunteer_thankyou(request):
+    # Render a simple thank-you page
+    return render(request, 'home/volunteer_thankyou.html')
+
+
+
+def blood_donation(request):
+    if request.method == 'POST':
+        # Retrieve form data from POST request
+        full_name   = request.POST.get('full_name')
+        blood_group = request.POST.get('blood_group')
+        email       = request.POST.get('email')
+        phone       = request.POST.get('phone')
+        place       = request.POST.get('place')
+        post        = request.POST.get('post')
+        pin         = request.POST.get('pin')
+        district    = request.POST.get('district')
+        gender      = request.POST.get('gender')
+        dob         = request.POST.get('dob')
+
+        try:
+            # Create a new BloodDonor record in the database
+            BloodDonor.objects.create(
+                full_name=full_name,
+                blood_group=blood_group,
+                email=email,
+                phone=phone,
+                place=place,
+                post=post,
+                pin=pin,
+                district=district,
+                gender=gender,
+                dob=dob
+            )
+            messages.success(request, "Thank you for registering as a blood donor!")
+            # Redirect to the same page (or to a thank-you page) after successful submission
+            return redirect('blood_donation')
+        except Exception as e:
+            # Optionally log the error and show an error message to the user
+            messages.error(request, f"An error occurred while processing your registration: {e}")
+
+    # For GET requests, simply render the blood donation form template
+    return render(request, 'home/blood_donor.html')

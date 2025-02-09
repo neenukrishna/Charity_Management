@@ -1,3 +1,4 @@
+<!--------------
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,7 +9,6 @@
     <div class="container mt-4">
         <h2>Field Data Collection</h2>
 
-        <!-- Add Field Data Button -->
         <a href="{% url 'add_field_data' %}" class="btn btn-primary mb-3">
             <i class="fas fa-plus me-2"></i>Add Field Data
         </a>
@@ -59,6 +59,90 @@
         </table>
 
         <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</body>
+</html>
+---------------->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Field Data Collection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-lg">
+            <!-- Card Header -->
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-clipboard-list me-2"></i>Field Data Collection
+                </h3>
+                <div>
+                    <a href="{% url 'add_field_data' %}" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus-circle me-2"></i>Add Field Data
+                    </a>
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Volunteer</th>
+                                <th>Full Name</th>
+                                <th>Place</th>
+                                <th>Post</th>
+                                <th>Pin</th>
+                                <th>District</th>
+                                <th>Email</th>
+                                <th>Details</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Proof</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in field_data_entries %}
+                            <tr>
+                                <td class="fw-bold">{{ entry.volunteer.full_name }}</td>
+                                <td>{{ entry.full_name }}</td>
+                                <td>{{ entry.place }}</td>
+                                <td>{{ entry.post }}</td>
+                                <td>{{ entry.pin }}</td>
+                                <td>{{ entry.district }}</td>
+                                <td>{{ entry.email }}</td>
+                                <td>{{ entry.details }}</td>
+                                <td>{{ entry.date }}</td>
+                                <td>{{ entry.status }}</td>
+                                <td>
+                                    {% if entry.proof %}
+                                        <a href="{{ entry.proof.url }}" target="_blank">View Proof</a>
+                                    {% else %}
+                                        No proof uploaded
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="11" class="text-center py-4">
+                                    <i class="fas fa-exclamation-circle fa-2x text-muted mb-3"></i>
+                                    <p class="text-muted mb-0">No field data found</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Back to Dashboard Button -->
+        
     </div>
 </body>
 </html>

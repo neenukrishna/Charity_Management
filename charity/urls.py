@@ -3,9 +3,11 @@
 from django.urls import path
 from . import views
 from .views import user_home,profile
-from .views import admin_dashboard, manage_users, manage_events, manage_volunteers, manage_staff  
+from .views import admin_dashboard, manage_users, manage_events, manage_volunteers, manage_staff,hospital_without_hunger,volunteer,volunteer_thankyou
 from .views import register, user_login, user_logout
 from .views import admin_dashboard
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -48,12 +50,35 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('view-events/', views.view_events, name='view_events'),
     path('sponsor-event/<int:event_id>/', views.sponsor_event, name='sponsor_event'),
-    path('add-donation/', views.make_donation, name='make_donation'),
+    path('donation/', views.make_donation, name='make_donation'),
     path('request-emergency-support/', views.request_emergency_support, name='request_emergency_support'),
     path('register-blood-donation/', views.register_blood_donation, name='register_blood_donation'),
-    path('submit-feedback/', views.submit_feedback, name='submit_feedback')
+    path('submit-feedback/', views.submit_feedback, name='submit_feedback'),
+    
+    
+    path('staff-dashboard/', views.staff_dashboard, name='staff_dashboard'),
+    path('staff/profile-staff/', views.staff_profile, name='staff_profile'),
+    path('staff/update-staff/', views.update_profile, name='update_profile'),
+    path('staff/change-password-staff/', views.change_password, name='change_password'),
+    path('staff/<int:staff_id>/', views.staff_profile, name='staff_profile'),
+    
+    path('meal/', views.hospital_without_hunger, name='hospital_without_hunger'),
+    path('grocery/', views.grocery_assistance, name='grocery_assistance'),
+    path('cancer_patient/', views.cancer_patient, name='cancer_patient'),
+    path('beneficary_aid/', views.beneficary_aid, name='beneficary_aid'),
+    path('palliative_program/',views.palliative_program,name='palliative_program'),
+    path('counseling/',views.counselling,name='counseling'),
+    path('volunteer/', views.volunteer, name='volunteer'),
+    path('volunteer/thank-you/', views.volunteer_thankyou, name='volunteer_thankyou'),
+    path('blood-donor/', views.blood_donation, name='blood_donation'),
+
+
+
 
     
 ]
 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

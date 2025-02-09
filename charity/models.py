@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings  # To use CustomUser
 from django.contrib.auth.models import AbstractUser
 from django.utils.timezone import now
+from django.utils import timezone
 
 
 # Custom User Model
@@ -44,7 +45,7 @@ class Event(models.Model):
     description = models.TextField()
     location = models.CharField(max_length=255)
     event_status = models.CharField(max_length=50, choices=[('Upcoming', 'Upcoming'), ('Ongoing', 'Ongoing'), ('Completed', 'Completed')])
-    sponsor_details = models.TextField()
+    sponsor_details = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.event_type
@@ -62,7 +63,17 @@ class Volunteer(models.Model):
     post = models.CharField(max_length=255)
     pin = models.CharField(max_length=10)
     district = models.CharField(max_length=255)
-    availability = models.BooleanField(default=True)
+    availability_date = models.DateField(default=timezone.now)
+   
+    VOLUNTEERING_CHOICES = [
+        ('HWH', 'Hospital Without Hunger'),
+        ('EGA', 'Essential Grocery Assistance'),
+        ('CHC', 'Comprehensive Home Care'),
+        ('BAS', 'Beneficiary Aid & Support'),
+        ('PCP', 'Palliative Care Program'),
+        ('GC', 'Guidance & Counseling'),
+    ]
+    volunteering_in = models.CharField(max_length=20, choices=VOLUNTEERING_CHOICES,default=True)
     assigned_task = models.TextField(null=True, blank=True)
     proof = models.FileField(upload_to='volunteer_proofs/', null=True, blank=True)
     status = models.CharField(max_length=50, choices=[('Pending', 'Pending'), ('Approved', 'Approved')])
@@ -110,6 +121,7 @@ class PalliativeCare(models.Model):
     palliative_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE)
+    details=models.TextField(null=True, blank=True)
     date = models.DateField()
     needs = models.TextField()
     status = models.CharField(max_length=50, choices=[('Ongoing', 'Ongoing'), ('Completed', 'Completed')])
@@ -184,23 +196,32 @@ class Feedback(models.Model):
     def __str__(self):
         return f"Feedback - {self.user.fullname}"
     
-
 class Staff(models.Model):
     staff_id = models.AutoField(primary_key=True)
+    full_name = models.CharField(max_length=100)
     role = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15)
     dob = models.DateField()
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
+    gender = models.CharField(
+        max_length=10, 
+        choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')]
+    )
     place = models.CharField(max_length=100)
     post = models.CharField(max_length=100)
     pin = models.CharField(max_length=10)
     district = models.CharField(max_length=100)
     join_date = models.DateField()
-    status = models.CharField(max_length=20, choices=[('Active', 'Active'), ('Inactive', 'Inactive')], default='Active')
+    password = models.CharField(max_length=255)
+    status = models.CharField(
+        max_length=20, 
+        choices=[('Active', 'Active'), ('Inactive', 'Inactive')], 
+        default='Active'
+    )
 
     def __str__(self):
-        return f"{self.role} - {self.email}"
+        return f"{self.role} - {self.email}"  # Removed the trailing comma
+
 
 
 

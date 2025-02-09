@@ -19,3 +19,112 @@
     </form>
 </body>
 </html>
+<!-------------
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - CharityConnect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .rating-star {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .feedback-card {
+            border-left: 4px solid #0d6efd;
+            transition: transform 0.3s;
+        }
+        .feedback-card:hover {
+            transform: translateX(10px);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card p-4 h-100">
+                    <h3 class="text-primary mb-4 fw-bold">Submit Feedback</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label class="form-label">Rating</label>
+                            <div class="d-flex justify-content-between" id="rating-stars">
+                                {% for i in "12345" %}
+                                <i class="rating-star far fa-star fa-2x" 
+                                   data-value="{{ i }}" 
+                                   onmouseover="highlightStars({{ i }})" 
+                                   onmouseout="resetStars()" 
+                                   onclick="setRating({{ i }})"></i>
+                                {% endfor %}
+                            </div>
+                            <input type="hidden" name="rating" id="selected-rating" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Comments</label>
+                            <textarea class="form-control" name="comments" rows="4" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Feedback
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <h3 class="text-primary mb-4 fw-bold">Recent Feedback</h3>
+                <div class="feedback-list">
+                    {% for feedback in feedbacks %}
+                    <div class="feedback-card card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <div class="rating">
+                                    {% for i in "12345" %}
+                                    <i class="fas fa-star text-{% if i <= feedback.rating %}warning{% else %}secondary{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                                <small class="text-muted">{{ feedback.created_at }}</small>
+                            </div>
+                            <p class="mb-0">{{ feedback.comments }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="alert alert-info">No feedback submitted yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function highlightStars(num) {
+            const stars = document.querySelectorAll('#rating-stars .rating-star');
+            stars.forEach((star, index) => {
+                star.classList.toggle('fas', index < num);
+                star.classList.toggle('text-warning', index < num);
+            });
+        }
+
+        function resetStars() {
+            const selected = document.getElementById('selected-rating').value || 0;
+            const stars = document.querySelectorAll('#rating-stars .rating-star');
+            stars.forEach((star, index) => {
+                star.classList.toggle('fas', index < selected);
+                star.classList.toggle('text-warning', index < selected);
+            });
+        }
+
+        function setRating(num) {
+            document.getElementById('selected-rating').value = num;
+            resetStars();
+        }
+    </script>
+</body>
+</html>
+----------->

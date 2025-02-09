@@ -1,3 +1,4 @@
+<!----------------------
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,31 +12,30 @@
         <form method="POST">
             {% csrf_token %}
             
-            <!-- Donation Type -->
+           
             <div class="mb-3">
                 <label for="donation_type" class="form-label">Donation Type</label>
                 <input type="text" class="form-control" id="donation_type" name="donation_type" required>
             </div>
 
-            <!-- Amount -->
             <div class="mb-3">
                 <label for="amount" class="form-label">Amount</label>
                 <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
             </div>
 
-            <!-- Donation Details -->
+            
             <div class="mb-3">
                 <label for="donation_details" class="form-label">Donation Details</label>
                 <textarea class="form-control" id="donation_details" name="donation_details" rows="3" required></textarea>
             </div>
 
-            <!-- Quantity -->
+           
             <div class="mb-3">
                 <label for="quantity" class="form-label">Quantity</label>
                 <input type="number" class="form-control" id="quantity" name="quantity" required>
             </div>
 
-            <!-- Status -->
+            
             <div class="mb-3">
                 <label for="status" class="form-label">Status</label>
                 <select class="form-control" id="status" name="status" required>
@@ -49,6 +49,92 @@
         </form>
 
         <a href="{% url 'manage_donations' %}" class="btn btn-secondary mt-3">Back to Donations</a>
+    </div>
+</body>
+</html>
+------------->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Donation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-lg">
+            <!-- Card Header -->
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="fas fa-hand-holding-heart me-2"></i>Add New Donation</h3>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                {% if error_message %}
+                <div class="alert alert-danger d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-3"></i>
+                    <div>{{ error_message }}</div>
+                </div>
+                {% endif %}
+
+                <form method="POST" class="row g-4">
+                    {% csrf_token %}
+
+                    <!-- Donation Type -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="donation_type" name="donation_type" placeholder="Donation Type" required>
+                            <label for="donation_type"><i class="fas fa-donate me-2"></i>Donation Type</label>
+                        </div>
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="number" step="0.01" class="form-control" id="amount" name="amount" placeholder="Amount" required>
+                            <label for="amount"><i class="fas fa-dollar-sign me-2"></i>Amount</label>
+                        </div>
+                    </div>
+
+                    <!-- Donation Details -->
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea class="form-control" id="donation_details" name="donation_details" rows="3" placeholder="Donation Details" required></textarea>
+                            <label for="donation_details"><i class="fas fa-info-circle me-2"></i>Donation Details</label>
+                        </div>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Quantity" required>
+                            <label for="quantity"><i class="fas fa-sort-numeric-up me-2"></i>Quantity</label>
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                            <label for="status"><i class="fas fa-toggle-on me-2"></i>Status</label>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="col-12 text-end mt-4">
+                        <a href="{% url 'manage_donations' %}" class="btn btn-outline-secondary me-3">
+                            <i class="fas fa-arrow-left me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success px-4">
+                            <i class="fas fa-save me-2"></i>Add Donation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </body>
 </html>

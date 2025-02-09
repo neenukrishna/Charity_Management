@@ -1,3 +1,4 @@
+<!--------------
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,6 +43,77 @@
         </table>
 
         <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</body>
+</html>
+----------------->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-lg">
+            <!-- Card Header -->
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-comments me-2"></i>Feedback Management
+                </h3>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
+                    <i class="fas fa-home me-2"></i>Dashboard
+                </a>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>User</th>
+                                <th>Comments</th>
+                                <th>Rating</th>
+                                <th>Reply</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for feedback in feedbacks %}
+                            <tr>
+                                <td class="fw-bold">{{ feedback.user.fullname }}</td>
+                                <td>{{ feedback.comments }}</td>
+                                <td>{{ feedback.rating }}</td>
+                                <td>{{ feedback.reply|default:"No reply yet" }}</td>
+                                <td>
+                                    <form method="POST" action="{% url 'send_feedback_reply' feedback.feedback_id %}">
+                                        {% csrf_token %}
+                                        <div class="input-group">
+                                            <input type="text" name="reply" class="form-control" placeholder="Enter reply" required>
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fas fa-paper-plane me-1"></i>Send
+                                            </button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <i class="fas fa-comment-slash fa-2x text-muted mb-3"></i>
+                                    <p class="text-muted mb-0">No feedbacks found</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Back to Dashboard Button -->
+        
     </div>
 </body>
 </html>

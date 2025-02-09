@@ -1,0 +1,240 @@
+<!------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, {{ staff_member.full_name }}</h1>
+    <p>Your role: {{ staff_member.role }}</p>
+    <a href="{% url 'logout' %}">Logout</a>
+</body>
+</html>
+---------------->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Staff Dashboard - Humanitarian Hub</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    /* Sidebar */
+    .sidebar {
+      min-height: 100vh;
+      background-color: #343a40;
+    }
+    .sidebar a {
+      color: #cfd8dc;
+      text-decoration: none;
+      padding: 15px;
+      display: block;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #495057;
+      color: #ffffff;
+    }
+    /* Top Navbar */
+    .navbar {
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: #343a40;
+    }
+    /* Dashboard Cards */
+    .card {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border: none;
+      margin-bottom: 20px;
+    }
+    .card-header {
+      background-color: #ffffff;
+      border-bottom: none;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    .card-body {
+      background-color: #ffffff;
+    }
+    /* Quick Actions */
+    .quick-actions a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <nav class="sidebar d-flex flex-column p-3" style="width: 250px;">
+      <a href="#" class="d-flex align-items-center mb-3">
+        <span class="fs-4 text-white">Humanitarian Hub</span>
+      </a>
+      <hr class="text-white" />
+      <ul class="nav nav-pills flex-column mb-auto">
+        <!-- Dashboard Link -->
+        <li class="nav-item">
+          <a href="#" class="nav-link active">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+          </a>
+        </li>
+        <!-- New Profile Link -->
+        <li class="nav-item">
+          <a href="{% url 'staff_profile' %}" class="nav-link">
+            <i class="fas fa-user me-2"></i>Profile
+          </a>
+        </li>
+        <!-- Events Link -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-calendar-alt me-2"></i>Events
+          </a>
+        </li>
+        <!-- Volunteers Link -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-users me-2"></i>Volunteers
+          </a>
+        </li>
+        <!-- Donations Link -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-hand-holding-heart me-2"></i>Donations
+          </a>
+        </li>
+        <!-- Palliative Care Link -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-medkit me-2"></i>Palliative Care
+          </a>
+        </li>
+        <!-- Emergencies Link -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-exclamation-triangle me-2"></i>Emergencies
+          </a>
+        </li>
+        <!-- Inventory Link -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-database me-2"></i>Inventory
+          </a>
+        </li>
+        <!-- Notifications Link -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-bell me-2"></i>Notifications
+          </a>
+        </li>
+      </ul>
+      <hr class="text-white" />
+      <div>
+        <!-- Logout link with red text -->
+        <a href="{% url 'logout' %}" class="nav-link text-danger">
+          <i class="fas fa-sign-out-alt me-2"></i>Logout
+        </a>
+      </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="flex-grow-1">
+      <!-- Top Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Staff Dashboard</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar" aria-controls="topNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="topNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <span class="nav-link">Welcome, {{ staff_member.full_name }}</span>
+              </li>
+              <li class="nav-item">
+                <span class="nav-link badge bg-secondary">{{ staff_member.role }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+      <div class="container-fluid p-4">
+        <div class="row g-4">
+          <!-- Emergency Requests Card -->
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <i class="fas fa-exclamation-triangle me-2"></i> Emergency Requests
+                <span class="badge bg-danger float-end">3 New</span>
+              </div>
+              <div class="card-body">
+                <p>2 pending actions needed</p>
+              </div>
+            </div>
+          </div>
+          <!-- Recent Donations Card -->
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <i class="fas fa-hand-holding-heart me-2"></i> Recent Donations
+              </div>
+              <div class="card-body">
+                <p>5 new donations today</p>
+                <a href="#" class="btn btn-primary">Review</a>
+              </div>
+            </div>
+          </div>
+          <!-- Upcoming Events Card -->
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <i class="fas fa-calendar-check me-2"></i> Upcoming Events
+              </div>
+              <div class="card-body">
+                <p>Blood Drive - Tomorrow 10AM</p>
+                <a href="#" class="btn btn-primary">Details</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quick Actions Section -->
+        <div class="card mt-5">
+          <div class="card-header">
+            <i class="fas fa-tasks me-2"></i> Quick Actions
+          </div>
+          <div class="card-body">
+            <div class="row text-center quick-actions">
+              <div class="col-md-3 mb-3">
+                <a href="#" class="btn btn-outline-primary w-100">Create New Event</a>
+              </div>
+              <div class="col-md-3 mb-3">
+                <a href="#" class="btn btn-outline-primary w-100">Assign Volunteers</a>
+              </div>
+              <div class="col-md-3 mb-3">
+                <a href="#" class="btn btn-outline-primary w-100">Update Inventory</a>
+              </div>
+              <div class="col-md-3 mb-3">
+                <a href="#" class="btn btn-outline-primary w-100">Field Data Upload</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div> <!-- End container-fluid -->
+    </div> <!-- End Main Content -->
+  </div> <!-- End d-flex wrapper -->
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
