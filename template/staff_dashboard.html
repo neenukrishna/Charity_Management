@@ -95,7 +95,7 @@
         </li>
         <!-- Events Link -->
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="{% url 'staff_events' %}" class="nav-link">
             <i class="fas fa-calendar-alt me-2"></i>Events
           </a>
         </li>
@@ -103,6 +103,11 @@
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="fas fa-users me-2"></i>Volunteers
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'manage_blood_donors' %}" class="nav-link">
+            <i class="fas fa-tint me-2"></i>Blood Donors
           </a>
         </li>
         <!-- Donations Link -->
@@ -139,7 +144,7 @@
       <hr class="text-white" />
       <div>
         <!-- Logout link with red text -->
-        <a href="{% url 'logout' %}" class="nav-link text-danger">
+        <a href="{% url 'home' %}" class="nav-link text-danger">
           <i class="fas fa-sign-out-alt me-2"></i>Logout
         </a>
       </div>

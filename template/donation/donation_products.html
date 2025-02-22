@@ -1,0 +1,57 @@
+<!-- myapp/templates/donation_products.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-4">
+  <h2 class="mb-4">{{ title }}</h2>
+  <div class="row">
+    {% for product in products %}
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+        {% endif %}
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+          <p class="card-text"><strong>Donation Amount:</strong> ${{ product.donation_amount }}</p>
+          <!-- Button to trigger Quick View modal -->
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quickViewModal{{ product.id }}">
+            Quick View
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Quick View Modal -->
+    <div class="modal fade" id="quickViewModal{{ product.id }}" tabindex="-1" aria-labelledby="quickViewModalLabel{{ product.id }}" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form method="POST" action="{% url 'add_to_basket' %}">
+            {% csrf_token %}
+            <div class="modal-header">
+              <h5 class="modal-title" id="quickViewModalLabel{{ product.id }}">{{ product.name }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>{{ product.description }}</p>
+              <p><strong>Donation Amount:</strong> ${{ product.donation_amount }}</p>
+              <input type="hidden" name="product_id" value="{{ product.id }}">
+              <div class="mb-3">
+                <label for="quantity{{ product.id }}" class="form-label">Quantity:</label>
+                <input type="number" class="form-control" id="quantity{{ product.id }}" name="quantity" value="1" min="1" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-success">Add Donation</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="text-center mt-4">
+    <a href="{% url 'view_basket' %}" class="btn btn-warning">View Donation Basket</a>
+  </div>
+</div>
+{% endblock %}

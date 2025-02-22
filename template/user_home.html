@@ -1,14 +1,15 @@
+<!--------------------
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>User Dashboard - CharityConnect</title>
-  <!-- Bootstrap 5 -->
+  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Google Fonts -->
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Font Awesome -->
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     :root {
@@ -88,7 +89,7 @@
 </head>
 <body>
 
-  <!-- Navbar -->
+
   <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
       <a class="navbar-brand" href="{% url 'user_home' %}">
@@ -117,7 +118,6 @@
     </div>
   </nav>
 
-  <!-- Dashboard Hero -->
   <section class="dashboard-hero">
     <div class="container">
       <h1 class="display-5 fw-bold mb-3">Welcome Back, {{ request.user.fullname }}!</h1>
@@ -132,12 +132,12 @@
     </div>
   </section>
 
-  <!-- User Functions -->
+ 
   <section class="py-5">
     <div class="container">
       <h3 class="fw-bold mb-5">User Functions</h3>
       <div class="row g-4">
-        <!-- View Upcoming Events -->
+       
         <div class="col-md-4">
           <div class="service-card">
             <div class="card-icon">
@@ -148,9 +148,7 @@
             <a href="{% url 'view_events' %}" class="btn btn-primary w-100 mb-3">View Events</a>
           </div>
         </div>
-        <!-- Sponsor an Event -->
-        
-        <!-- Make a Donation -->
+       
         <div class="col-md-4">
           <div class="service-card">
             <div class="card-icon text-warning">
@@ -161,7 +159,7 @@
             <a href="{% url 'make_donation' %}" class="btn btn-primary w-100 mb-3">Donate Now</a>
           </div>
         </div>
-        <!-- Emergency Support Requests -->
+        
         <div class="col-md-4">
           <div class="service-card">
             <div class="card-icon text-danger">
@@ -172,7 +170,7 @@
             <a href="{% url 'request_emergency_support' %}" class="btn btn-primary w-100 mb-3">Request Support</a>
           </div>
         </div>
-        <!-- Blood Donation Registration -->
+     
         <div class="col-md-4">
           <div class="service-card">
             <div class="card-icon text-info">
@@ -194,7 +192,7 @@
             <a href="#" class="btn btn-primary w-100 mb-3">Chat Now</a>
           </div>
         </div> -->
-        <!-- Submit Feedback -->
+        <!--------------------
         <div class="col-md-4">
           <div class="service-card">
             <div class="card-icon text-warning">
@@ -209,7 +207,6 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <footer class="main-footer">
     <div class="container py-5">
       <div class="row g-5">
@@ -240,6 +237,547 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+---------------->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CharityConnect - Empowering Communities</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --secondary-color: #10b981;
+      --accent-color: #f59e0b;
+      --dark-color: #1e293b;
+      --light-color: #f8fafc;
+    }
+  
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      background-color: var(--light-color);
+      padding-top: 70px;
+    }
+  
+    h1, h2, h3 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      color: var(--dark-color);
+    }
+  
+    .hero-section {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.95) 0%, rgba(16, 185, 129, 0.95) 100%),
+                  url('https://images.unsplash.com/photo-1593113598332-cd288d649433?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      color: white;
+    }
+  
+    .feature-card {
+      transition: transform 0.3s ease;
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding-bottom: 20px;
+    }
+  
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+  
+    .icon-wrapper {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: -40px auto 20px;
+    }
+  
+    /* Updated Explore Button Style */
+    .btn-explore {
+      background: transparent;
+      border: 2px solid var(--secondary-color);
+      color: var(--secondary-color);
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-explore:hover {
+      background: var(--secondary-color);
+      color: white;
+    }
+  
+    .btn-cta {
+      background: var(--secondary-color);
+      color: white;
+      padding: 15px 40px;
+      border-radius: 30px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+  
+    .btn-cta:hover {
+      transform: scale(1.05);
+      background: #059669;
+    }
+  
+    .navbar {
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(10px);
+    }
+  
+    .nav-link {
+      color: var(--dark-color) !important;
+      font-weight: 500;
+    }
+    .navbar-brand {
+      font-weight: 700;
+      color: var(--dark-color) !important;
+    }
+  
+    .nav-link:hover {
+      color: var(--primary-color) !important;
+    }
+    .hero-btn {
+      background: transparent;
+      border: 2px solid #fff;
+      color: #fff;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    .hero-btn:hover {
+      background: #fff;
+      color: var(--primary-color, #2563eb); /* fallback if primary-color not defined */
+    }
+  
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+  
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+  
+    .main-footer {
+      background: var(--dark-color);
+      color: #94a3b8;
+      position: relative;
+    }
+  
+    .footer-link {
+      color: #94a3b8;
+      transition: color 0.2s ease;
+    }
+  
+    .footer-link:hover {
+      color: var(--secondary-color);
+    }
+  </style>
+</head>
+<body>
+  <!-- Fixed Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-hands-helping me-2"></i>AKG Charitable Society
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#services">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'view_events' %}">Events</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'donation_category' %}">Donation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#gallery">Notification</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contact">Contact</a>
+          </li>
+          <div class="d-flex align-items-center">
+            <div class="dropdown">
+              <a class="btn btn-light rounded-circle p-2" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{% url 'profile' %}">
+                    <i class="fas fa-user-circle me-2"></i>Profile
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-user-cog me-2"></i>Account
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                
+                <li>
+                  <a class="dropdown-item text-danger" href="{% url 'home' %}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+    
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- <section class="dashboard-hero">
+    <div class="container">
+      <h1 class="display-5 fw-bold mb-3">Welcome Back, {{ request.user.fullname }}!</h1>
+      <div class="d-flex justify-content-center gap-3 mb-4">
+        <div class="badge bg-white text-dark px-3 py-2 rounded-pill">
+          <i class="fas fa-star me-2 text-warning"></i>Gold Member
+        </div>
+        <div class="badge bg-white text-dark px-3 py-2 rounded-pill">
+          <i class="fas fa-hand-holding-heart me-2 text-danger"></i>245 Points
+        </div>
+      </div>
+    </div>
+  </section> -->
+  
+  <!-- Hero Section -->
+  <section class="hero-section" id="home">
+    <div class="container text-center">
+      <h1 class="display-3 mb-4">Welcome Back, {{ request.user.fullname }}!</h1>
+      <p class="lead mb-5">Join our mission to create sustainable change in communities worldwide.</p>
+      <div class="d-flex gap-3 justify-content-center">
+        <a href="donation_category/" class="hero-btn">Donate Now</a>
+        <a href="login/" class="hero-btn">Request Support</a>
+        
+      </div>
+    </div>
+  </section>
+  
+  
+  
+  <!-- About Section -->
+  <section class="py-5" id="about">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6 mb-4 mb-md-0">
+          <img src="/media/akg6.jpg" alt="About Us" class="img-fluid rounded">
+        </div>
+        <div class="col-md-6">
+          <h2>About Us</h2>
+          <p>AKG Charitable Society, Kakkodi, Kozhikode is a dedicated non-profit organization committed to uplifting communities through social welfare initiatives. Our mission is to provide humanitarian aid, support the underprivileged, and foster a compassionate society.
+            We focus on healthcare, education, emergency relief, palliative care, and community development, ensuring that every individual receives the support they need. Through volunteer efforts, donation drives, and public engagement, we aim to create a meaningful impact in the lives of those in need.
+            Join us in making a difference—together, we can build a better tomorrow!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Services Section -->
+  <section class="py-5 bg-light" id="services">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2>Our Services</h2>
+        <p class="text-muted">We deliver a range of services to support and uplift communities.</p>
+      </div>
+      <div class="row g-4">
+        <!-- Service Card 1: Hospital Meal Support -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-utensils fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Nourish the Needy</h4>
+            <p class="text-muted">Providing free, nutritious meals to patients and caregivers in hospitals, ensuring that no one goes hungry during treatment.</p>
+            <a href="/meal/" class="btn-explore btn-sm mt-3">Explore</a>
+          </div>
+        </div>
+        <!-- Service Card 2: Essential Grocery Assistance -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-shopping-basket fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Essential Grocery Assistance</h4>
+            <p class="text-muted">Distributing grocery kits to families in need, ensuring access to essential food supplies during difficult times.</p>
+            <a href="" class="btn-explore btn-sm mt-3">Explore</a>
+          </div>
+        </div>
+        <!-- Service Card 3: Home Care for Cancer Patients -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-user-nurse fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Comprehensive Home Care</h4>
+            <p class="text-muted">Offering in-home medical and emotional support for cancer patients, helping them manage their health with dignity and care.</p>
+            <a href="/cancer_patient/" class="btn-explore btn-sm mt-3">Explore</a>
+          </div>
+        </div>
+        <!-- Service Card 4: Beneficiary Support -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-hands-helping fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Beneficiary Aid & Support</h4>
+            <p class="text-muted">Extending essential aid and support to underprivileged individuals and families in times of crisis.</p>
+            <a href="/beneficary_aid/" class="btn-explore btn-sm mt-3">Explore</a>
+          </div>
+        </div>
+        <!-- Service Card 5: Palliative Care Support -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-hand-holding-heart fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Palliative Care Program</h4>
+            <p class="text-muted">Providing compassionate end-of-life care, pain management, and emotional support for terminally ill patients and their families.</p>
+            <a href="/palliative_program/" class="btn-explore btn-sm mt-3">Explore</a>
+          </div>
+        </div>
+        <!-- Service Card 6: Counseling Services -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-headset fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Guidance & Counseling</h4>
+            <p class="text-muted">Offering professional counseling and mental well-being support to individuals facing emotional and personal challenges.</p>
+            <a href="/counseling/" class="btn-explore btn-sm mt-3">Explore</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Donation Categories Section ----------------------------------------------------------------------------------------------------------->
+   <!----------------------------
+<section class="py-5" id="donation-categories">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2>Donation Categories</h2>
+      <p class="text-muted">Choose how you would like to help. Your donation makes a difference!</p>
+    </div>
+    <div class="row g-4">
+      
+      <div class="col-md-4">
+        <div class="feature-card p-4 text-center">
+          <div class="icon-wrapper">
+            <i class="fas fa-donate fa-2x text-white"></i>
+          </div>
+          <h4 class="mb-3">Monetary Donations</h4>
+          <p class="text-muted">Support our projects with financial contributions to drive impactful change.</p>
+          <a href="donation/monetary/" class="btn-explore btn-sm mt-3">Donate Now</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card p-4 text-center">
+          <div class="icon-wrapper">
+            <i class="fas fa-hamburger fa-2x text-white"></i>
+          </div>
+          <h4 class="mb-3">Food Donations</h4>
+          <p class="text-muted">Help feed those in need by donating non-perishable food items.</p>
+          <a href="donation/food/" class="btn-explore btn-sm mt-3">Donate Now</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card p-4 text-center">
+          <div class="icon-wrapper">
+            <i class="fas fa-tshirt fa-2x text-white"></i>
+          </div>
+          <h4 class="mb-3">Clothing Donations</h4>
+          <p class="text-muted">Provide warm clothing to those in need during the colder months.</p>
+          <a href="donation/clothing/" class="btn-explore btn-sm mt-3">Donate Now</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card p-4 text-center">
+          <div class="icon-wrapper">
+            <i class="fas fa-hand-holding-medical fa-2x text-white"></i>
+          </div>
+          <h4 class="mb-3">Blood Donations</h4>
+          <p class="text-muted">Save lives by donating blood through our regular blood drives.</p>
+          <a href="blood-donor/" class="btn-explore btn-sm mt-3">Donate Blood</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card p-4 text-center">
+          <div class="icon-wrapper">
+            <i class="fas fa-first-aid fa-2x text-white"></i>
+          </div>
+          <h4 class="mb-3">Medical Supplies</h4>
+          <p class="text-muted">Donate essential medical supplies to support community health initiatives.</p>
+          <a href="donation/medical-supplies/" class="btn-explore btn-sm mt-3">Donate Now</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card p-4 text-center">
+          <div class="icon-wrapper">
+            <i class="fas fa-book fa-2x text-white"></i>
+          </div>
+          <h4 class="mb-3">Educational Donations</h4>
+          <p class="text-muted">Help empower communities by donating books and educational supplies.</p>
+          <a href="donation/education/" class="btn-explore btn-sm mt-3">Donate Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+--------------->
+<!---------------------------------------------------donation end----------------------------------------------------------------------->
+  <!-- Gallery Section -->
+  <section class="py-5" id="gallery">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2>Gallery</h2>
+        <p class="text-muted">Snapshots of our work in the community.</p>
+      </div>
+      <div class="row g-4 gallery">
+        <div class="col-md-4">
+          <img src="media/akg5.jpg" alt="Gallery Image 1">
+        </div>
+        <div class="col-md-4">
+          <img src="media/akg1.jpg" alt="Gallery Image 2">
+        </div>
+        <div class="col-md-4">
+          <img src="media/akg11.jpg" alt="Gallery Image 2">
+        </div>
+        <div class="col-md-4">
+          <img src="media/akg14.jpg" alt="Gallery Image 2">
+        </div>
+        <div class="col-md-4">
+          <img src="media/akg12.jpg" alt="Gallery Image 2">
+        </div>
+        <div class="col-md-4">
+          <img src="media/akg10.jpg" alt="Gallery Image 2">
+        </div>
+        <div class="col-md-4">
+          <img src="media/akg13.jpg" alt="Gallery Image 2">
+        </div>
+        <div class="col-md-4">
+          <img src="media/akg16.jpg" alt="Gallery Image 2">
+        </div>
+        <div class="col-md-4">
+          <img src="media/akg15.jpg" alt="Gallery Image 3">
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Contact Section -->
+  <section class="py-5 bg-primary" id="contact">
+    <div class="container text-white">
+      <div class="row">
+        <div class="col-md-6">
+          <h2>Contact Us</h2>
+          <p>We would love to hear from you. Whether you have a question about our work, need support, or want to get involved, please reach out!</p>
+          <ul class="list-unstyled">
+            <li><i class="fas fa-map-marker-alt me-2"></i>123 Charity Lane, Hope City, Country</li>
+            <li><i class="fas fa-phone me-2"></i>+1 (555) 123-4567</li>
+            <li><i class="fas fa-envelope me-2"></i>info@charityconnect.org</li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <h4>Send Us a Message</h4>
+          <form>
+            <div class="mb-3">
+              <input type="text" class="form-control" placeholder="Your Name" required>
+            </div>
+            <div class="mb-3">
+              <input type="email" class="form-control" placeholder="Your Email" required>
+            </div>
+            <div class="mb-3">
+              <textarea class="form-control" rows="4" placeholder="Your Message" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-light">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <h4>About CharityConnect</h4>
+          <p class="text-muted">We are committed to creating sustainable change by empowering communities through education, healthcare, and emergency relief.</p>
+        </div>
+        <div class="col-lg-4">
+          <h4>Quick Links</h4>
+          <ul class="list-unstyled">
+            <li><a href="#about" class="text-decoration-none text-muted">Our Mission</a></li>
+            <li><a href="#services" class="text-decoration-none text-muted">Programs</a></li>
+            <li><a href="#gallery" class="text-decoration-none text-muted">Gallery</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h4>Stay Connected</h4>
+          <div class="d-flex gap-3">
+            <a href="#" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a>
+          </div>
+          <div class="input-group mt-3">
+            <input type="email" class="form-control" placeholder="Enter your email" />
+            <button class="btn btn-primary" type="button">Subscribe</button>
+          </div>
+        </div>
+      </div>
+      <hr class="mt-5" />
+      <p class="text-center text-muted mb-0">&copy; 2023 CharityConnect. All rights reserved.</p>
+    </div>
+  </footer>
+  
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

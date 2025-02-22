@@ -56,6 +56,8 @@
 </body>
 </html>
 ------------->
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -73,7 +75,7 @@
                     <a href="{% url 'add_blood_donor' %}" class="btn btn-light btn-sm">
                         <i class="fas fa-plus-circle me-2"></i>Add Blood Donor
                     </a>
-                    <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
+                    <a href="{% if request.user.is_superuser %}{% url 'admin_dashboard' %}{% else %}{% url 'staff_dashboard' %}{% endif %}" class="btn btn-light btn-sm">
                         <i class="fas fa-home me-2"></i>Dashboard
                     </a>
                 </div>

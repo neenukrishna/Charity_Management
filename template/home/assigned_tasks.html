@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <h3 class="mb-4">Assigned Tasks</h3>
+  {% if tasks %}
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Description</th>
+            <th>Assigned By</th>
+            <th>Deadline</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for task in tasks %}
+          <tr>
+            <td>{{ task.title }}</td>
+            <td>{{ task.description }}</td>
+            <td>{{ task.assigned_by.get_full_name|default:task.assigned_by }}</td>
+            <td>{{ task.deadline|date:"M d, Y" }}</td>
+            <td>{{ task.status }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>No tasks have been assigned to you yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

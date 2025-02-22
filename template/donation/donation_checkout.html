@@ -1,0 +1,23 @@
+<!-- myapp/templates/donation_checkout.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-4">
+  <h2>Donation Checkout</h2>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="billing_name" class="form-label">Name:</label>
+      <input type="text" class="form-control" id="billing_name" name="billing_name" required>
+    </div>
+    <div class="mb-3">
+      <label for="billing_address" class="form-label">Address:</label>
+      <input type="text" class="form-control" id="billing_address" name="billing_address" required>
+    </div>
+    <div class="mb-3">
+      <label for="billing_email" class="form-label">Email:</label>
+      <input type="email" class="form-control" id="billing_email" name="billing_email" required>
+    </div>
+    <button type="submit" class="btn btn-success">Confirm Donation</button>
+  </form>
+</div>
+{% endblock %}

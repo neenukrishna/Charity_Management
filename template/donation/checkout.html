@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Checkout</h2>
+{% if cart %}
+<table border="1" cellpadding="5">
+  <tr>
+    <th>Item</th>
+    <th>Price</th>
+    <th>Quantity</th>
+    <th>Subtotal</th>
+  </tr>
+  {% for key, item in cart.items %}
+  <tr>
+    <td>{{ item.name }}</td>
+    <td>₹{{ item.price }}</td>
+    <td>{{ item.quantity }}</td>
+    <td>₹{{ item.subtotal }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p>Total: ₹{{ total }}</p>
+<form method="POST" action="{% url 'checkout' %}">
+  {% csrf_token %}
+  <button type="submit">Confirm Donation</button>
+</form>
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+{% endblock %}

@@ -71,6 +71,7 @@
 </html>
 ---------------->
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -81,7 +82,6 @@
 <body class="bg-light">
     <div class="container mt-5">
         <div class="card shadow-lg">
-
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h3 class="mb-0">
                     <i class="fas fa-user-friends me-2"></i>Manage Volunteers
@@ -115,6 +115,7 @@
                                 <th>Assigned Task</th>
                                 <th>Proof</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -124,13 +125,13 @@
                                 <td>{{ volunteer.full_name }}</td>
                                 <td>{{ volunteer.email }}</td>
                                 <td>{{ volunteer.phone }}</td>
-                                <td>{{ volunteer.dob }}</td>
+                                <td>{{ volunteer.dob|date:"Y-m-d" }}</td>
                                 <td>{{ volunteer.gender }}</td>
                                 <td>{{ volunteer.place }}</td>
                                 <td>{{ volunteer.post }}</td>
                                 <td>{{ volunteer.pin }}</td>
                                 <td>{{ volunteer.district }}</td>
-                                <td>{{ volunteer.availability|yesno:"Yes,No" }}</td>
+                                <td>{{ volunteer.availability_date|date:"Y-m-d" }}</td>
                                 <td>{{ volunteer.assigned_task }}</td>
                                 <td>
                                     {% if volunteer.proof %}
@@ -140,23 +141,27 @@
                                     {% endif %}
                                 </td>
                                 <td>{{ volunteer.status }}</td>
+                                <td>
+                                    {% if volunteer.status != 'Approved' %}
+                                        <a href="{% url 'approve_volunteer' volunteer.volunteer_id %}" class="btn btn-success btn-sm">Approve</a>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Approved</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="14" class="text-center py-4">
+                                <td colspan="15" class="text-center py-4">
                                     <i class="fas fa-user-slash fa-2x text-muted mb-3"></i>
                                     <p class="text-muted mb-0">No volunteers found</p>
                                 </td>
                             </tr>
                             {% endfor %}
                         </tbody>
-                    </table>
+                                            </table>
                 </div>
             </div>
-        </div>
-        
-        
+        </div>    
     </div>
 </body>
 </html>
-

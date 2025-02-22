@@ -9,21 +9,27 @@
 <body>
   <div class="container mt-4">
     <h2>Sponsor Event: {{ event.event_type }}</h2>
-    <p><strong>Date:</strong> {{ event.event_date }}</p>
+    <p><strong>Date:</strong> {{ event.event_date|date:"F d, Y" }}</p>
     <p><strong>Description:</strong> {{ event.description }}</p>
     <p><strong>Location:</strong> {{ event.location }}</p>
     <p><strong>Status:</strong> {{ event.event_status }}</p>
-    <p><strong>Sponsor Details:</strong> {{ event.sponsor_details }}</p>
-
+    
+    <hr>
+    <h5>Event Funding Details</h5>
+    <p><strong>Target Budget:</strong> ${{ event.target_budget|floatformat:2 }}</p>
+    <p><strong>Collected Amount:</strong> ${{ event.collected_amount|floatformat:2 }}</p>
+    <p><strong>Remaining Amount:</strong> ${{ event.remaining_amount|floatformat:2 }}</p>
+    <hr>
+    
     <form method="POST">
       {% csrf_token %}
       <div class="mb-3">
-        <label for="sponsorship_amount" class="form-label">Sponsorship Amount (optional):</label>
-        <input type="number" class="form-control" id="sponsorship_amount" name="sponsorship_amount" required>
+        <label for="sponsorship_amount" class="form-label">Enter Sponsorship Amount:</label>
+        <input type="number" class="form-control" id="sponsorship_amount" name="sponsorship_amount" step="0.01" required>
       </div>
       <button type="submit" class="btn btn-success">Confirm Sponsorship</button>
     </form>
-
+    
     <a href="{% url 'view_events' %}" class="btn btn-secondary mt-3">Back to Events</a>
   </div>
 </body>

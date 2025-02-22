@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import get_object_or_404, render
+
+# from django.contrib.auth.decorators import login_required, user_passes_test
 
 admin.site.site_header = "Charity Management Admin"
 admin.site.site_title = "Charity Admin Panel"
@@ -34,6 +37,24 @@ class VolunteerAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'email', 'phone', 'status')
     list_filter = ('status',)
     search_fields = ('full_name', 'email')
+
+
+
+
+def is_admin(user):
+    # Replace this with your actual admin test logic.
+    return user.is_staff or user.is_superuser
+
+@login_required
+@user_passes_test(is_admin)
+def sponsorship_details(request, event_id):
+    event = get_object_or_404(Event, event_id=event_id)
+    sponsorships = event.sponsorships.all()  # Using the related_name from the ForeignKey.
+    context = {
+        'event': event,
+        'sponsorships': sponsorships,
+    }
+    return render(request, 'sponsorship_details.html', context)
 
 
 

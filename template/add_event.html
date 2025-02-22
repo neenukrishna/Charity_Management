@@ -86,7 +86,7 @@
                     <!-- Event Type -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="event_type" name="event_type" placeholder="Event Type" required>
+                            <input type="text" class="form-control" id="event_type" name="event_type" placeholder="Event Type" required autofocus>
                             <label for="event_type"><i class="fas fa-calendar-alt me-2"></i>Event Type</label>
                         </div>
                     </div>
@@ -121,23 +121,32 @@
                             <select class="form-select" id="event_status" name="event_status" required>
                                 <option value="Upcoming">Upcoming</option>
                                 <option value="Ongoing">Ongoing</option>
-                                <option value="Completed">Completed</option>
                             </select>
                             <label for="event_status"><i class="fas fa-info-circle me-2"></i>Event Status</label>
                         </div>
                     </div>
                     
-                    <!-- Sponsor Details -->
-                    <!-- <div class="col-12">
+                    <!-- Target Budget -->
+                    <div class="col-md-6">
                         <div class="form-floating">
-                            <textarea class="form-control" id="sponsor_details" name="sponsor_details" rows="3" placeholder="Sponsor Details" required></textarea>
+                            <input type="number" class="form-control" id="target_budget" name="target_budget" placeholder="Target Budget" step="0.01" required>
+                            <label for="target_budget"><i class="fas fa-dollar-sign me-2"></i>Target Budget</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Sponsor Details (Optional - currently commented out) -->
+                    <!--
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea class="form-control" id="sponsor_details" name="sponsor_details" rows="3" placeholder="Sponsor Details"></textarea>
                             <label for="sponsor_details"><i class="fas fa-handshake me-2"></i>Sponsor Details</label>
                         </div>
-                    </div> -->
+                    </div>
+                    -->
                     
                     <!-- Form Actions -->
                     <div class="col-12 text-end mt-4">
-                        <a href="{% url 'manage_events' %}" class="btn btn-outline-secondary me-3">
+                        <a href="{% if request.user.is_superuser %}{% url 'manage_events' %}{% else %}{% url 'staff_events' %}{% endif %}" class="btn btn-outline-secondary me-3">
                             <i class="fas fa-arrow-left me-2"></i>Cancel
                         </a>
                         <button type="submit" class="btn btn-success px-4">
@@ -147,8 +156,6 @@
                 </form>
             </div>
         </div>
-        <!-- Back to Events Button -->
-        
     </div>
 </body>
 </html>

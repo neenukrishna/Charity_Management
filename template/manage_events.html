@@ -1,54 +1,3 @@
-<!-----------------
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Manage Events</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-</head>
-<body>
-    <div class="container mt-4">
-        <h2>Manage Events</h2>
-
-        <a href="{% url 'add_event' %}" class="btn btn-primary mb-3">
-            <i class="fas fa-plus me-2"></i>Add Event
-        </a>
-
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Event Type</th>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Location</th>
-                    <th>Status</th>
-                    <th>Sponsor Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in events %}
-                <tr>
-                    <td>{{ event.event_id }}</td>
-                    <td>{{ event.event_type }}</td>
-                    <td>{{ event.event_date }}</td>
-                    <td>{{ event.description }}</td>
-                    <td>{{ event.location }}</td>
-                    <td>{{ event.event_status }}</td>
-                    <td>{{ event.sponsor_details }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7">No events found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
-    </div>
-</body>
-</html>
----------->
 <!DOCTYPE html>
 <html>
 <head>
@@ -65,10 +14,11 @@
                     <i class="fas fa-calendar-alt me-2"></i>Manage Events
                 </h3>
                 <div>
+                    <!-- Ensure 'add_event' and 'admin_dashboard' URL names match your configuration -->
                     <a href="{% url 'add_event' %}" class="btn btn-light btn-sm">
                         <i class="fas fa-plus-circle me-2"></i>Add Event
                     </a>
-                    <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
+                    <a href="{% if request.user.is_superuser %}{% url 'admin_dashboard' %}{% else %}{% url 'staff_dashboard' %}{% endif %}" class="btn btn-light btn-sm">
                         <i class="fas fa-home me-2"></i>Dashboard
                     </a>
                 </div>
@@ -82,26 +32,35 @@
                                 <th>ID</th>
                                 <th>Event Type</th>
                                 <th>Date</th>
-                                <th>Description</th>
                                 <th>Location</th>
                                 <th>Status</th>
-                                <th>Sponsor Details</th>
+                                <th>Target Budget</th>
+                                <th>Collected Amount</th>
+                                <th>Remaining Amount</th>
+                                <th>Sponsorship Details</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for event in events %}
                             <tr>
-                                <td class="fw-bold">{{ event.event_id }}</td>
+                                <td class="fw-bold">#{{ event.event_id }}</td>
                                 <td>{{ event.event_type }}</td>
                                 <td>{{ event.event_date }}</td>
-                                <td>{{ event.description }}</td>
                                 <td>{{ event.location }}</td>
                                 <td>{{ event.event_status }}</td>
-                                <td>{{ event.sponsor_details }}</td>
+                                <td>${{ event.target_budget|floatformat:2 }}</td>
+                                <td>${{ event.collected_amount|floatformat:2 }}</td>
+                                <td>${{ event.remaining_amount|floatformat:2 }}</td>
+                                <td>
+                                    <!-- Ensure the URL 'sponsorship_details' exists and accepts event.event_id as a parameter -->
+                                    <a href="{% url 'sponsorship_details' event.event_id %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Details
+                                    </a>
+                                </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="7" class="text-center py-4">
+                                <td colspan="9" class="text-center py-4">
                                     <i class="fas fa-calendar-times fa-2x text-muted mb-3"></i>
                                     <p class="text-muted mb-0">No events found</p>
                                 </td>
@@ -112,8 +71,6 @@
                 </div>
             </div>
         </div>
-        <!-- Back to Dashboard Button -->
-        
     </div>
 </body>
 </html>
