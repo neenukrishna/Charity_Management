@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h1>Confirm Your Donation</h1>
+  {% if goods_items %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Donation Item</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, item in goods_items.items %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p>Total Items: {{ total_quantity }}</p>
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">Confirm Donation</button>
+    </form>
+  {% else %}
+    <p>No donation items found in your cart.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,34 +1,45 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Your Donation Cart</h2>
-{% if cart %}
-<table border="1" cellpadding="5">
-  <tr>
-    <th>Item</th>
-    <th>Price</th>
-    <th>Quantity</th>
-    <th>Subtotal</th>
-    <th>Actions</th>
-  </tr>
-  {% for key, item in cart.items %}
-  <tr>
-    <td>{{ item.name }}</td>
-    <td>₹{{ item.price }}</td>
-    <td>{{ item.quantity }}</td>
-    <td>₹{{ item.subtotal }}</td>
-    <td>
-      <form method="POST" action="{% url 'remove_from_cart' key %}">
-        {% csrf_token %}
-        <button type="submit">Remove</button>
-      </form>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
-<p>Total: ₹{{ total }}</p>
-<a href="{% url 'checkout' %}">Proceed to Checkout</a> | 
-<a href="{% url 'clear_cart' %}">Clear Cart</a>
-{% else %}
-<p>Your cart is empty.</p>
-{% endif %}
+<div class="container mt-4">
+  <h1>Your Cart</h1>
+  {% if cart %}
+    <form action="{% url 'update_cart' %}" method="POST">
+      {% csrf_token %}
+      <table class="table table-bordered">
+        <thead class="thead-light">
+          <tr>
+            <th>Item</th>
+            <th>Price (₹)</th>
+            <th>Quantity</th>
+            <th>Subtotal (₹)</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, item in cart.items %}
+            <tr>
+              <td>{{ item.name }}</td>
+              <td>{{ item.price|floatformat:2 }}</td>
+              <td>
+                <input type="number" name="quantity_{{ key }}" value="{{ item.quantity }}" min="0" class="form-control" style="width:80px;">
+              </td>
+              <td>{{ item.subtotal|floatformat:2 }}</td>
+              <td>
+                <a href="{% url 'remove_from_cart' key %}" class="btn btn-danger btn-sm">Remove</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <h4>Total: ₹{{ total|floatformat:2 }}</h4>
+      <div class="mb-3">
+        <button type="submit" class="btn btn-secondary">Update Cart</button>
+        <a href="{% url 'clear_cart' %}" class="btn btn-warning">Clear Cart</a>
+        <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+      </div>
+    </form>
+  {% else %}
+    <p>Your cart is empty.</p>
+  {% endif %}
+</div>
 {% endblock %}

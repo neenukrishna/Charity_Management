@@ -1,81 +1,119 @@
-<!-- templates/donations/donation_category.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Donation Categories</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-<body>
-  <nav class="navbar navbar-light bg-light">
+{% extends 'base.html' %}
+{% block content %}
+  <!-- Font Awesome CSS (placed here since base.html cannot be changed) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom CSS for Donation Categories -->
+  <style>
+    .icon-wrapper {
+      background: #007bff;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .feature-card {
+      background-color: #f8f9fa;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+    .btn-explore {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 5px 15px;
+      text-decoration: none;
+    }
+    .btn-explore:hover {
+      background-color: #0056b3;
+      color: #fff;
+    }
+  </style>
+
+  <!-- Donation Categories Section -->
+  <section class="py-5" id="donation-categories">
     <div class="container">
-      <a class="navbar-brand" href="#">Home</a>
+      <div class="text-center mb-5">
+        <h2>Donation Categories</h2>
+        <p class="text-muted">Choose how you would like to help. Your donation makes a difference!</p>
+      </div>
+      <div class="row g-4">
+        <!-- Monetary Donations -->
+        <div class="col-md-4">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-hand-holding-usd fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Monetary Donations</h4>
+            <p class="text-muted">Support our projects with financial contributions.</p>
+            <a href="{% url 'monetary_donation' %}" class="btn-explore btn-sm mt-3">Donate Now</a>
+          </div>
+        </div>
+        <!-- Medical Expenses -->
+        <div class="col-md-4">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-briefcase-medical fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Medical Expenses</h4>
+            <p class="text-muted">Donate to help cover medical lab expenses.</p>
+            <a href="{% url 'medical_expenses_donation' %}" class="btn-explore btn-sm mt-3">Donate Now</a>
+          </div>
+        </div>
+        <!-- Nourish the Needy -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-utensils fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Nourish the Needy</h4>
+            <p class="text-muted">Provide nutritious meals to those in need.</p>
+            <a href="{% url 'nourish_the_needy_donation' %}" class="btn-explore btn-sm mt-3">Donate Now</a>
+          </div>
+        </div>
+        <!-- Essential Grocery Assistance -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-shopping-cart fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Essential Grocery Assistance</h4>
+            <p class="text-muted">Help provide grocery kits to families in need.</p>
+            <a href="{% url 'grocery_kit_donation' %}" class="btn-explore btn-sm mt-3">Donate Now</a>
+          </div>
+        </div>
+        <!-- Comprehensive Home Care -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-home fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Comprehensive Home Care</h4>
+            <p class="text-muted">Support in‑home care services for patients.</p>
+            <a href="{% url 'comprehensive_home_care_donation' %}" class="btn-explore btn-sm mt-3">Donate Now</a>
+
+          </div>
+        </div>
+        <!-- Other Donations (Blood Donation) -->
+        <div class="col-md-4">
+          <div class="feature-card p-4 text-center">
+            <div class="icon-wrapper">
+              <i class="fas fa-hand-holding-heart fa-2x text-white"></i>
+            </div>
+            <h4 class="mb-3">Other Donations</h4>
+            <p class="text-muted">Donate blood through our regular drives.</p>
+            <a href="{% url 'other_donations' %}" class="btn-explore btn-sm mt-3">Donate Now</a>
+          </div>
+        </div>
+      </div>
     </div>
-  </nav>
-  <div class="container mt-4">
-    <h2>Donation Categories</h2>
-    <div class="row">
-      <!-- Monetary Donations (example link; create a view for monetary donations if needed) -->
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-body text-center">
-            <h5 class="card-title">Monetary Donations</h5>
-            <p class="card-text">Donate money to support our cause.</p>
-            <a href="{% url 'monetary_donation' %}" class="btn btn-primary">Donate Now</a>
-          </div>
-        </div>
-      </div>
-      <!-- Medical Expenses -->
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-body text-center">
-            <h5 class="card-title">Medical Expenses</h5>
-            <p class="card-text">Help cover medical expenses.</p>
-            <a href="{% url 'medical_expenses_donation' %}" class="btn btn-primary">Donate Now</a>
-          </div>
-        </div>
-      </div>
-      <!-- Nourish the Needy (Meals) -->
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-body text-center">
-            <h5 class="card-title">Nourish the Needy</h5>
-            <p class="card-text">Provide nutritious meals.</p>
-            <a href="{% url 'donation_products' 'meals' %}" class="btn btn-primary">Donate Now</a>
-          </div>
-        </div>
-      </div>
-      <!-- Essential Grocery Assistance -->
-      <div class="col-md-4 mt-4">
-        <div class="card">
-          <div class="card-body text-center">
-            <h5 class="card-title">Essential Grocery Assistance</h5>
-            <p class="card-text">Donate grocery kits to those in need.</p>
-            <a href="{% url 'grocery_kit_donation' %}" class="btn btn-primary">Donate Now</a>
-          </div>
-        </div>
-      </div>
-      <!-- Comprehensive Home Care -->
-      <div class="col-md-4 mt-4">
-        <div class="card">
-          <div class="card-body text-center">
-            <h5 class="card-title">Comprehensive Home Care</h5>
-            <p class="card-text">Support in‑home care services.</p>
-            <a href="{% url 'donation_products' 'home' %}" class="btn btn-primary">Donate Now</a>
-          </div>
-        </div>
-      </div>
-      <!-- Other Donations -->
-      <div class="col-md-4 mt-4">
-        <div class="card">
-          <div class="card-body text-center">
-            <h5 class="card-title">Other Donations</h5>
-            <p class="card-text">Donate blood through our drives.</p>
-            <a href="{% url 'blood_donor' %}" class="btn btn-primary">Donate Blood</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+  </section>
+{% endblock %}

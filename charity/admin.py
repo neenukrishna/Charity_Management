@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404, render
+from .models import Donation, DonationProduct,Inventory
 
 # from django.contrib.auth.decorators import login_required, user_passes_test
 
@@ -22,11 +23,11 @@ class CustomUserAdmin(UserAdmin):
     )
     
 
-# Customizing other models in admin
-class DonationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'donation_type', 'amount', 'status', 'date_time')
-    list_filter = ('status', 'donation_type')
-    search_fields = ('user__fullname', 'donation_type')
+# # Customizing other models in admin
+# class DonationAdmin(admin.ModelAdmin):
+#     list_display = ('user', 'donation_type', 'amount', 'status', 'date_time')
+#     list_filter = ('status', 'donation_type')
+#     search_fields = ('user__fullname', 'donation_type')
 
 class EventAdmin(admin.ModelAdmin):
     list_display = ('event_type', 'event_date', 'location', 'event_status')
@@ -57,8 +58,59 @@ def sponsorship_details(request, event_id):
     return render(request, 'sponsorship_details.html', context)
 
 
+class DonationAdmin(admin.ModelAdmin):
+    list_display = (
+        'donation_id',
+        'user',
+        'donor_email',
+        'donation_type',
+        'amount',
+        'quantity',
+        'donation_details',
+        'date_time',
+        'status'
+    )
+    list_filter = ('donation_type', 'status', 'date_time')
+    search_fields = ('user__username', 'user__email', 'donation_details')
+
+    def donor_email(self, obj):
+        return obj.user.email
+    donor_email.short_description = 'Donor Email'
+
+# admin.site.register(Donation, DonationAdmin)
 
 
+class DonationProductAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category', 'donation_amount')
+    list_filter = ('category',)
+    search_fields = ('name', 'description')
+
+
+
+admin.register(Inventory)
+class InventoryAdmin(admin.ModelAdmin):
+    list_display = ('inventory_id', 'donation', 'total_quantity', 'allocated_quantity', 'available_quantity', 'beneficiary')
+
+
+class FeedbackAdmin(admin.ModelAdmin):
+    list_display = ('feedback_id', 'user', 'rating', 'short_comments', 'reply', 'date')
+    list_filter = ('date', 'rating')
+    search_fields = ('user__fullname', 'comments', 'reply')
+    ordering = ('-date',)
+    # Make everything except reply read-only so that admin can only modify the reply
+    readonly_fields = ('feedback_id', 'user', 'rating', 'comments', 'date')
+    
+    def short_comments(self, obj):
+        # Show the first 50 characters of comments
+        return obj.comments[:50] + ('...' if len(obj.comments) > 50 else '')
+    short_comments.short_description = 'Comments'
+
+
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'created_at')
+
+
+from .models import Contact
 from django.contrib import admin
 from .models import CustomUser
 from .models import Donation
@@ -77,19 +129,43 @@ from .models import Staff
 
 admin.site.register(CustomUser, CustomUserAdmin)
 # admin.site.register(CustomUser)
-admin.site.register(Donation)
+admin.site.register(Donation,DonationAdmin)
+admin.site.register(DonationProduct, DonationProductAdmin)
+
 admin.site.register(Event)
 admin.site.register(Volunteer)
 admin.site.register(BloodDonor)
 admin.site.register(FieldData)
-admin.site.register(Feedback)
-admin.site.register(Inventory)
+admin.site.register(Feedback,FeedbackAdmin)
+# admin.site.register(Inventory,InventoryAdmin)
 admin.site.register(PalliativeCare)
 admin.site.register(Notification)
 admin.site.register(Payment)
-admin.site.register(BeneficiarySupport)
+# admin.site.register(BeneficiarySupport)
 admin.site.register(Staff)
+admin.site.register(Contact)
 
+
+@admin.register(BeneficiarySupport)
+class BeneficiarySupportAdmin(admin.ModelAdmin):
+    list_display = (
+        'beneficiary_id',
+        'user',
+        'beneficiary_name',
+        'emergency_type',
+        'emergency_level',
+        'date',
+        'status',
+    )
+    list_filter = ('status', 'emergency_level', 'date')
+    search_fields = (
+        'beneficiary_name', 
+        'user__username', 
+        'beneficiary_email', 
+        'beneficiary_phone',
+        'other_donation_type',
+        'custom_other_donation'
+    )
 
 def admin_only(user):
     return user.is_superuser

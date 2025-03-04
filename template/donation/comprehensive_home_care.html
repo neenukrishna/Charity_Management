@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <!-- Breadcrumbs -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'user_home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="#">Donation</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Comprehensive Home Care</li>
+    </ol>
+  </nav>
+
+  <!-- Donation Section -->
+  <div class="row align-items-center my-5">
+    <div class="col-md-6">
+      <img src="/media/homecare.jpg" alt="Comprehensive Home Care" class="img-fluid rounded" width="500">
+    </div>
+    <div class="col-md-6">
+      <h2 class="mb-3">Comprehensive Home Care</h2>
+      <p class="h4 text-primary mb-3">₹3,000.00</p>
+      <p>Support in‑home care services for patients.</p>
+      <!-- Add-to-Cart Form -->
+      <form method="POST" action="{% url 'add_to_cart_homecare' %}">
+        {% csrf_token %}
+        <div class="mb-3" style="max-width: 150px;">
+          <label for="quantity" class="form-label">Quantity:</label>
+          <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1">
+        </div>
+        <button type="submit" class="btn btn-success">Add to Cart</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

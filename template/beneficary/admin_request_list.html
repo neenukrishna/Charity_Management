@@ -1,0 +1,33 @@
+<!-- beneficiary/templates/beneficiary/admin_request_list.html -->
+{% extends "base.html" %}
+{% block content %}
+  <h2>All Beneficiary Support Requests</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Email</th>  <!-- New column for beneficiary email -->
+        <th>Emergency Type</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for req in requests %}
+        <tr>
+          <td>{{ req.beneficiary_id }}</td>
+          <td>{{ req.user.username }}</td>
+          <td>{{ req.user.email }}</td>  <!-- Display beneficiary email -->
+          <td>{{ req.emergency_type }}</td>
+          <td>{{ req.status }}</td>
+          <td>{{ req.date }}</td>
+          <td>
+            <a href="{% url 'update_request' req.beneficiary_id %}">Update</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

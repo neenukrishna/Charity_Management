@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Donor Details</h2>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p><strong>Full Name:</strong> {{ donor.fullname }}</p>
+            <p><strong>Email:</strong> {{ donor.email }}</p>
+            <p><strong>Phone:</strong> {{ donor.phone }}</p>
+            <p><strong>Date of Birth:</strong> {{ donor.dob|date:"M d, Y" }}</p>
+            <p><strong>Place:</strong> {{ donor.place }}</p>
+            <p><strong>Post:</strong> {{ donor.post }}</p>
+            <p><strong>PIN:</strong> {{ donor.pin }}</p>
+            <p><strong>District:</strong> {{ donor.district }}</p>
+            <p><strong>Gender:</strong> {{ donor.gender }}</p>
+            <p><strong>User Type:</strong> {{ donor.get_user_type_display }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+  <div class="card p-4">
+    <!-- Organization Information -->
+    <div class="text-center mb-4">
+      <h1>{{ organization_name }}</h1>
+      <p>{{ organization_address }}</p>
+      <p>
+        Phone: {{ organization_phone }} | Email: {{ organization_email }} | Website: {{ organization_website }}
+      </p>
+    </div>
+    <hr>
+    <!-- Receipt Number -->
+    <div class="mb-4">
+      <h4>Receipt Number: <span class="text-muted">{{ receipt_number }}</span></h4>
+    </div>
+    <hr>
+    <!-- Donation Details -->
+    <div class="mb-4">
+      <h3>Donation Details</h3>
+      <p>Date of Donation: {{ donation_date }}</p>
+      <p>Amount Donated: ₹{{ amount_donated|floatformat:2 }}</p>
+      <p>Donation Method: {{ donation_method }}</p>
+    </div>
+    <hr>
+    <!-- Donor Information -->
+    <div class="mb-4">
+      <h3>Donor Information</h3>
+      <p>Donor: {{ donor_name }}</p>
+      <p>Address: {{ donor_address }}</p>
+      {% if donor_contact %}
+      <p>Contact: {{ donor_contact }}</p>
+      {% endif %}
+    </div>
+    <hr>
+    <!-- Thank You Note -->
+    <div class="text-center">
+      <p class="lead">Thank you for your generous donation! Your support makes a significant difference in the lives of those in need.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

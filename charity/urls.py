@@ -27,7 +27,7 @@ urlpatterns = [
     path('manage-blood-donors/', views.manage_blood_donors, name='manage_blood_donors'),
     path('manage-emergency-support/', views.manage_emergency_support, name='manage_emergency_support'),
     path('manage-palliative-care/', views.manage_palliative_care, name='manage_palliative_care'),
-    path('manage-inventory/', views.manage_inventory, name='manage_inventory'),
+#     path('manage-inventory/', views.manage_inventory, name='manage_inventory'),
     path('manage-notifications/', views.manage_notifications, name='manage_notifications'),
     path('manage-field-data/', views.manage_field_data, name='manage_field_data'),
     path('manage-feedbacks/', views.manage_feedbacks, name='manage_feedbacks'),
@@ -52,7 +52,7 @@ urlpatterns = [
     path('user-home/', views.user_home, name='user_home'),
     path('profile/', views.profile, name='profile'),
     path('donation/', views.make_donation, name='make_donation'),
-    path('request-emergency-support/', views.request_emergency_support, name='request_emergency_support'),
+    # path('request-emergency-support/', views.request_emergency_support, name='request_emergency_support'),
     path('register-blood-donation/', views.register_blood_donation, name='register_blood_donation'),
     path('submit-feedback/', views.submit_feedback, name='submit_feedback'),
     
@@ -114,9 +114,8 @@ urlpatterns = [
     
     
     #donations
-    path('donation/monetory_donation/', views.monetary_donation, name='monetary_donation'),
-    path('donation/monetary_submit/', views.submit_monetary_donation, name='submit_monetary_donation'),
-    
+    path('donation/monetary/', views.monetary_donation, name='monetary_donation'),
+    path('donation/monetary-receipt/', views.monetary_receipt, name='monetary_receipt'),
     
     path('donation/blood_donor/', views.blood_donor, name='blood_donor'),
     path('donation-category/', views.donation_category, name='donation_category'),
@@ -135,6 +134,43 @@ urlpatterns = [
     
     # Checkout
     path('donation/checkout/', views.checkout, name='checkout'),
+    path('donation/receipt/', views.receipt, name='receipt'),
+    
+    
+    path('donation/nourish-the-needy/', views.nourish_the_needy_donation, name='nourish_the_needy_donation'),
+    path('donation/add-to-cart-needy/', views.add_to_cart_needy, name='add_to_cart_needy'),
+    path('donation/comprehensive-home-care/', views.comprehensive_home_care_donation, name='comprehensive_home_care_donation'),
+    path('donation/add-to-cart-homecare/', views.add_to_cart_homecare, name='add_to_cart_homecare'),
+    path('donation/other-donations/', views.other_donations, name='other_donations'),
+    path('donation/add-to-cart-other/', views.add_to_cart_other, name='add_to_cart_other'),
+    path('donation/goods-checkout/', views.goods_checkout, name='goods_checkout'),
+    path('donor/<int:user_id>/', views.donor_detail, name='donor_detail'),
+    
+    
+    path('submit-request/', views.submit_request, name='submit_request'),
+    path('request-list/', views.request_list, name='request_list'),
+    path('admin-request-list/', views.admin_request_list, name='admin_request_list'),
+    path('update-request/<int:pk>/', views.update_request, name='update_request'),
+    path('monetary/payment-success/', views.payment_success, name='payment_success'),
+    path('inventory/', views.inventory_list, name='inventory_list'),
+    
+    
+    path('submit/', views.submit_feedback, name='submit_feedback'),
+    path('all/', views.all_feedbacks, name='all_feedbacks'),
+    path('home/dashboard/', views.account_dashboard, name='account_dashboard'),
+    path('user-home/', views.contact_view, name='user_home'),
+    path('contacts/', views.admin_contact_list, name='admin_contact_list'),
+    
+    path('urgent-requests/', views.urgent_requests, name='urgent_requests'),
+
+    # path('user-home/', views.home_view, name='home'),
+
+
+
+
+
+
+
 
     
 ]

@@ -31,16 +31,20 @@ class CustomUser(AbstractUser):
 
 # --- Donation model for donation records (if needed) ---
 
-
+# Donation type and status choices
 DONATION_TYPE_CHOICES = (
     ('monetary', 'Monetary'),
-    ('goods', 'Goods'),
+    ('medical', 'Medical Expenses'),
+    ('meals', 'Nourish the Needy'),
+    ('grocery', 'Essential Grocery Assistance'),
+    ('home', 'Comprehensive Home Care'),
+    ('other', 'Other Donations'),
 )
 
 STATUS_CHOICES = (
     ('Pending', 'Pending'),
-    ('Approved', 'Approved'),
-    ('Rejected', 'Rejected'),
+    ('Paid', 'Paid'),
+    ('Failed', 'Failed'),
 )
 
 class Donation(models.Model):
@@ -54,7 +58,7 @@ class Donation(models.Model):
     amount = models.DecimalField(
         max_digits=10, decimal_places=2,
         null=True, blank=True,
-        help_text="Enter the amount for monetary donations."
+        help_text="Enter the amount for monetary donations or the estimated value for in-kind donations."
     )
     donation_details = models.TextField(help_text="Enter the donation details.")
     quantity = models.IntegerField(
@@ -70,7 +74,7 @@ class Donation(models.Model):
     )
 
     def __str__(self):
-        return f"{self.donation_type} - {self.user.username}"
+        return f"{self.get_donation_type_display()} - {self.user.username}"
 
     def clean(self):
         if self.donation_type == 'monetary':
@@ -84,7 +88,6 @@ class Donation(models.Model):
 
     class Meta:
         ordering = ['-date_time']
-
 
 class DonationProduct(models.Model):
     CATEGORY_CHOICES = (
@@ -101,7 +104,6 @@ class DonationProduct(models.Model):
 
     def __str__(self):
         return self.name
-
     
 class Event(models.Model):
     event_id = models.AutoField(primary_key=True)
@@ -175,9 +177,8 @@ class Volunteer(models.Model):
     volunteering_in = models.CharField(max_length=20, choices=VOLUNTEERING_CHOICES, default='OTH')
     assigned_task = models.TextField(null=True, blank=True)
     proof = models.FileField(upload_to='volunteer_proofs/', null=True, blank=True)
-    status = models.CharField(max_length=50, choices=[('Pending', 'Pending'), ('Approved', 'Approved')], default='Pending')
+    status = models.CharField(max_length=50, choices=[('Pending', 'Pending'), ('Paid', 'Paid')], default='Pending')
     
-    # Link to a Django User account once approved.
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     
     def __str__(self):
@@ -201,29 +202,51 @@ class BloodDonor(models.Model):
     def __str__(self):
         return f"{self.full_name} ({self.blood_group})"
 
-
-# Beneficiary Support Model
 class BeneficiarySupport(models.Model):
     beneficiary_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    
+    # Beneficiary details
+    beneficiary_name = models.CharField(max_length=255, blank=True, null=True)
+    beneficiary_email = models.EmailField(blank=True, null=True)
+    beneficiary_phone = models.CharField(max_length=20, blank=True, null=True)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    age = models.PositiveIntegerField(blank=True, null=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
+    place = models.CharField(max_length=255, blank=True, null=True)
+    post = models.CharField(max_length=255, blank=True, null=True)
+    pin = models.CharField(max_length=10, blank=True, null=True)
+    district = models.CharField(max_length=255, blank=True, null=True)
+    relationship = models.CharField(max_length=255, blank=True, null=True)
+    
+    # Request details
     emergency_type = models.CharField(max_length=255)
     details = models.TextField()
     date = models.DateField(auto_now_add=True)
     response = models.TextField(null=True, blank=True)
     proof = models.FileField(upload_to='beneficiary_proofs/', null=True, blank=True)
-    emergency_level = models.CharField(max_length=50, choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')])
-    status = models.CharField(max_length=50, choices=[('Pending', 'Pending'), ('Resolved', 'Resolved')])
-
+    emergency_level = models.CharField(
+        max_length=50, 
+        choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')]
+    )
+    status = models.CharField(
+        max_length=50, 
+        choices=[('Pending', 'Pending'), ('Resolved', 'Resolved')],
+        default='Pending'
+    )
+    
+    # Additional Assistance Details
+    other_donation_type = models.CharField(max_length=255, blank=True, null=True)
+    custom_other_donation = models.CharField(max_length=255, blank=True, null=True)
+    
     def __str__(self):
         return self.emergency_type
-
-
+    
 # Palliative Care Model
 class PalliativeCare(models.Model):
     palliative_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE)
-    details=models.TextField(null=True, blank=True)
     date = models.DateField()
     needs = models.TextField()
     status = models.CharField(max_length=50, choices=[('Ongoing', 'Ongoing'), ('Completed', 'Completed')])
@@ -232,17 +255,18 @@ class PalliativeCare(models.Model):
         return f"Palliative Care - {self.user.fullname}"
 
 
-# Inventory Model
 class Inventory(models.Model):
-    inventory_id = models.AutoField(primary_key=True)
     donation = models.ForeignKey(Donation, on_delete=models.CASCADE)
-    total_quantity = models.IntegerField()
-    allocated_quantity = models.IntegerField()
-    beneficiary = models.ForeignKey(BeneficiarySupport, on_delete=models.CASCADE)
+    item_name = models.CharField(max_length=255)
+    quantity = models.PositiveIntegerField()
+    allocated = models.BooleanField(default=False)
+    allocated_to = models.ForeignKey(BeneficiarySupport, null=True, blank=True, on_delete=models.SET_NULL)
+    date_received = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Inventory - {self.donation.donation_type}"
-
+        return f"{self.item_name} ({self.quantity})"
+    
+    
 
 class FieldData(models.Model):
     field_id = models.AutoField(primary_key=True)
@@ -269,8 +293,6 @@ class FieldData(models.Model):
     def __str__(self):
         return self.full_name
 
-
-# Payment Model
 class Payment(models.Model):
     payment_id = models.AutoField(primary_key=True)
     donation = models.ForeignKey(Donation, on_delete=models.CASCADE)
@@ -280,7 +302,6 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment - {self.donation.donation_type}"
-
 
 # Notification Model
 class Notification(models.Model):
@@ -292,8 +313,6 @@ class Notification(models.Model):
     def __str__(self):
         return self.message
 
-
-# Feedback Model
 class Feedback(models.Model):
     feedback_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -342,6 +361,21 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"Message from {self.sender.fullname} to {self.receiver.fullname}"
+    
+class Contact(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+    
+    
+    
+    
+    
+
     
     
 

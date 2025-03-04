@@ -1,117 +1,63 @@
-<!---------------
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Manage Donations</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-</head>
-<body>
-    <div class="container mt-4">
-        <h2>Manage Donations</h2>
-
-        
-        <a href="{% url 'add_donation' %}" class="btn btn-primary mb-3">
-            <i class="fas fa-plus me-2"></i>Add Donation
-        </a>
-
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Donation Type</th>
-                    <th>Amount</th>
-                    <th>Details</th>
-                    <th>Quantity</th>
-                    <th>Date & Time</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for donation in donations %}
-                <tr>
-                    <td>{{ donation.donation_id }}</td>
-                    <td>{{ donation.donation_type }}</td>
-                    <td>{{ donation.amount }}</td>
-                    <td>{{ donation.donation_details }}</td>
-                    <td>{{ donation.quantity }}</td>
-                    <td>{{ donation.date_time }}</td>
-                    <td>{{ donation.status }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7">No donations found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
-    </div>
-</body>
-</html>
------------------>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Manage Donations</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <div class="card shadow-lg">
-            <!-- Card Header -->
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h3 class="mb-0"><i class="fas fa-hand-holding-heart me-2"></i>Manage Donations</h3>
-                <div>
-                    <a href="{% url 'add_donation' %}" class="btn btn-light btn-sm">
-                        <i class="fas fa-plus-circle me-2"></i>Add Donation
-                    </a>
-                    <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
-                        <i class="fas fa-home me-2"></i>Dashboard
-                    </a>
-                </div>
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <!-- Card Header -->
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0"><i class="fas fa-hand-holding-heart me-2"></i>Manage Donations</h3>
+            <div>
+                <a href="{% url 'add_donation' %}" class="btn btn-light btn-sm">
+                    <i class="fas fa-plus-circle me-2"></i>Add Donation
+                </a>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
+                    <i class="fas fa-home me-2"></i>Dashboard
+                </a>
             </div>
-            <!-- Card Body -->
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover table-striped align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Donation Type</th>
-                                <th>Amount</th>
-                                <th>Details</th>
-                                <th>Quantity</th>
-                                <th>Date &amp; Time</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for donation in donations %}
-                            <tr>
-                                <td class="fw-bold">#{{ donation.donation_id }}</td>
-                                <td>{{ donation.donation_type }}</td>
-                                <td>{{ donation.amount }}</td>
-                                <td>{{ donation.donation_details }}</td>
-                                <td>{{ donation.quantity }}</td>
-                                <td>{{ donation.date_time }}</td>
-                                <td>{{ donation.status }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="7" class="text-center py-4">
-                                    <i class="fas fa-hand-holding-heart fa-2x text-muted mb-3"></i>
-                                    <p class="text-muted mb-0">No donations found</p>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Donor</th>
+                            <th>Donation Type</th>
+                            <th>Amount (₹)</th>
+                            <th>Details</th>
+                            <th>Quantity</th>
+                            <th>Date &amp; Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for donation in donations %}
+                        <tr>
+                            <td class="fw-bold">#{{ donation.donation_id }}</td>
+                            <td>
+                                <a href="{% url 'donor_detail' donation.user.id %}">
+                                    {{ donation.user.username }}
+                                </a>
+                            </td>
+                            <td>{{ donation.get_donation_type_display }}</td>
+                            <td>{{ donation.amount }}</td>
+                            <td>{{ donation.donation_details }}</td>
+                            <td>{{ donation.quantity }}</td>
+                            <td>{{ donation.date_time|date:"M d, Y H:i" }}</td>
+                            <td>{{ donation.status }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <i class="fas fa-hand-holding-heart fa-2x text-muted mb-3"></i>
+                                <p class="text-muted mb-0">No donations found</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

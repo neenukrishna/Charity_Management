@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container mt-4">
+    <h1>Allocate Inventory: {{ inventory }}</h1>
+    <p><strong>Total Quantity:</strong> {{ inventory.total_quantity }}</p>
+    <p><strong>Allocated Quantity:</strong> {{ inventory.allocated_quantity }}</p>
+    <p><strong>Available Quantity:</strong> {{ inventory.available_quantity }}</p> 
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="allocated_quantity" class="form-label">Quantity to Allocate:</label>
+        <input type="number" id="allocated_quantity" name="allocated_quantity" min="1" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="beneficiary" class="form-label">Select Beneficiary:</label>
+        <select id="beneficiary" name="beneficiary" class="form-select" required>
+          <option value="">-- Select a Beneficiary --</option>
+          {% for beneficiary in beneficiaries %}
+            <option value="{{ beneficiary.id }}">{{ beneficiary.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Allocate</button>
+    </form>
+  </div>
+{% endblock %}

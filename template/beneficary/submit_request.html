@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4 text-primary fw-bold">Beneficiary Support Request</h2>
+  
+  {% if error %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+    {% csrf_token %}
+
+    <!-- On Behalf Section -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Request Origin</h5>
+      </div>
+      <div class="card-body">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="on_behalf" 
+                 name="on_behalf" onclick="toggleOnBehalfDetails(this.checked)">
+          <label class="form-check-label text-muted" for="on_behalf">
+            Are you submitting this request on someone else's behalf?
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Beneficiary Details Section -->
+    <div id="on_behalf_details" style="display:none;">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">Beneficiary Information</h5>
+        </div>
+        <div class="card-body bg-light">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="beneficiary_name" class="form-label">Full Name<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="beneficiary_name" id="beneficiary_name">
+            </div>
+            <div class="col-md-6">
+              <label for="beneficiary_email" class="form-label">Email<span class="text-danger">*</span></label>
+              <input type="email" class="form-control" name="beneficiary_email" id="beneficiary_email">
+            </div>
+            <div class="col-md-4">
+              <label for="beneficiary_phone" class="form-label">Phone<span class="text-danger">*</span></label>
+              <input type="tel" class="form-control" name="beneficiary_phone" id="beneficiary_phone">
+            </div>
+            <div class="col-md-4">
+              <label for="gender" class="form-label">Gender<span class="text-danger">*</span></label>
+              <select name="gender" id="gender" class="form-select">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="age" class="form-label">Age<span class="text-danger">*</span></label>
+              <input type="number" class="form-control" name="age" id="age" min="0">
+            </div>
+            <div class="col-12">
+              <label for="address" class="form-label">Address<span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Street Address" name="address">
+                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control" placeholder="City" name="place">
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control" placeholder="Post Office" name="post">
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control" placeholder="PIN Code" name="pin">
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control" placeholder="District" name="district">
+            </div>
+            <div class="col-12">
+              <label for="relationship" class="form-label">Relationship to Beneficiary</label>
+              <input type="text" class="form-control" name="relationship" id="relationship">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency Details Section -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-warning">
+        <h5 class="mb-0">Assistance Details</h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="donation_category" class="form-label">Assistance Type<span class="text-danger">*</span></label>
+            <select name="donation_category" id="donation_category" class="form-select" 
+                    onchange="toggleOtherDonation(this.value)" required>
+              <option value="">Select Assistance Type</option>
+              <option value="monetary">Financial Support</option>
+              <option value="medical">Medical Assistance</option>
+              <option value="meals">Nutrition Support</option>
+              <option value="grocery">Essential Supplies</option>
+              <option value="home">Home Care Services</option>
+              <option value="other">Other Support</option>
+            </select>
+          </div>
+
+          <div id="other_donation_section" style="display:none;">
+            <div class="border-start border-4 border-primary ps-3 mb-4">
+              <h6 class="text-primary mb-3">Special Assistance Details</h6>
+              <div class="mb-3">
+                <select class="form-select" id="other_donation_type" name="other_donation_type" 
+                        onchange="toggleCustomOtherDonation(this.value)">
+                  <option value="">Select Assistance Type</option>
+                  <option value="Hospital Beds">Medical Equipment</option>
+                  <option value="Wheel Chairs">Mobility Aids</option>
+                  <option value="Walkers">Walking Assistance</option>
+                  <option value="Hygiene Products">Hygiene Kits</option>
+                  <option value="Nutritious Food">Specialized Nutrition</option>
+                  <option value="custom">Other Essential Support</option>
+                </select>
+              </div>
+              <div class="mb-3" id="custom_other_donation_div" style="display:none;">
+                <input type="text" class="form-control" id="custom_other_donation" 
+                       placeholder="Please specify assistance type" name="custom_other_donation">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label for="details" class="form-label">Situation Details<span class="text-danger">*</span></label>
+            <textarea class="form-control" name="details" id="details" rows="4" 
+                      placeholder="Please describe the situation in detail..." required></textarea>
+          </div>
+
+          <div class="col-md-6">
+            <label for="emergency_level" class="form-label">Urgency Level<span class="text-danger">*</span></label>
+            <div class="input-group">
+              <select name="emergency_level" id="emergency_level" class="form-select" required>
+                <option value="">Select Urgency Level</option>
+                <option value="Low">Standard (72h response)</option>
+                <option value="Medium">Urgent (24h response)</option>
+                <option value="High">Emergency (Immediate response)</option>
+              </select>
+              <span class="input-group-text"><i class="bi bi-exclamation-triangle"></i></span>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="proof" class="form-label">Supporting Documents</label>
+            <input type="file" class="form-control" name="proof" id="proof" 
+                   aria-describedby="fileHelp">
+            <div id="fileHelp" class="form-text">Upload any relevant documents (medical reports, ID proof, etc.)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-grid gap-2 col-md-6 mx-auto mb-5">
+      <button type="submit" class="btn btn-primary btn-lg shadow">
+        <i class="bi bi-send-check me-2"></i>Submit Assistance Request
+      </button>
+    </div>
+  </form>
+</div>
+
+<style>
+  .card-header {
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  .required-asterisk {
+    color: #dc3545;
+    margin-left: 3px;
+  }
+  .card {
+    border: none;
+    transition: transform 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+  }
+</style>
+
+<script>
+  function toggleOnBehalfDetails(isChecked) {
+    var onBehalfDiv = document.getElementById('on_behalf_details');
+    onBehalfDiv.style.display = isChecked ? 'block' : 'none';
+    // Toggle required attribute for all inputs/selects inside the on_behalf_details section.
+    var inputs = onBehalfDiv.querySelectorAll('input, select');
+    inputs.forEach(function(input) {
+      if (isChecked) {
+        input.setAttribute('required', 'required');
+      } else {
+        input.removeAttribute('required');
+      }
+    });
+  }
+  function toggleOtherDonation(value) {
+    document.getElementById('other_donation_section').style.display = (value === 'other') ? 'block' : 'none';
+  }
+  function toggleCustomOtherDonation(value) {
+    document.getElementById('custom_other_donation_div').style.display = (value === 'custom') ? 'block' : 'none';
+  }
+</script>
+{% endblock %}

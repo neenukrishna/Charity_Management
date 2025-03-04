@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Inventory</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="card shadow-lg">
+      <!-- Card Header -->
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">
+          <i class="fas fa-boxes me-2"></i>Manage Inventory
+        </h3>
+        <div>
+          <a href="{% url 'add_inventory' %}" class="btn btn-light btn-sm">
+            <i class="fas fa-plus-circle me-2"></i>Add Inventory
+          </a>
+          <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
+            <i class="fas fa-home me-2"></i>Dashboard
+          </a>
+        </div>
+      </div>
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover table-striped align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Donation Type</th>
+                <th>Total Amount (₹)</th>
+                <th>Total Quantity</th>
+                <th>Allocated Quantity</th>
+                <th>Available Quantity</th>
+                <th># of Entries</th>
+                <th>Beneficiaries</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in inventory_summary %}
+              <tr>
+                <td>{{ item.donation_type_display }}</td>
+                <td>
+                  {% if item.donation_type == "monetary" %}
+                    ₹{{ item.total_amount }}
+                  {% else %}
+                    N/A
+                  {% endif %}
+                </td>
+                <td>{{ item.total_quantity }}</td>
+                <td>{{ item.allocated_quantity }}</td>
+                <td>{{ item.available_quantity }}</td>
+                <td>{{ item.count }}</td>
+                <td>{{ item.beneficiaries }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" class="text-center py-4">
+                  <i class="fas fa-box-open fa-2x text-muted mb-3"></i>
+                  <p class="text-muted mb-0">No inventory records found</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

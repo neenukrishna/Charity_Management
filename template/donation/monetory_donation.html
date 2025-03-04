@@ -1,40 +1,24 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <div class="container my-4">
   <h2 class="text-center text-success">Monetary Donation</h2>
-
   <!-- Donation Description -->
   <p class="text-muted text-center">{{ description }}</p>
-
   <div class="card shadow-sm p-4">
-    <form method="POST" action="{% url 'submit_monetary_donation' %}">
+    <form method="POST" action="{% url 'monetary_donation' %}">
       {% csrf_token %}
-
       <div class="mb-3">
-        <label for="amount" class="form-label">Donation Amount ($):</label>
+        <label for="amount" class="form-label">Donation Amount (₹):</label>
         <input type="number" step="0.01" min="1" class="form-control" id="amount" name="amount" required>
       </div>
-
       <div class="mb-3">
         <label for="donation_details" class="form-label">Donation Details:</label>
         <textarea class="form-control" id="donation_details" name="donation_details" rows="3" required></textarea>
       </div>
-
       <input type="hidden" name="donation_type" value="monetary">
-      
-      <button type="submit" class="btn btn-success w-100" id="donateBtn">
-        Donate
-      </button>
+      <button type="submit" class="btn btn-success w-100" id="donateBtn">Donate</button>
     </form>
   </div>
 </div>
-
-<script>
-  document.getElementById("donateBtn").addEventListener("click", function () {
-    this.innerHTML = "Processing...";
-    this.disabled = true;
-  });
-</script>
 
 {% endblock %}

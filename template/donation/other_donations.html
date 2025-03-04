@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <!-- Breadcrumbs -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'user_home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="#">Donation</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Other Donations</li>
+    </ol>
+  </nav>
+
+  <!-- Other Donations Section -->
+  <div class="row my-5">
+    <div class="col-md-6">
+      <img src="/media/others.jpg" alt="Other Donations" class="img-fluid rounded" width="500">
+    </div>
+    <div class="col-md-6">
+      <h2 class="mb-3">Other Donations</h2>
+      <p class="h5 text-primary mb-3">Select an item to donate</p>
+      <form method="POST" action="{% url 'add_to_cart_other' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="donation_type" class="form-label">Donation Type:</label>
+          <select class="form-select" id="donation_type" name="donation_type" onchange="checkOther(this.value)">
+            <option value="Hospital Beds">Hospital Beds</option>
+            <option value="Wheel Chairs">Wheel Chairs</option>
+            <option value="Walkers">Walkers</option>
+            <option value="Hygiene Products">Hygiene Products</option>
+            <option value="Nutritious Food">Nutritious Food</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="mb-3" id="otherDonationDiv" style="display: none;">
+          <label for="other_donation" class="form-label">Please specify:</label>
+          <input type="text" class="form-control" id="other_donation" name="other_donation">
+        </div>
+        <div class="mb-3" style="max-width: 150px;">
+          <label for="quantity" class="form-label">Quantity:</label>
+          <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1">
+        </div>
+        <button type="submit" class="btn btn-success">Add to Cart</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function checkOther(value) {
+    const otherDiv = document.getElementById('otherDonationDiv');
+    if(value === 'Other'){
+      otherDiv.style.display = 'block';
+    } else {
+      otherDiv.style.display = 'none';
+    }
+  }
+</script>
+{% endblock %}

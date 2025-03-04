@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .feedback-form-wrapper {
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 3rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    }
+
+    .rating-container {
+        text-align: center;
+        margin: 2rem 0;
+    }
+
+    .star-rating {
+        display: inline-flex;
+        gap: 1rem;
+    }
+
+    .star-rating .star {
+        font-size: 2.8rem;
+        color: #e2e8f0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .star-rating .star.hover,
+    .star-rating .star.selected {
+        color: #ffd700;
+        transform: scale(1.15);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.2rem;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .submit-btn {
+        background: var(--secondary-color);
+        color: black;
+        padding: 1.2rem 3rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        border: none;
+        margin-top: 2rem;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    }
+</style>
+
+<div class="feedback-form-wrapper">
+    <h2 class="text-center mb-4">Share Your Experience</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="rating-container">
+            <div class="star-rating">
+                <i class="fas fa-star star" data-value="1"></i>
+                <i class="fas fa-star star" data-value="2"></i>
+                <i class="fas fa-star star" data-value="3"></i>
+                <i class="fas fa-star star" data-value="4"></i>
+                <i class="fas fa-star star" data-value="5"></i>
+            </div>
+            <input type="hidden" name="rating" id="rating" required>
+        </div>
+        
+        <div class="mb-4">
+            <label for="comments" class="form-label">Your Feedback</label>
+            <textarea name="comments" id="comments" class="form-control" rows="5" 
+                      placeholder="Share your thoughts with us..." required></textarea>
+        </div>
+        
+        <button type="submit" class="submit-btn">Submit Feedback</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating');
+
+        stars.forEach(star => {
+            star.addEventListener('mouseover', () => {
+                stars.forEach(s => s.classList.toggle('hover', s.dataset.value <= star.dataset.value));
+            });
+
+            star.addEventListener('mouseout', () => {
+                stars.forEach(s => s.classList.remove('hover'));
+            });
+
+            star.addEventListener('click', () => {
+                ratingInput.value = star.dataset.value;
+                stars.forEach(s => {
+                    s.classList.toggle('selected', s.dataset.value <= star.dataset.value);
+                    s.classList.remove('hover');
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

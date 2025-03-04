@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from .models import CustomUser,FieldData, Volunteer
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
-from .models import Donation,Event,Volunteer,BloodDonor, BeneficiarySupport, PalliativeCare, Inventory, Notification, FieldData, Feedback,Inventory, Notification, FieldData,Staff,Sponsorship,DonationProduct
+from .models import Donation,Event,Volunteer,BloodDonor,Payment, BeneficiarySupport, PalliativeCare, Inventory, Notification, FieldData, Feedback,Inventory, Notification, FieldData,Staff,Sponsorship,DonationProduct,Contact
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import ChatMessage, CustomUser
 from decimal import Decimal
@@ -17,6 +17,10 @@ from django.contrib.auth import get_user_model
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
+import razorpay
+import uuid
+from django.http import JsonResponse
+
 
 
 
@@ -29,11 +33,59 @@ def is_admin(user):
 
 #---------------------------------ADMIN USER DASHBOARD--------------------------------------------------------------------------------
 def home(request):
-    return render(request, 'home.html')
+    feedbacks = Feedback.objects.order_by('-date')[:6]
+    return render(request, 'home.html', {'feedbacks': feedbacks})
+
+
+def all_feedbacks(request):
+    feedbacks = Feedback.objects.order_by('-date')
+    return render(request, 'feedback/all_feedbacks.html', {'feedbacks': feedbacks})
 
 @login_required
 def user_home(request):
     return render(request, 'user_home.html')
+
+
+@login_required
+def account_dashboard(request):
+    donations = Donation.objects.filter(user=request.user).order_by('-date_time')
+    beneficiary_requests = BeneficiarySupport.objects.filter(user=request.user).order_by('-date')
+    feedbacks = Feedback.objects.filter(user=request.user).order_by('-date')
+    context = {
+        'donations': donations,
+        'beneficiary_requests': beneficiary_requests,
+        'feedbacks': feedbacks,
+    }
+    return render(request, 'home/dashboard.html', context)
+
+def contact_view(request):
+    if request.method == 'POST':
+        # Debug: print the POST data to the console
+        print("Received POST data:", request.POST)
+        
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        message_text = request.POST.get('message', '').strip()
+
+        # Check that all fields are provided
+        if name and email and message_text:
+            # Create the contact object
+            contact = Contact.objects.create(name=name, email=email, message=message_text)
+            print("Contact created:", contact)
+            messages.success(request, 'Your message has been sent successfully.')
+            return redirect('user_home')
+        else:
+            messages.error(request, 'Please fill out all fields.')
+    
+    return render(request, 'user_home.html')
+
+
+def admin_contact_list(request):
+    contacts = Contact.objects.all().order_by('-created_at')
+    print("Total contacts:", contacts.count())  # Debug: log the number of contacts
+    return render(request, 'feedback/contacts.html', {'contacts': contacts})
+
+
 
 @login_required
 def profile(request):
@@ -165,12 +217,7 @@ def manage_blood_donors(request):
     donors = BloodDonor.objects.all()
     return render(request, 'manage_blood_donors.html', {'donors': donors})
 
-# Manage Emergency Support
-@login_required
-@user_passes_test(is_admin)
-def manage_emergency_support(request):
-    emergency_requests = BeneficiarySupport.objects.all()
-    return render(request, 'manage_emergency_support.html', {'emergency_requests': emergency_requests})
+
 
 # Manage Palliative Care
 @login_required
@@ -180,11 +227,10 @@ def manage_palliative_care(request):
     return render(request, 'manage_palliative_care.html', {'palliative_cases': palliative_cases})
 
 # Manage Resources & Inventory
-@login_required
-@user_passes_test(is_admin)
-def manage_inventory(request):
-    inventory_items = Inventory.objects.all()
-    return render(request, 'manage_inventory.html', {'inventory_items': inventory_items})
+# @login_required
+# @user_passes_test(is_admin)
+
+
 
 # Manage Notifications
 @login_required
@@ -210,11 +256,11 @@ def manage_feedbacks(request):
 
 
 # Manage Resources & Inventory
-@login_required
-@user_passes_test(is_admin)
-def manage_inventory(request):
-    inventory_items = Inventory.objects.all()
-    return render(request, 'manage_inventory.html', {'inventory_items': inventory_items})
+# @login_required
+# @user_passes_test(is_admin)
+# def manage_inventory(request):
+#     inventory_items = Inventory.objects.all()
+#     return render(request, 'manage_inventory.html', {'inventory_items': inventory_items})
 
 # Manage Notifications
 @login_required
@@ -693,27 +739,27 @@ def make_donation(request):
 
 
 
-@login_required
-def request_emergency_support(request):
-    if request.method == 'POST':
-        emergency_type = request.POST.get('emergency_type')
-        details = request.POST.get('details')
-        # You may also let the user choose an emergency level, but for now we set a default.
-        emergency_level = request.POST.get('emergency_level', 'High')
-        status = 'Pending'  # New requests start as Pending
+# @login_required
+# def request_emergency_support(request):
+#     if request.method == 'POST':
+#         emergency_type = request.POST.get('emergency_type')
+#         details = request.POST.get('details')
+#         # You may also let the user choose an emergency level, but for now we set a default.
+#         emergency_level = request.POST.get('emergency_level', 'High')
+#         status = 'Pending'  # New requests start as Pending
 
-        # Create the emergency support request
-        BeneficiarySupport.objects.create(
-            user=request.user,
-            emergency_type=emergency_type,
-            details=details,
-            emergency_level=emergency_level,
-            status=status
-        )
-        messages.success(request, "Your emergency support request has been submitted.")
-        return redirect('user_home')
+#         # Create the emergency support request
+#         BeneficiarySupport.objects.create(
+#             user=request.user,
+#             emergency_type=emergency_type,
+#             details=details,
+#             emergency_level=emergency_level,
+#             status=status
+#         )
+#         messages.success(request, "Your emergency support request has been submitted.")
+#         return redirect('user_home')
     
-    return render(request, 'request_emergency_support.html')
+#     return render(request, 'request_emergency_support.html')
 
 
 def register_blood_donation(request):
@@ -1029,38 +1075,7 @@ def blood_donation(request):
 
 #--------------------------------DONATIONS----------------------------------
 
-# ----------------------------
-# Monetary Donations (No Basket)
-# ----------------------------
-@login_required
-def monetary_donation(request):
-    description = "Monetary donations help us provide direct financial assistance to those in need. Your contributions support medical expenses, food aid, and emergency relief efforts."
-    return render(request, 'donation/monetory_donation.html', {'description': description})
 
-@login_required
-def submit_monetary_donation(request):
-    if request.method == 'POST':
-        amount = request.POST.get('amount')
-        donation_details = request.POST.get('donation_details')
-        
-        if not amount:
-            messages.error(request, "Please enter a valid amount.")
-            return redirect('monetary_donation')
-        
-        Donation.objects.create(
-            user=request.user,
-            donation_type='monetary',
-            amount=amount,
-            donation_details=donation_details,
-            quantity=None,
-            status='Pending'
-        )
-        messages.success(request, "Thank you for your donation!")
-        return redirect('user_home')  # Adjust as needed
-    return redirect('monetary_donation')
-# ----------------------------
-# Blood Donation Registration (Other Donations)
-# ----------------------------
 @login_required
 def blood_donor(request):
     if request.method == 'POST':
@@ -1170,20 +1185,109 @@ def sponsorship_details(request, event_id):
 
 
 
-#--------------------donation grocery kit--------------------------------------------
+#--------------------donation full-----------------------------------------
 
+@login_required
+def monetary_donation(request):
+    description = ("Monetary donations help us provide direct financial assistance to those in need. "
+                   "Your contributions support medical expenses, food aid, and emergency relief efforts.")
+    
+    if request.method == 'POST':
+        amount = request.POST.get('amount')
+        donation_details = request.POST.get('donation_details')
+        
+        try:
+            amount_val = float(amount)
+        except (ValueError, TypeError):
+            messages.error(request, "Please enter a valid amount.")
+            return redirect('monetary_donation')
+        
+        # Save donation details in session for later use
+        request.session['monetary_donation_details'] = {
+            'amount': amount_val,
+            'donation_details': donation_details,
+        }
+        request.session.modified = True
+        
+        # Create a Razorpay order (amount in paise)
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        order_amount = int(amount_val * 100)
+        order_currency = "INR"
+        order_receipt = f"monetary_{uuid.uuid4().hex[:8]}"
+        razorpay_order = client.order.create({
+            'amount': order_amount,
+            'currency': order_currency,
+            'receipt': order_receipt,
+            'payment_capture': 1,
+        })
+        
+        request.session['monetary_razorpay_order'] = razorpay_order
+        request.session.modified = True
+        
+        context = {
+            'amount': amount_val,
+            'razorpay_order': razorpay_order,
+            'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+        }
+        return render(request, 'donation/monetary_payment.html', context)
+    
+    return render(request, 'donation/monetory_donation.html', {'description': description})
 
+@login_required
+def monetary_receipt(request):
+    donation_details = request.session.get('monetary_donation_details', {})
+    razorpay_order = request.session.get('monetary_razorpay_order', {})
+    
+    if not donation_details or not razorpay_order:
+        messages.error(request, "Donation details missing.")
+        return redirect('monetary_donation')
+    
+    amount_val = donation_details.get('amount')
+    donation_details_text = donation_details.get('donation_details')
+    
+    # Create the donation record with status Paid
+    donation = Donation.objects.create(
+        user=request.user,
+        donation_type='monetary',
+        amount=amount_val,
+        donation_details=donation_details_text,
+        quantity=None,
+        status='Paid'
+    )
+    
+    # Create a Payment record
+    Payment.objects.create(
+        donation=donation,
+        method='Razorpay',
+        status='Completed'
+    )
+    
+    # Clear session donation data
+    request.session.pop('monetary_donation_details', None)
+    request.session.pop('monetary_razorpay_order', None)
+    request.session.modified = True
+    
+    receipt_number = f"RCPT-{uuid.uuid4().hex[:8].upper()}"
+    donation_date = timezone.now()
+    
+    context = {
+        'organization_name': 'Charitable Trust Name',
+        'organization_address': '123 Charity Street, City, State, ZIP',
+        'organization_phone': '123-456-7890',
+        'organization_email': 'info@charity.org',
+        'organization_website': 'www.charity.org',
+        'receipt_number': receipt_number,
+        'donation_date': donation_date,
+        'amount_donated': amount_val,
+        'donation_method': 'Razorpay',
+        'donor_name': request.user.username,
+        'donor_address': '',  
+        'donor_contact': '',
+    }
+    
+    return render(request, 'donation/monetary_receipt.html', context)
 
-
-# ----------------------------
-# Donation Category Landing Page
-# ----------------------------
-# 
 def donation_category(request):
-    """
-    Displays various donation categories.
-    """
-    # You can define static categories or fetch from your database.
     categories = [
         {'slug': 'medical', 'name': 'Medical Expenses', 'description': 'Support medical care for those in need.'},
         {'slug': 'meals', 'name': 'Nourish the Needy', 'description': 'Provide meals to the underprivileged.'},
@@ -1192,13 +1296,8 @@ def donation_category(request):
     ]
     return render(request, 'donation_category.html', {'categories': categories})
 
-
-# --- List Donation Products by Category ---
 @login_required
 def donation_products(request, category):
-    """
-    Lists donation products filtered by category.
-    """
     products = DonationProduct.objects.filter(category=category)
     category_titles = {
         'medical': 'Medical Expenses',
@@ -1213,30 +1312,33 @@ def donation_products(request, category):
         'category': category
     })
 
-
-# --- Dedicated Donation Pages ---
+# Dedicated donation pages
 @login_required
 def grocery_kit_donation(request):
-    """
-    Renders the "Grocery Kit to a Patient" donation page.
-    """
     return render(request, 'donation/grocery_donation.html')
-
 
 @login_required
 def medical_expenses_donation(request):
-    """
-    Renders the "Medical Expenses" donation page.
-    """
     return render(request, 'donation/medical_expenses.html')
 
+@login_required
+def nourish_the_needy_donation(request):
+    return render(request, 'donation/nourish_the_needy.html')
 
-# --- Generic Add to Cart (for products listed under donation_products) ---
+@login_required
+def comprehensive_home_care_donation(request):
+    return render(request, 'donation/comprehensive_home_care.html')
+
+@login_required
+def other_donations(request):
+    return render(request, 'donation/other_donations.html')
+
+# ----------------------------
+# Cart & Checkout Functions
+# ----------------------------
+
 @login_required
 def add_to_cart(request):
-    """
-    Adds a donation product to the cart (stored in session).
-    """
     if request.method == 'POST':
         item_name = request.POST.get('name')
         try:
@@ -1261,13 +1363,8 @@ def add_to_cart(request):
         return redirect('view_cart')
     return redirect('donation_category')
 
-
-# --- Add to Cart: Grocery Kit Donation ---
 @login_required
 def add_to_cart_grocery(request):
-    """
-    Adds a Grocery Kit donation to the cart.
-    """
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity', 1))
         cart = request.session.get('cart', {})
@@ -1277,22 +1374,18 @@ def add_to_cart_grocery(request):
         else:
             cart[key] = {
                 'name': 'Grocery Kit to a Patient',
-                'price': 1000,  # example price
+                'price': 1000,
                 'quantity': quantity,
-                'image': '/media/groceryimg.jpeg',  # adjust the path as needed
+                'image': '/media/groceryimg.jpeg',
             }
         request.session['cart'] = cart
         request.session.modified = True
         messages.success(request, '"Grocery Kit to a Patient" has been added to your cart!')
-    return redirect('grocery_kit_donation')
+        return redirect('grocery_kit_donation')
+    return redirect('donation_category')
 
-
-# --- Add to Cart: Medical Expenses Donation ---
 @login_required
 def add_to_cart_medical(request):
-    """
-    Adds a Medical Expenses donation to the cart.
-    """
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity', 1))
         cart = request.session.get('cart', {})
@@ -1302,37 +1395,100 @@ def add_to_cart_medical(request):
         else:
             cart[key] = {
                 'name': 'Medical Expenses',
-                'price': 5000,  # example price
+                'price': 5000,
                 'quantity': quantity,
-                'image': '',  # add an image path if available
+                'image': '/media/medical_expenses.jpeg',
             }
         request.session['cart'] = cart
         request.session.modified = True
         messages.success(request, '"Medical Expenses" donation has been added to your cart!')
-    return redirect('medical_expenses_donation')
+        return redirect('medical_expenses_donation')
+    return redirect('donation_category')
 
+@login_required
+def add_to_cart_needy(request):
+    if request.method == 'POST':
+        try:
+            donation_amount = float(request.POST.get('donation_amount', 30))
+        except ValueError:
+            donation_amount = 30.0
+        cart = request.session.get('cart', {})
+        key = 'nourish_needy'
+        if key in cart:
+            cart[key]['price'] += donation_amount
+            cart[key]['quantity'] += 1
+        else:
+            cart[key] = {
+                'name': 'Nourish the Needy Donation',
+                'price': donation_amount,
+                'quantity': 1,
+                'image': '/media/nourish_needy.jpeg',
+            }
+        request.session['cart'] = cart
+        request.session.modified = True
+        messages.success(request, '"Nourish the Needy Donation" has been added to your cart!')
+        return redirect('nourish_the_needy_donation')
+    return redirect('donation_category')
 
-# --- View Cart ---
+@login_required
+def add_to_cart_homecare(request):
+    if request.method == 'POST':
+        quantity = int(request.POST.get('quantity', 1))
+        cart = request.session.get('cart', {})
+        key = 'comprehensive_home_care'
+        if key in cart:
+            cart[key]['quantity'] += quantity
+        else:
+            cart[key] = {
+                'name': 'Comprehensive Home Care',
+                'price': 3000,
+                'quantity': quantity,
+                'image': '/media/comprehensive_home_care.jpeg',
+            }
+        request.session['cart'] = cart
+        request.session.modified = True
+        messages.success(request, '"Comprehensive Home Care" donation has been added to your cart!')
+        return redirect('comprehensive_home_care_donation')
+    return redirect('donation_category')
+
+@login_required
+def add_to_cart_other(request):
+    if request.method == 'POST':
+        donation_type = request.POST.get('donation_type')
+        if donation_type == 'Other':
+            donation_type = request.POST.get('other_donation', 'Other')
+        try:
+            quantity = int(request.POST.get('quantity', 1))
+        except ValueError:
+            quantity = 1
+        
+        cart = request.session.get('cart', {})
+        key = f"other_{donation_type.replace(' ', '_').lower()}"
+        if key in cart:
+            cart[key]['quantity'] += quantity
+        else:
+            cart[key] = {
+                'name': donation_type,
+                'price': 0,
+                'quantity': quantity,
+                'image': '/media/other_default.jpeg',
+            }
+        request.session['cart'] = cart
+        request.session.modified = True
+        messages.success(request, f'"{donation_type}" donation has been added to your cart!')
+        return redirect('other_donations')
+    return redirect('donation_category')
+
 @login_required
 def view_cart(request):
-    """
-    Displays the items in the cart along with totals.
-    """
     cart = request.session.get('cart', {})
-    total = 0
+    total = sum(item['price'] * item['quantity'] for item in cart.values())
     for key, item in cart.items():
-        # Calculate subtotal for each item.
         item['subtotal'] = item['price'] * item['quantity']
-        total += item['subtotal']
     return render(request, 'donation/cart.html', {'cart': cart, 'total': total})
 
-
-# --- Remove an Item from Cart ---
 @login_required
 def remove_from_cart(request, key):
-    """
-    Removes an item from the cart.
-    """
     cart = request.session.get('cart', {})
     if key in cart:
         del cart[key]
@@ -1343,14 +1499,8 @@ def remove_from_cart(request, key):
         messages.error(request, "Item not found in cart.")
     return redirect('view_cart')
 
-
-# --- Update Cart Quantities ---
 @login_required
 def update_cart(request):
-    """
-    Updates item quantities in the cart.
-    Expects form fields like 'quantity_itemkey' for each cart item.
-    """
     if request.method == 'POST':
         cart = request.session.get('cart', {})
         for key, value in request.POST.items():
@@ -1371,37 +1521,528 @@ def update_cart(request):
         messages.success(request, "Cart updated successfully!")
     return redirect('view_cart')
 
-
-# --- Clear Entire Cart ---
 @login_required
 def clear_cart(request):
-    """
-    Clears all items from the cart.
-    """
     request.session['cart'] = {}
     request.session.modified = True
     messages.success(request, "Cart cleared!")
     return redirect('view_cart')
 
-
-# --- Checkout ---
 @login_required
 def checkout(request):
-    """
-    Handles the checkout process.
-    """
-    if request.method == 'POST':
-        cart = request.session.get('cart', {})
-        if not cart:
-            messages.error(request, "Your cart is empty!")
-            return redirect('view_cart')
-        total = sum(item['price'] * item['quantity'] for item in cart.values())
-        # Simulate payment processing here.
-        messages.success(request, f"Payment of ₹{total} received. Thank you for your donation!")
+    cart = request.session.get('cart', {})
+    if not cart:
+        messages.error(request, "Your cart is empty!")
+        return redirect('view_cart')
+    
+    total = sum(item['price'] * item['quantity'] for item in cart.values())
+    donation_type_mapping = {
+        'medical_expenses': 'medical',
+        'nourish_needy': 'meals',
+        'comprehensive_home_care': 'home',
+        'grocery_kit': 'grocery',
+    }
+    
+    # If no payment is required (total < 1)
+    if total < 1:
+        for key, item in cart.items():
+            donation_type = donation_type_mapping.get(key, 'other') if key in donation_type_mapping else 'other'
+            donation = Donation.objects.create(
+                user=request.user,
+                donation_type=donation_type,
+                amount=item['price'] * item['quantity'],
+                donation_details=item['name'],
+                quantity=item['quantity'],
+                status='Paid'
+            )
+            if donation.donation_type != 'monetary':
+                Inventory.objects.create(
+                    donation=donation,
+                    item_name=item['name'],
+                    quantity=item['quantity']
+                )
         request.session['cart'] = {}
         request.session.modified = True
-        return redirect('donation_category')
-    else:
+        messages.success(request, "Donation recorded successfully (no payment required).")
+        return redirect('receipt')
+    
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    order_amount = int(total * 100)
+    order_currency = "INR"
+    order_receipt = f"receipt_{uuid.uuid4().hex[:8]}"
+    razorpay_order = client.order.create({
+        'amount': order_amount,
+        'currency': order_currency,
+        'receipt': order_receipt,
+        'payment_capture': 1
+    })
+    
+    billing = {
+        'full_name': request.user.get_full_name() or '',
+        'email': request.user.email or '',
+    }
+    request.session['billing'] = billing
+    request.session.modified = True
+
+    context = {
+        'billing': billing,
+        'cart': cart,
+        'total': total,
+        'razorpay_order': razorpay_order,
+        'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+    }
+    return render(request, 'donation/payment.html', context)
+@login_required
+def receipt(request):
+    billing = request.session.get('billing', {})
+    cart = request.session.get('cart', {})
+
+    # Build a new clean cart dictionary that only contains expected keys.
+    clean_cart = {}
+    for key, item in cart.items():
+        if isinstance(item, dict):
+            name = item.get('name')
+            price = item.get('price')
+            # Use 'quantity' if present; otherwise, use 'total_quantity' (or 0 if not available).
+            quantity = item.get('quantity')
+            if quantity is None:
+                quantity = item.get('total_quantity', 0)
+            clean_cart[key] = {
+                'name': name,
+                'price': price,
+                'quantity': quantity
+            }
+    # Replace the original cart with the clean cart.
+    cart = clean_cart
+
+    total = sum(item['price'] * item['quantity'] for item in cart.values())
+    
+    receipt_number = f"RCPT-{uuid.uuid4().hex[:8].upper()}"
+    donation_date = timezone.now()
+    donation_type_mapping = {
+        'medical_expenses': 'medical',
+        'nourish_needy': 'meals',
+        'comprehensive_home_care': 'home',
+        'grocery_kit': 'grocery',
+    }
+    
+    # Create Donation and Inventory records from the clean cart.
+    for key, item in cart.items():
+        donation_type = donation_type_mapping.get(key, 'other') if key in donation_type_mapping else 'other'
+        donation = Donation.objects.create(
+            user=request.user,
+            donation_type=donation_type,
+            amount=item['price'] * item['quantity'],
+            donation_details=item['name'],
+            quantity=item['quantity'],
+            status='Paid'
+        )
+        # For non-monetary donations, create an Inventory record.
+        if donation.donation_type != 'monetary':
+            Inventory.objects.create(
+                donation=donation,
+                item_name=item['name'],
+                quantity=item['quantity']
+            )
+    
+    # Clear session data.
+    request.session['cart'] = {}
+    request.session['billing'] = {}
+    request.session.modified = True
+    
+    context = {
+        'organization_name': 'Charitable Trust Name',
+        'organization_address': '123 Charity Street, City, State, ZIP',
+        'organization_phone': '123-456-7890',
+        'organization_email': 'info@charity.org',
+        'organization_website': 'www.charity.org',
+        'receipt_number': receipt_number,
+        'donation_date': donation_date,
+        'amount_donated': total,
+        'donation_method': 'Razorpay',
+        'donor_name': billing.get('full_name'),
+        'donor_address': billing.get('address'),
+        'donor_contact': billing.get('phone'),
+    }
+    
+    return render(request, 'donation/receipt.html', context)
+
+
+@login_required
+def payment_success(request):
+    if request.method == 'POST':
+        razorpay_payment_id = request.POST.get('razorpay_payment_id')
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+        razorpay_signature = request.POST.get('razorpay_signature')
+
+        params_dict = {
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_payment_id': razorpay_payment_id,
+            'razorpay_signature': razorpay_signature,
+        }
+
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        try:
+            client.utility.verify_payment_signature(params_dict)
+        except razorpay.errors.SignatureVerificationError:
+            messages.error(request, "Payment verification failed!")
+            return redirect('monetary_donation')
+
+        billing = request.session.get('billing', {})
         cart = request.session.get('cart', {})
         total = sum(item['price'] * item['quantity'] for item in cart.values())
-        return render(request, 'donation/checkout.html', {'cart': cart, 'total': total})
+        
+        if total > 0:
+            monetary_donation = Donation.objects.create(
+                user=request.user,
+                donation_type='monetary',
+                amount=total,
+                donation_details="Donation payment via Razorpay",
+                quantity=1,
+                status='Paid'
+            )
+            donation_date = monetary_donation.date_time
+            Payment.objects.create(
+                donation=monetary_donation,
+                method='Razorpay',
+                status='Completed'
+            )
+        else:
+            donation_date = timezone.now()
+        
+        donation_type_mapping = {
+            'medical_expenses': 'medical',
+            'nourish_needy': 'meals',
+            'comprehensive_home_care': 'home',
+            'grocery_kit': 'grocery',
+        }
+        for key, item in cart.items():
+            donation_type = donation_type_mapping.get(key, 'other') if key in donation_type_mapping else 'other'
+            donation = Donation.objects.create(
+                user=request.user,
+                donation_type=donation_type,
+                amount=item['price'] * item['quantity'],
+                donation_details=item['name'],
+                quantity=item['quantity'],
+                status='Paid'
+            )
+            if donation.donation_type != 'monetary':
+                Inventory.objects.create(
+                    donation=donation,
+                    item_name=item['name'],
+                    quantity=item['quantity']
+                )
+                
+        request.session['cart'] = {}
+        request.session['billing'] = {}
+        request.session.modified = True
+
+        receipt_number = f"RCPT-{uuid.uuid4().hex[:8].upper()}"
+        context = {
+            'organization_name': 'Charitable Trust Name',
+            'organization_address': '123 Charity Street, City, State, ZIP',
+            'organization_phone': '123-456-7890',
+            'organization_email': 'info@charity.org',
+            'organization_website': 'www.charity.org',
+            'receipt_number': receipt_number,
+            'donation_date': donation_date,
+            'amount_donated': total,
+            'donation_method': 'Razorpay',
+            'donor_name': billing.get('full_name'),
+            'donor_address': billing.get('address'),
+            'donor_contact': billing.get('phone'),
+        }
+
+        messages.success(request, "Payment successful and donation recorded!")
+        return render(request, 'donation/receipt.html', context)
+    
+    return redirect('monetary_donation')
+
+# ----------------------------
+# Beneficiary Request Functions
+# ----------------------------
+# Manage Emergency Support
+# A simple test for admin/staff users.
+def is_admin(user):
+    return user.is_staff
+from datetime import date
+
+
+@login_required
+def submit_request(request):
+    if request.method == 'POST':
+        donation_category = request.POST.get('donation_category')
+        details = request.POST.get('details')
+        emergency_level = request.POST.get('emergency_level')
+        proof = request.FILES.get('proof')
+
+        # Check if "on_behalf" checkbox is checked.
+        on_behalf = request.POST.get('on_behalf')
+        if on_behalf:
+            # When submitting on someone else's behalf, use form values.
+            beneficiary_name = request.POST.get('beneficiary_name')
+            beneficiary_email = request.POST.get('beneficiary_email')
+            beneficiary_phone = request.POST.get('beneficiary_phone')
+            gender = request.POST.get('gender')
+            age = request.POST.get('age')
+            address = request.POST.get('address')
+            place = request.POST.get('place')
+            post = request.POST.get('post')
+            pin = request.POST.get('pin')
+            district = request.POST.get('district')
+            relationship = request.POST.get('relationship')
+        else:
+            # When not on behalf, use the logged-in user's details from the CustomUser model.
+            beneficiary_name = request.user.fullname or request.user.username
+            beneficiary_email = request.user.email
+            beneficiary_phone = request.user.phone
+            gender = request.user.gender
+
+            # Compute age from dob if available.
+            if request.user.dob:
+                today = date.today()
+                age = today.year - request.user.dob.year - ((today.month, today.day) < (request.user.dob.month, request.user.dob.day))
+            else:
+                age = None
+
+            # Use address details from the user profile.
+            address = request.user.place  # If you have a separate street address field, use it here.
+            place = request.user.place
+            post = request.user.post
+            pin = request.user.pin
+            district = request.user.district
+            relationship = ""  # No relationship is needed in this case.
+
+        other_donation_type = request.POST.get('other_donation_type')
+        custom_other_donation = request.POST.get('custom_other_donation')
+        
+        if donation_category and details and emergency_level:
+            BeneficiarySupport.objects.create(
+                user=request.user,
+                emergency_type=donation_category,
+                details=details,
+                emergency_level=emergency_level,
+                proof=proof,
+                status='Pending',
+                beneficiary_name=beneficiary_name,
+                beneficiary_email=beneficiary_email,
+                beneficiary_phone=beneficiary_phone,
+                gender=gender,
+                age=age if age and str(age).isdigit() else None,
+                address=address,
+                place=place,
+                post=post,
+                pin=pin,
+                district=district,
+                relationship=relationship,
+                other_donation_type=other_donation_type,
+                custom_other_donation=custom_other_donation
+            )
+            messages.success(request, "Your request has been submitted.")
+            return redirect('request_list')
+        else:
+            error = "Please fill in all the required fields."
+            return render(request, 'beneficary/submit_request.html', {'error': error})
+    return render(request, 'beneficary/submit_request.html')
+@login_required
+def request_list(request):
+    # List only the requests submitted by the logged-in user.
+    requests = BeneficiarySupport.objects.filter(user=request.user)
+    return render(request, 'beneficary/request_list.html', {'requests': requests})
+
+@user_passes_test(is_admin)
+def admin_request_list(request):
+    # Admin view: list all requests.
+    requests = BeneficiarySupport.objects.all()
+    return render(request, 'beneficary/admin_request_list.html', {'requests': requests})
+
+@user_passes_test(is_admin)
+def manage_emergency_support(request):
+    # Another admin view for managing emergency support requests.
+    emergency_requests = BeneficiarySupport.objects.all()
+    # Pass the context variable as 'requests' so the template can iterate correctly.
+    return render(request, 'manage_emergency_support.html', {'requests': emergency_requests})
+
+@user_passes_test(is_admin)
+def update_request(request, pk):
+    beneficiary_request = get_object_or_404(BeneficiarySupport, pk=pk)
+    if request.method == 'POST':
+        response_text = request.POST.get('response')
+        status_value = request.POST.get('status')
+        beneficiary_request.response = response_text
+        beneficiary_request.status = status_value
+        beneficiary_request.save()
+        messages.success(request, "Request updated successfully.")
+        return redirect('manage_emergency_support')
+    return render(request, 'beneficary/update_request.html', {'request_obj': beneficiary_request})
+
+
+
+
+@login_required
+@user_passes_test(is_admin)
+def urgent_requests(request):
+    urgent_reqs = BeneficiarySupport.objects.filter(emergency_level="High")
+    return render(request, 'beneficary/urgent_requests.html', {'requests': urgent_reqs})
+
+# ----------------------------
+# Inventory & Allocation Functions
+# ----------------------------
+
+from django.db.models import Sum, Count,Q
+
+@login_required
+@user_passes_test(is_admin)
+def manage_inventory(request):
+    # Define donation types.
+    donation_types = ['monetary', 'medical', 'meals', 'grocery', 'home', 'other']
+    inventory_summary = []
+    
+    # Get donation type display choices dynamically.
+    donation_type_choices = dict(Donation._meta.get_field('donation_type').choices)
+    
+    for d_type in donation_types:
+        if d_type == 'monetary':
+            # For monetary donations, filter by status "Paid".
+            monetary_donations = Donation.objects.filter(donation_type='monetary', status='Paid')
+            total_amount = monetary_donations.aggregate(total=Sum('amount'))['total'] or 0
+            
+            inventory_summary.append({
+                'donation_type': d_type,
+                'donation_type_display': donation_type_choices.get(d_type, d_type),
+                'total_amount': total_amount,
+                'total_quantity': 'N/A',  # Not applicable for monetary donations.
+                'allocated_quantity': 'N/A',
+                'available_quantity': 'N/A',
+                'count': monetary_donations.count(),
+                'beneficiaries': 'N/A',
+            })
+        else:
+            # For non-monetary donations, aggregate data from Inventory.
+            qs = Inventory.objects.filter(donation__donation_type=d_type)
+            agg = qs.aggregate(
+                total_quantity=Sum('quantity'),
+                allocated_quantity=Sum('quantity', filter=Q(allocated=True)),
+                count=Count('id')
+            )
+            total_quantity = agg['total_quantity'] or 0
+            allocated_quantity = agg['allocated_quantity'] or 0
+            available_quantity = total_quantity - allocated_quantity
+            
+            # Get distinct beneficiary names from allocated records.
+            beneficiaries_qs = qs.filter(allocated=True, allocated_to__isnull=False)\
+                                 .values_list('allocated_to__beneficiary_name', flat=True)\
+                                 .distinct()
+            beneficiary_list = ", ".join(beneficiaries_qs) if beneficiaries_qs else "Not Allocated"
+            
+            inventory_summary.append({
+                'donation_type': d_type,
+                'donation_type_display': donation_type_choices.get(d_type, d_type),
+                'total_amount': 'N/A',  # Monetary amount not applicable here.
+                'total_quantity': total_quantity,
+                'allocated_quantity': allocated_quantity,
+                'available_quantity': available_quantity,
+                'count': agg['count'],
+                'beneficiaries': beneficiary_list,
+            })
+    
+    # Fetch all inventory items for detailed listing.
+    inventory_items = Inventory.objects.select_related('donation', 'allocated_to')
+    
+    return render(request, 'beneficary/manage_inventory_summary.html', {
+        'inventory_summary': inventory_summary,
+        'inventory_items': inventory_items
+    })
+
+
+@user_passes_test(lambda u: u.is_staff)
+def inventory_list(request):
+    inventory_items = Inventory.objects.all()
+    return render(request, 'inventory_list.html', {'inventory_items': inventory_items})
+
+@user_passes_test(lambda u: u.is_staff)
+def update_inventory(request, pk):
+    inventory_item = get_object_or_404(Inventory, pk=pk)
+    if request.method == 'POST':
+        beneficiary_id = request.POST.get('beneficiary_id')
+        if beneficiary_id:
+            beneficiary = get_object_or_404(BeneficiarySupport, pk=beneficiary_id)
+            inventory_item.allocated_to = beneficiary
+            inventory_item.allocated = True
+            inventory_item.save()
+            messages.success(request, "Inventory allocated successfully.")
+        else:
+            messages.error(request, "Please select a beneficiary.")
+        return redirect('inventory_list')
+    beneficiaries = BeneficiarySupport.objects.filter(status='Pending')
+    return render(request, 'inventory/update_inventory.html', {'inventory_item': inventory_item, 'beneficiaries': beneficiaries})
+
+
+
+#-----------------------------------
+
+
+
+
+@login_required
+def goods_checkout(request):
+    """
+    Finalizes non-monetary (goods/in-kind) donations from the session cart.
+    This view should display a summary of items and, on confirmation,
+    create Donation records for each item.
+    """
+    cart = request.session.get('cart', {})
+    if not cart:
+        messages.error(request, "Your cart is empty!")
+        return redirect('view_cart')
+    
+    # You can filter the cart items by donation_type if needed.
+    # Here, we assume all non-monetary items have a donation_type other than 'monetary'
+    goods_items = {k: v for k, v in cart.items() if k not in ['monetary', 'grocery_kit']}
+
+    if request.method == 'POST':
+        # Optionally, retrieve additional donor details from the POST data.
+        # For now, we'll just use the current user.
+        for key, item in goods_items.items():
+            # Determine the donation type based on the key or item data.
+            # For example, if key is "medical_expenses", set donation_type accordingly.
+            # You might store the actual donation type in the session item.
+            donation_type = item.get('donation_type', 'other')  # default to 'other'
+            # Create a Donation record.
+            Donation.objects.create(
+                user=request.user,
+                donation_type=donation_type,
+                donation_details=item.get('name', 'Goods Donation'),
+                quantity=item.get('quantity'),
+                # For goods donations, you might not require an amount.
+                amount=item.get('price') if item.get('price') > 0 else None,
+                status='Pending'
+            )
+        # Clear the session cart after finalization.
+        request.session['cart'] = {}
+        request.session.modified = True
+        messages.success(request, "Thank you for your donation!")
+        return redirect('user_home')
+    
+    # For GET requests, show a summary for confirmation.
+    total_quantity = sum(item.get('quantity', 0) for item in goods_items.values())
+    context = {
+        'goods_items': goods_items,
+        'total_quantity': total_quantity,
+    }
+    return render(request, 'donation/goods_checkout.html', context)
+
+
+@login_required
+def donor_detail(request, user_id):
+    donor = get_object_or_404(User, pk=user_id)
+    return render(request, 'donation/donor_detail.html', {'donor': donor})
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <!-- Audio element for urgent request alert -->
+    {% if requests|length > 0 %}
+    <audio id="urgent-sound" src="{% static 'sounds/urgent_alert.mp3' %}" preload="auto"></audio>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var sound = document.getElementById('urgent-sound');
+            if(sound) {
+                sound.play().catch(function(err) {
+                    console.log("Audio playback failed:", err);
+                });
+            }
+        });
+    </script>
+    {% endif %}
+    
+    <div class="card shadow-lg">
+        <!-- Card Header with a red background for urgency -->
+        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">
+                <i class="fas fa-exclamation-triangle me-2"></i>Urgent Beneficiary Support Requests
+            </h3>
+            <div>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
+                    <i class="fas fa-home me-2"></i>Dashboard
+                </a>
+            </div>
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Beneficiary Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Emergency Level</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                        <tr>
+                            <td>#{{ req.beneficiary_id }}</td>
+                            <td>{{ req.user.username }}</td>
+                            <td>{{ req.beneficiary_name }}</td>
+                            <td>{{ req.beneficiary_email }}</td>
+                            <td>{{ req.beneficiary_phone }}</td>
+                            <td>{{ req.emergency_level }}</td>
+                            <td>{{ req.date|date:"M d, Y" }}</td>
+                            <td>{{ req.status }}</td>
+                            <td>
+                                <a href="{% url 'update_request' req.beneficiary_id %}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit me-1"></i>Update
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center">No urgent requests found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

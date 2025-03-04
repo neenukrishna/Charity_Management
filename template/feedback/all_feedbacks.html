@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  /* Alternative Feedback List Style using Grid */
+  .feedback-list-container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 1rem;
+  }
+
+  .feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .feedback-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    padding: 2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .feedback-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .feedback-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+  }
+
+  .feedback-header h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--dark-color);
+  }
+
+  .rating i {
+    color: #ffc107;
+    margin-right: 2px;
+  }
+
+  .feedback-content {
+    font-size: 1rem;
+    color: #475569;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .admin-reply {
+    background: #f1f5f9;
+    border-left: 4px solid var(--secondary-color);
+    padding: 1rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+  }
+
+  .feedback-meta {
+    text-align: right;
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-top: 2rem;
+  }
+
+  .empty-state i {
+    font-size: 3rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+  }
+</style>
+
+<div class="feedback-list-container">
+  <h2 class="text-center mb-4 section-title">Community Feedback</h2>
+  
+  {% if feedbacks %}
+    <div class="feedback-grid">
+      {% for fb in feedbacks %}
+      <div class="feedback-card">
+        <div class="feedback-header">
+          <div class="user-avatar">
+            {{ fb.user.fullname|first|upper }}
+          </div>
+          <div>
+            <h4>{{ fb.user.fullname }}</h4>
+            <div class="rating">
+              {% for star in "12345"|make_list %}
+                {% if forloop.counter <= fb.rating %}
+                  <i class="fas fa-star"></i>
+                {% else %}
+                  <i class="far fa-star"></i>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <p class="feedback-content">{{ fb.comments }}</p>
+        {% if fb.reply %}
+        <div class="admin-reply">
+          {{ fb.reply }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="fas fa-comment-slash"></i>
+      <h3>No Feedback Yet</h3>
+      <p class="text-muted">Be the first to share your experience!</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

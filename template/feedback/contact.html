@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Contact Section -->
+<section class="py-5 bg-primary" id="contact">
+  <div class="container text-white">
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Contact Us</h2>
+        <p>We would love to hear from you. Whether you have a question about our work, need support, or want to get involved, please reach out!</p>
+        <ul class="list-unstyled">
+          <li><i class="fas fa-map-marker-alt me-2"></i>123 Charity Lane, Hope City, Country</li>
+          <li><i class="fas fa-phone me-2"></i>+1 (555) 123-4567</li>
+          <li><i class="fas fa-envelope me-2"></i>info@charityconnect.org</li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <h4>Send Us a Message</h4>
+        <form method="POST">
+          {% csrf_token %}
+          <div class="mb-3">
+            <input type="text" class="form-control" name="name" placeholder="Your Name" required>
+          </div>
+          <div class="mb-3">
+            <input type="email" class="form-control" name="email" placeholder="Your Email" required>
+          </div>
+          <div class="mb-3">
+            <textarea class="form-control" name="message" rows="4" placeholder="Your Message" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-light">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

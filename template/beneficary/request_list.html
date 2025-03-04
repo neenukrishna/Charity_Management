@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Your Support Requests</h2>
+  <ul class="list-group">
+    {% for req in requests %}
+      <li class="list-group-item">
+        <strong>{{ req.emergency_type }}</strong> - Status: {{ req.status }} - Submitted on: {{ req.date }}
+      </li>
+    {% empty %}
+      <li class="list-group-item">No requests found.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
