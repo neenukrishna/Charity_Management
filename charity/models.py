@@ -236,6 +236,8 @@ class BeneficiarySupport(models.Model):
     )
     
     # Additional Assistance Details
+    allocation_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
     other_donation_type = models.CharField(max_length=255, blank=True, null=True)
     custom_other_donation = models.CharField(max_length=255, blank=True, null=True)
     

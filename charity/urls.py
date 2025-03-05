@@ -162,6 +162,10 @@ urlpatterns = [
     path('contacts/', views.admin_contact_list, name='admin_contact_list'),
     
     path('urgent-requests/', views.urgent_requests, name='urgent_requests'),
+    path('inventory-allocate/<str:d_type>/', views.beneficiary_requests_by_category, name='allocate_by_category'),
+    path('allocate-beneficiary-request/<int:pk>/', views.allocate_beneficiary_request, name='allocate_beneficiary_request'),
+
+
 
     # path('user-home/', views.home_view, name='home'),
 

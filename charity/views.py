@@ -1592,6 +1592,8 @@ def checkout(request):
         'razorpay_key_id': settings.RAZORPAY_KEY_ID,
     }
     return render(request, 'donation/payment.html', context)
+
+
 @login_required
 def receipt(request):
     billing = request.session.get('billing', {})
@@ -1890,70 +1892,103 @@ def urgent_requests(request):
 # ----------------------------
 
 from django.db.models import Sum, Count,Q
-
 @login_required
 @user_passes_test(is_admin)
 def manage_inventory(request):
-    # Define donation types.
-    donation_types = ['monetary', 'medical', 'meals', 'grocery', 'home', 'other']
-    inventory_summary = []
-    
-    # Get donation type display choices dynamically.
+    # Define your donation types.
+    # Money-based: all except 'other'
+    money_based_types = ['monetary', 'medical', 'meals', 'grocery', 'home']
     donation_type_choices = dict(Donation._meta.get_field('donation_type').choices)
     
-    for d_type in donation_types:
-        if d_type == 'monetary':
-            # For monetary donations, filter by status "Paid".
-            monetary_donations = Donation.objects.filter(donation_type='monetary', status='Paid')
-            total_amount = monetary_donations.aggregate(total=Sum('amount'))['total'] or 0
-            
-            inventory_summary.append({
-                'donation_type': d_type,
-                'donation_type_display': donation_type_choices.get(d_type, d_type),
-                'total_amount': total_amount,
-                'total_quantity': 'N/A',  # Not applicable for monetary donations.
-                'allocated_quantity': 'N/A',
-                'available_quantity': 'N/A',
-                'count': monetary_donations.count(),
-                'beneficiaries': 'N/A',
-            })
-        else:
-            # For non-monetary donations, aggregate data from Inventory.
-            qs = Inventory.objects.filter(donation__donation_type=d_type)
-            agg = qs.aggregate(
-                total_quantity=Sum('quantity'),
-                allocated_quantity=Sum('quantity', filter=Q(allocated=True)),
-                count=Count('id')
-            )
-            total_quantity = agg['total_quantity'] or 0
-            allocated_quantity = agg['allocated_quantity'] or 0
-            available_quantity = total_quantity - allocated_quantity
-            
-            # Get distinct beneficiary names from allocated records.
-            beneficiaries_qs = qs.filter(allocated=True, allocated_to__isnull=False)\
-                                 .values_list('allocated_to__beneficiary_name', flat=True)\
-                                 .distinct()
-            beneficiary_list = ", ".join(beneficiaries_qs) if beneficiaries_qs else "Not Allocated"
-            
-            inventory_summary.append({
-                'donation_type': d_type,
-                'donation_type_display': donation_type_choices.get(d_type, d_type),
-                'total_amount': 'N/A',  # Monetary amount not applicable here.
-                'total_quantity': total_quantity,
-                'allocated_quantity': allocated_quantity,
-                'available_quantity': available_quantity,
-                'count': agg['count'],
-                'beneficiaries': beneficiary_list,
-            })
+    money_summary = {}
+    for d_type in money_based_types:
+        donations = Donation.objects.filter(donation_type=d_type, status='Paid')
+        total_amount = donations.aggregate(total=Sum('amount'))['total'] or 0
+        entries_count = donations.count()
+        # For money-based categories, we can calculate allocated amounts from beneficiary requests.
+        allocated_sum = BeneficiarySupport.objects.filter(
+            emergency_type__iexact=d_type, status='Resolved'
+        ).aggregate(total_allocated=Sum('allocation_amount'))['total_allocated'] or 0
+        available_amount = total_amount - allocated_sum
+        
+        money_summary[d_type] = {
+            'donation_type_display': donation_type_choices.get(d_type, d_type),
+            'total_amount': total_amount,
+            'allocated_amount': allocated_sum,
+            'available_amount': available_amount,
+            'entries_count': entries_count,
+        }
     
-    # Fetch all inventory items for detailed listing.
+    # For "other" donations (in-kind), group by the sub-category.
+    # We assume that for "other" donations, Inventory.item_name stores the specific sub-category.
+    qs = Inventory.objects.filter(donation__donation_type='other')
+    others_grouped = qs.values('item_name').annotate(
+        total_quantity=Sum('quantity'),
+        allocated_quantity=Sum('quantity', filter=Q(allocated=True)),
+        entries_count=Count('id')
+    )
+    others_summary = []
+    for entry in others_grouped:
+        total_quantity = entry['total_quantity'] or 0
+        allocated_quantity = entry['allocated_quantity'] or 0
+        available_quantity = total_quantity - allocated_quantity
+        others_summary.append({
+            'sub_category': entry['item_name'],
+            'total_quantity': total_quantity,
+            'allocated_quantity': allocated_quantity,
+            'available_quantity': available_quantity,
+            'entries_count': entry['entries_count'],
+        })
+    
+    # (Optionally) Fetch detailed inventory items.
     inventory_items = Inventory.objects.select_related('donation', 'allocated_to')
     
-    return render(request, 'beneficary/manage_inventory_summary.html', {
-        'inventory_summary': inventory_summary,
-        'inventory_items': inventory_items
-    })
+    context = {
+        'money_summary': money_summary,
+        'others_summary': others_summary,
+        'inventory_items': inventory_items,
+    }
+    return render(request, 'beneficary/manage_inventory_summary.html', context)
 
+
+@login_required
+@user_passes_test(is_admin)
+def beneficiary_requests_by_category(request, category):
+    # For money-based types, category might be like 'medical', etc.
+    # For other, category is the sub-category (i.e., the value in Inventory.item_name).
+    # Adjust filtering logic as needed.
+    requests_qs = BeneficiarySupport.objects.filter(emergency_type__iexact=category, status='Pending')
+    context = {
+        'donation_category': category,
+        'requests': requests_qs,
+    }
+    return render(request, 'beneficary/beneficiary_requests_by_category.html', context)
+@login_required
+@user_passes_test(is_admin)
+def allocate_beneficiary_request(request, pk):
+    # Allocate a single beneficiary request.
+    req_obj = get_object_or_404(BeneficiarySupport, pk=pk)
+    if request.method == 'POST':
+        # Get the allocation amount from the form.
+        allocation_amount = request.POST.get('allocation_amount')
+        if allocation_amount:
+            try:
+                allocation_amount = float(allocation_amount)
+            except ValueError:
+                messages.error(request, "Please enter a valid amount.")
+                return redirect('allocate_beneficiary_request', pk=pk)
+            req_obj.allocation_amount = allocation_amount
+            req_obj.status = 'Resolved'
+            req_obj.save()
+            messages.success(request, "Beneficiary request allocated successfully.")
+            # Redirect back to the list for the same category.
+            return redirect('allocate_by_category', d_type=req_obj.emergency_type)
+        else:
+            messages.error(request, "Please enter an allocation amount.")
+    context = {
+        'request_obj': req_obj
+    }
+    return render(request, 'beneficary/allocate_beneficiary_request.html', context)
 
 @user_passes_test(lambda u: u.is_staff)
 def inventory_list(request):

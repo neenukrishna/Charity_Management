@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h3 class="text-primary mb-3">Allocate Beneficiary Request</h3>
+    <p><strong>Beneficiary Name:</strong> {{ request_obj.beneficiary_name }}</p>
+    <p><strong>Email:</strong> {{ request_obj.beneficiary_email }}</p>
+    <p><strong>Requested Category:</strong> {{ request_obj.emergency_type }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="allocation_amount" class="form-label">Allocation Amount (₹):</label>
+            <input type="number" step="0.01" class="form-control" id="allocation_amount" name="allocation_amount" required>
+        </div>
+        <button type="submit" class="btn btn-success">Allocate Now</button>
+    </form>
+    <a href="{% url 'allocate_by_category' request_obj.emergency_type %}" class="btn btn-secondary mt-3">Back</a>
+</div>
+{% endblock %}
