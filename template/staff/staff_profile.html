@@ -1,84 +1,112 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Staff Profile - Humanitarian Hub</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-      .profile-card {
-          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-          border: none;
-          border-radius: 10px;
-          background-color: #fff;
-          padding: 20px;
-          margin-top: 20px;
-      }
-  </style>
-</head>
-<body class="bg-light">
-  <div class="container mt-5">
-    <div class="profile-card p-4">
-      <h2 class="mb-3"><i class="fas fa-user me-2"></i>Staff Profile</h2>
-      
-      <div class="row mb-3">
-        <div class="col-md-4"><strong>ID:</strong></div>
-        <div class="col-md-8">#{{ staff_member.staff_id }}</div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-4"><strong>Full Name:</strong></div>
-        <div class="col-md-8">{{ staff_member.full_name }}</div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-4"><strong>Role:</strong></div>
-        <div class="col-md-8">{{ staff_member.role }}</div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-4"><strong>Email:</strong></div>
-        <div class="col-md-8">
-          <a href="mailto:{{ staff_member.email }}">{{ staff_member.email }}</a>
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0"><i class="fas fa-user-tie me-2"></i>Staff Profile</h3>
+                        <div class="btn-group">
+                            <a href="{% url 'update_profile' %}" class="btn btn-light btn-sm">
+                                <i class="fas fa-edit me-1"></i>Edit Profile
+                            </a>
+                            <a href="{% url 'change_password' %}" class="btn btn-light btn-sm">
+                                <i class="fas fa-lock me-1"></i>Change Password
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Personal Information -->
+                        <div class="col-md-6 border-end">
+                            <div class="mb-4">
+                                <h5 class="text-primary mb-3"><i class="fas fa-id-card me-2"></i>Personal Details</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-5">Staff ID</dt>
+                                    <dd class="col-sm-7">#{{ staff_member.staff_id }}</dd>
+
+                                    <dt class="col-sm-5">Full Name</dt>
+                                    <dd class="col-sm-7">{{ staff_member.full_name }}</dd>
+
+                                    <dt class="col-sm-5">Date of Birth</dt>
+                                    <dd class="col-sm-7">{{ staff_member.dob|date:"F j, Y" }}</dd>
+
+                                    <dt class="col-sm-5">Gender</dt>
+                                    <dd class="col-sm-7">{{ staff_member.gender }}</dd>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <h5 class="text-primary mb-3"><i class="fas fa-address-book me-2"></i>Contact Information</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-5">Email</dt>
+                                    <dd class="col-sm-7">
+                                        <a href="mailto:{{ staff_member.email }}" class="text-decoration-none">
+                                            {{ staff_member.email }}
+                                        </a>
+                                    </dd>
+
+                                    <dt class="col-sm-5">Phone</dt>
+                                    <dd class="col-sm-7">{{ staff_member.phone|default:"-" }}</dd>
+
+                                    <dt class="col-sm-5">Address</dt>
+                                    <dd class="col-sm-7">
+                                        {{ staff_member.place }}<br>
+                                        {{ staff_member.post }}, {{ staff_member.district }}<br>
+                                        PIN: {{ staff_member.pin }}
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employment Details -->
+                    <div class="border-top pt-4">
+                        <h5 class="text-primary mb-3"><i class="fas fa-briefcase me-2"></i>Employment Details</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-1">
+                                    <strong>Position:</strong> 
+                                    <span class="badge bg-primary">{{ staff_member.role }}</span>
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Join Date:</strong> 
+                                    {{ staff_member.join_date|date:"M j, Y" }}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1">
+                                    <strong>Status:</strong> 
+                                    <span class="badge {% if staff_member.status == 'Active' %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {{ staff_member.status }}
+                                    </span>
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Last Updated:</strong> 
+                                    {{ staff_member.updated_at|date:"M j, Y H:i"|default:"-" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Section -->
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        
+                        <a href="{% url 'staff_dashboard' %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-4"><strong>Phone:</strong></div>
-        <div class="col-md-8">{{ staff_member.phone }}</div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-4"><strong>Date of Birth:</strong></div>
-        <div class="col-md-8">{{ staff_member.dob }}</div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-4"><strong>Gender:</strong></div>
-        <div class="col-md-8">{{ staff_member.gender }}</div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-4"><strong>Address:</strong></div>
-        <div class="col-md-8">
-          {{ staff_member.place }}, {{ staff_member.post }}, {{ staff_member.district }} - {{ staff_member.pin }}
-        </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-4"><strong>Join Date:</strong></div>
-        <div class="col-md-8">{{ staff_member.join_date }}</div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-4"><strong>Status:</strong></div>
-        <div class="col-md-8">{{ staff_member.status }}</div>
-      </div>
-      
-      <!-- Action Buttons -->
-      <div class="mt-4">
-        <a href="{% url 'update_profile' %}" class="btn btn-primary">
-          <i class="fas fa-edit me-1"></i> Update Profile
-        </a>
-        <a href="{% url 'change_password' %}" class="btn btn-warning">
-          <i class="fas fa-key me-1"></i> Change Password
-        </a>
-        <a href="{% url 'staff_dashboard' %}" class="btn btn-secondary">
-          <i class="fas fa-home me-1"></i> Back to Dashboard
-        </a>
-      </div>
     </div>
-  </div>
-</body>
-</html>
+</div>
+{% endblock %}

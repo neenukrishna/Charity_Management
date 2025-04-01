@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Palliative Patient Detail</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background: #f4f7fc;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .header {
+      background: #2c3e50;
+      color: #fff;
+      padding: 20px 0;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      font-size: 1.75rem;
+      margin: 0;
+    }
+    .card {
+      border: none;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+      background: #2980b9;
+      color: #fff;
+      font-size: 1.25rem;
+    }
+    .table th {
+      background: #ecf0f1;
+      width: 35%;
+    }
+    .btn-back {
+      background: #2980b9;
+      border: none;
+    }
+    .btn-back:hover {
+      background: #1c5980;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1><i class="fas fa-heartbeat me-2"></i>Palliative Care Patient Details</h1>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        Patient Information
+      </div>
+      <div class="card-body">
+        <table class="table table-borderless">
+          <tbody>
+            <tr>
+              <th scope="row"><i class="fas fa-user me-2"></i>Patient Name</th>
+              <td>{{ patient.patientName }}</td>
+            </tr>
+            <tr>
+              <th scope="row"><i class="fas fa-calendar-alt me-2"></i>Age</th>
+              <td>{{ patient.age }}</td>
+            </tr>
+            <tr>
+              <th scope="row"><i class="fas fa-venus-mars me-2"></i>Gender</th>
+              <td>{{ patient.gender }}</td>
+            </tr>
+            <tr>
+              <th scope="row"><i class="fas fa-map-marker-alt me-2"></i>Address</th>
+              <td>{{ patient.address }}</td>
+            </tr>
+            <tr>
+              <th scope="row"><i class="fas fa-phone me-2"></i>Contact Number</th>
+              <td>{{ patient.contactNumber }}</td>
+            </tr>
+            <tr>
+              <th scope="row"><i class="fas fa-envelope me-2"></i>Email</th>
+              <td>{{ patient.email }}</td>
+            </tr>
+            <tr>
+              <th scope="row"><i class="fas fa-notes-medical me-2"></i>Medical Condition</th>
+              <td>{{ patient.medicalCondition }}</td>
+            </tr>
+            <tr>
+              <th scope="row"><i class="fas fa-info-circle me-2"></i>Additional Details</th>
+              <td>{{ patient.additionalDetails }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-end">
+          <a href="{% url 'view_assigned_tasks_coordinator' %}" class="btn btn-back text-white mt-3">
+            <i class="fas fa-arrow-left me-2"></i>Back to Assigned Tasks
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

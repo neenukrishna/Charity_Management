@@ -34,11 +34,15 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'charity',
+    'channels',
+    'chat',  # new chat app
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+     
+
     'django.contrib.staticfiles',
 ]
 
@@ -68,12 +72,22 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'charity.context_processors.notification_count',
+                
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'AKG.wsgi.application'
+
+ASGI_APPLICATION = 'your_project.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 
 

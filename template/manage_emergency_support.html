@@ -1,78 +1,203 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-5">
-    <div class="card shadow-lg">
-        <!-- Card Header -->
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h3 class="mb-0">
-                <i class="fas fa-exclamation-triangle me-2"></i>Beneficiary Support Requests
-            </h3>
-            <div>
-                <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
-                    <i class="fas fa-home me-2"></i>Dashboard
-                </a>
-            </div>
-        </div>
-        <!-- Card Body -->
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover table-striped align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>User</th>
-                            <th>Beneficiary Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Address</th>
-                            <th>Assistance Type</th>
-                            <th>Emergency Level</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for req in requests %}
-                        <tr>
-                            <td>#{{ req.beneficiary_id }}</td>
-                            <td>{{ req.user.username }}</td>
-                            <td>{{ req.beneficiary_name }}</td>
-                            <td>{{ req.beneficiary_email }}</td>
-                            <td>{{ req.beneficiary_phone }}</td>
-                            <td>
-                                {% if req.address %}
-                                    {{ req.address }}<br>
-                                    {% if req.place %}City: {{ req.place }}<br>{% endif %}
-                                    {% if req.post %}Post Office: {{ req.post }}<br>{% endif %}
-                                    {% if req.pin %}PIN Code: {{ req.pin }}<br>{% endif %}
-                                    {% if req.district %}District: {{ req.district }}{% endif %}
-                                {% else %}
-                                    Not Provided
-                                {% endif %}
-                            </td>
-                            <td>{{ req.emergency_type }}</td>
-                            <td>{{ req.emergency_level }}</td>
-                            <td>{{ req.date|date:"M d, Y" }}</td>
-                            <td>{{ req.status }}</td>
-                            <td>
-                                <a href="{% url 'update_request' req.beneficiary_id %}" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-edit me-1"></i>Update
-                                </a>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="11" class="text-center py-4">
-                                <i class="fas fa-exclamation-circle fa-2x text-muted mb-3"></i>
-                                <p class="text-muted mb-0">No beneficiary support requests found</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  <div class="card shadow-lg">
+    <!-- Card Header -->
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h3 class="mb-0">
+        <i class="fas fa-exclamation-triangle me-2"></i>Beneficiary Support Requests
+      </h3>
+      <div>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
+          <i class="fas fa-home me-2"></i>Dashboard
+        </a>
+      </div>
     </div>
+
+    <!-- Filter Form -->
+    <div class="card-body">
+      <form method="GET" class="d-flex align-items-center gap-2 mb-4 flex-wrap">
+        <input type="text" name="emergency_type" class="form-control" placeholder="Assistance Type" value="{{ request.GET.emergency_type }}" style="max-width: 200px;">
+        
+        <select name="emergency_level" class="form-select" style="max-width: 180px;">
+            <option value="">Emergency Level</option>
+            <option value="Low" {% if request.GET.emergency_level == "Low" %}selected{% endif %}>Low</option>
+            <option value="Medium" {% if request.GET.emergency_level == "Medium" %}selected{% endif %}>Medium</option>
+            <option value="High" {% if request.GET.emergency_level == "High" %}selected{% endif %}>High</option>
+        </select>
+        
+        <select name="payment_method" class="form-select" style="max-width: 180px;">
+            <option value="">Payment Method</option>
+            <option value="bank_transfer" {% if request.GET.payment_method == "bank_transfer" %}selected{% endif %}>Bank Transfer</option>
+            <option value="pickup" {% if request.GET.payment_method == "pickup" %}selected{% endif %}>Pickup</option>
+        </select>
+
+        <select name="status" class="form-select" style="max-width: 150px;">
+            <option value="">Status</option>
+            <option value="Pending" {% if request.GET.status == "Pending" %}selected{% endif %}>Pending</option>
+            <option value="Approved" {% if request.GET.status == "Approved" %}selected{% endif %}>Approved</option>
+            <option value="Rejected" {% if request.GET.status == "Rejected" %}selected{% endif %}>Rejected</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search me-1"></i>Search
+        </button>
+
+        <a href="{% url 'manage_emergency_support' %}" class="btn btn-secondary">
+            <i class="fas fa-sync-alt me-1"></i>Reset
+        </a>
+      </form>
+
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Beneficiary</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Contact</th>
+              <th style="min-width: 250px">Address</th>
+              <th>Type</th>
+              <th style="min-width: 300px">Situation</th>
+              <th>Level</th>
+              <th>Proof</th>
+              <th>Payment</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for req in requests %}
+            <tr>
+              <td>#{{ req.beneficiary_id }}</td>
+              <td>{{ req.user.username }}</td>
+              <td>
+                <div class="fw-bold">{{ req.beneficiary_name }}</div>
+                <div class="text-muted small">{{ req.beneficiary_email }}</div>
+              </td>
+              <td>{{ req.age }}</td>
+              <td>{{ req.gender }}</td>
+              <td>{{ req.beneficiary_phone }}</td>
+              <td>
+                {% if req.address %}
+                  <div class="address-info">
+                    <div class="text-break">{{ req.address|linebreaksbr }}</div>
+                    {% if req.place %}<div><strong>City:</strong> {{ req.place }}</div>{% endif %}
+                    {% if req.post %}<div><strong>Post:</strong> {{ req.post }}</div>{% endif %}
+                    {% if req.pin %}<div><strong>PIN:</strong> {{ req.pin }}</div>{% endif %}
+                    {% if req.district %}<div><strong>District:</strong> {{ req.district }}</div>{% endif %}
+                  </div>
+                {% else %}
+                  <span class="text-muted">Not Provided</span>
+                {% endif %}
+              </td>
+              <td>{{ req.emergency_type }}</td>
+              <td class="situation-detail">
+                {{ req.details|linebreaks }}
+              </td>
+              <td>
+                <span class="badge 
+                  {% if req.emergency_level == 'High' %}bg-danger
+                  {% elif req.emergency_level == 'Medium' %}bg-warning text-dark
+                  {% else %}bg-secondary{% endif %}">
+                  {{ req.emergency_level }}
+                </span>
+              </td>
+              <td>
+                {% if req.proof %}
+                  <a href="{{ req.proof.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-file-pdf"></i> View
+                  </a>
+                {% else %}
+                  <span class="text-muted">N/A</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if req.disbursement_method == "bank_transfer" %}
+                  <div class="bank-details">
+                    <div class="small"><strong>Holder:</strong> {{ req.account_holder }}</div>
+                    <div class="small"><strong>Bank:</strong> {{ req.bank_name }}</div>
+                    <div class="small"><strong>Acc No:</strong> {{ req.account_number }}</div>
+                    <div class="small"><strong>IFSC:</strong> {{ req.ifsc_code }}</div>
+                  </div>
+                {% elif req.disbursement_method == "pickup" %}
+                  <span class="badge bg-info">Pickup</span>
+                {% else %}
+                  <span class="text-muted">-</span>
+                {% endif %}
+              </td>
+              <td>{{ req.date|date:"d M Y" }}</td>
+              <td>
+                <span class="badge 
+                  {% if req.status == 'Approved' %}bg-success
+                  {% elif req.status == 'Rejected' %}bg-danger
+                  {% else %}bg-secondary{% endif %}">
+                  {{ req.status }}
+                </span>
+              </td>
+              <td>
+                {% if req.status == 'Pending' %}
+                  <div class="btn-group">
+                    <a href="{% url 'approve_request' req.beneficiary_id %}" class="btn btn-sm btn-success">
+                      <i class="fas fa-check"></i>
+                    </a>
+                    <a href="{% url 'reject_request' req.beneficiary_id %}" class="btn btn-sm btn-danger">
+                      <i class="fas fa-times"></i>
+                    </a>
+                  </div>
+                {% else %}
+                  <span class="text-muted">Processed</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="13" class="text-center py-4">
+                <i class="fas fa-exclamation-circle fa-2x text-muted mb-3"></i>
+                <p class="text-muted mb-0">No support requests found</p>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
+
+<style>
+  .address-info div {
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+  }
+  
+  .situation-detail {
+    white-space: pre-wrap;
+    line-height: 1.4;
+    font-size: 0.9em;
+  }
+
+  .bank-details div {
+    margin-bottom: 0.2rem;
+    font-size: 0.85em;
+  }
+
+  .table th {
+    vertical-align: middle;
+  }
+
+  .table td {
+    vertical-align: top;
+    padding: 0.75rem;
+  }
+
+  .badge {
+    font-weight: 500;
+    padding: 0.5em 0.75em;
+  }
+</style>
 {% endblock %}

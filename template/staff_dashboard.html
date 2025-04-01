@@ -1,17 +1,3 @@
-<!------------------
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Staff Dashboard</title>
-</head>
-<body>
-    <h1>Welcome, {{ staff_member.full_name }}</h1>
-    <p>Your role: {{ staff_member.role }}</p>
-    <a href="{% url 'logout' %}">Logout</a>
-</body>
-</html>
----------------->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,6 +8,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       background-color: #f8f9fa;
@@ -81,69 +69,62 @@
       </a>
       <hr class="text-white" />
       <ul class="nav nav-pills flex-column mb-auto">
-        <!-- Dashboard Link -->
         <li class="nav-item">
           <a href="#" class="nav-link active">
             <i class="fas fa-tachometer-alt me-2"></i>Dashboard
           </a>
         </li>
-        <!-- New Profile Link -->
         <li class="nav-item">
           <a href="{% url 'staff_profile' %}" class="nav-link">
             <i class="fas fa-user me-2"></i>Profile
           </a>
         </li>
-        <!-- Events Link -->
         <li class="nav-item">
-          <a href="{% url 'staff_events' %}" class="nav-link">
+          <a href="{% url 'staff_manage_events' %}" class="nav-link">
             <i class="fas fa-calendar-alt me-2"></i>Events
           </a>
         </li>
-        <!-- Volunteers Link -->
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="{% url 'staff_manage_volunteers' %}" class="nav-link">
             <i class="fas fa-users me-2"></i>Volunteers
           </a>
         </li>
         <li class="nav-item">
-          <a href="{% url 'manage_blood_donors' %}" class="nav-link">
+          <a href="{% url 'staff_manage_blood_donors' %}" class="nav-link">
             <i class="fas fa-tint me-2"></i>Blood Donors
           </a>
         </li>
-        <!-- Donations Link -->
         <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="fas fa-hand-holding-heart me-2"></i>Donations
+          <a href="{% url 'staff_manage_donations' %}" class="nav-link">
+            <i class="fas fa-hand-holding-heart me-2"></i>Manage Donations
           </a>
         </li>
-        <!-- Palliative Care Link -->
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="{% url 'staff_manage_palliative_cases' %}" class="nav-link">
             <i class="fas fa-medkit me-2"></i>Palliative Care
           </a>
         </li>
-        <!-- Emergencies Link -->
         <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="fas fa-exclamation-triangle me-2"></i>Emergencies
+          <a href="{% url 'staff_urgent_requests' %}" class="nav-link">
+            <i class="fas fa-exclamation-triangle me-2"></i>Urgent Requests
           </a>
         </li>
-        <!-- Inventory Link -->
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="{% url 'staff_manage_emergency_support' %}" class="nav-link">
+            <i class="fas fa-ambulance me-2"></i>Emergency Support
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'staff_manage_inventory' %}" class="nav-link">
             <i class="fas fa-database me-2"></i>Inventory
           </a>
         </li>
-        <!-- Notifications Link -->
-        <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="fas fa-bell me-2"></i>Notifications
-          </a>
-        </li>
+        
+        
+        
       </ul>
       <hr class="text-white" />
       <div>
-        <!-- Logout link with red text -->
         <a href="{% url 'home' %}" class="nav-link text-danger">
           <i class="fas fa-sign-out-alt me-2"></i>Logout
         </a>
@@ -174,72 +155,159 @@
       
       <div class="container-fluid p-4">
         <div class="row g-4">
-          <!-- Emergency Requests Card -->
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-header">
-                <i class="fas fa-exclamation-triangle me-2"></i> Emergency Requests
-                <span class="badge bg-danger float-end">3 New</span>
-              </div>
-              <div class="card-body">
-                <p>2 pending actions needed</p>
-              </div>
+            <!-- Emergency Requests Card -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Emergency Requests
+                        <span class="badge bg-danger float-end">{{ new_emergency }} New</span>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ pending_actions }} pending actions needed</p>
+                        <a href="{% url 'staff_urgent_requests' %}" class="btn btn-sm btn-outline-danger">View Requests</a>
+                    </div>
+                </div>
             </div>
-          </div>
-          <!-- Recent Donations Card -->
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-header">
-                <i class="fas fa-hand-holding-heart me-2"></i> Recent Donations
-              </div>
-              <div class="card-body">
-                <p>5 new donations today</p>
-                <a href="#" class="btn btn-primary">Review</a>
-              </div>
+    
+            <!-- Recent Donations Card -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-hand-holding-heart me-2"></i> Today's Donations
+                    </div>
+                    <div class="card-body">
+                        <p>{{ today_donations }} new donations received</p>
+                        <a href="{% url 'staff_manage_events' %}?status=Paid" class="btn btn-sm btn-outline-success">View Events</a>
+                      </div>
+                </div>
             </div>
-          </div>
-          <!-- Upcoming Events Card -->
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-header">
-                <i class="fas fa-calendar-check me-2"></i> Upcoming Events
-              </div>
-              <div class="card-body">
-                <p>Blood Drive - Tomorrow 10AM</p>
-                <a href="#" class="btn btn-primary">Details</a>
-              </div>
+    
+            <!-- Upcoming Events Card -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-calendar-check me-2"></i> Upcoming Events
+                    </div>
+                    <div class="card-body">
+                      <a href="{% url 'staff_manage_events' %}?status=Paid" class="btn btn-sm btn-outline-success">View Events</a>
+
+                        
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-        
-        <!-- Quick Actions Section -->
-        <div class="card mt-5">
-          <div class="card-header">
-            <i class="fas fa-tasks me-2"></i> Quick Actions
-          </div>
-          <div class="card-body">
-            <div class="row text-center quick-actions">
-              <div class="col-md-3 mb-3">
-                <a href="#" class="btn btn-outline-primary w-100">Create New Event</a>
-              </div>
-              <div class="col-md-3 mb-3">
-                <a href="#" class="btn btn-outline-primary w-100">Assign Volunteers</a>
-              </div>
-              <div class="col-md-3 mb-3">
-                <a href="#" class="btn btn-outline-primary w-100">Update Inventory</a>
-              </div>
-              <div class="col-md-3 mb-3">
-                <a href="#" class="btn btn-outline-primary w-100">Field Data Upload</a>
-              </div>
+
+        <!-- Project Metrics Section -->
+        <!-- <div class="container-fluid p-4 mt-5">
+            <h4 class="mb-3">Operational Metrics</h4>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Donation Breakdown (Last 30 Days)
+                        </div>
+                        <div class="card-body">
+                            <canvas id="donationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+     -->
+                <!-- Emergency Requests Distribution -->
+                <!-- <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Request Types Distribution
+                        </div>
+                        <div class="card-body">
+                            <canvas id="emergencyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+    
+            <!-- Additional Charts Row -->
+            <!-- <div class="row">
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Volunteer Availability
+                        </div>
+                        <div class="card-body">
+                            <canvas id="volunteerChart"></canvas>
+                        </div>
+                    </div>
+                </div> -->
+    
+                <!-- Inventory Status -->
+                <!-- <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Inventory Levels
+                        </div>
+                        <div class="card-body">
+                            <canvas id="inventoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-        
-      </div> <!-- End container-fluid -->
-    </div> <!-- End Main Content -->
-  </div> <!-- End d-flex wrapper -->
+    </div>  -->
+
+  <!-- Hidden elements for dynamic JSON data -->
+  <script id="donation-data" type="application/json">{{ donation_breakdown|safe }}</script>
+  <script id="emergency-data" type="application/json">{{ emergency_distribution|safe }}</script>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Chart.js Initialization -->
+  <script>
+    // Parse the JSON data passed from the view
+    const donationData = JSON.parse(document.getElementById('donation-data').textContent);
+    const emergencyData = JSON.parse(document.getElementById('emergency-data').textContent);
+
+    // Donation Breakdown Chart (Bar Chart)
+    const donationCtx = document.getElementById('donationChart').getContext('2d');
+    const donationChart = new Chart(donationCtx, {
+      type: 'bar',
+      data: {
+        labels: donationData.labels,  // Dynamic labels from project data
+        datasets: [{
+          label: 'Donation Amount (₹)',
+          data: donationData.data,      // Dynamic values from project data
+          backgroundColor: ['#007bff', '#28a745', '#ffc107', '#17a2b8', '#dc3545', '#6c757d']
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Emergency Requests Distribution Chart (Pie Chart)
+    const emergencyCtx = document.getElementById('emergencyChart').getContext('2d');
+    const emergencyChart = new Chart(emergencyCtx, {
+      type: 'pie',
+      data: {
+        labels: emergencyData.labels,  // Dynamic labels from project data
+        datasets: [{
+          label: 'Number of Requests',
+          data: emergencyData.data,      // Dynamic values from project data
+          backgroundColor: ['#dc3545', '#ffc107', '#28a745']
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+
+
+    
+  </script>
 </body>
 </html>

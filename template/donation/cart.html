@@ -1,45 +1,146 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-  <h1>Your Cart</h1>
+<div class="container py-5">
+  <!-- Cart Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 fw-bold text-primary">
+      <i class="fas fa-shopping-cart me-2"></i>Your Donation Cart
+    </h1>
+    <a href="{% url 'donation_category' %}" class="btn btn-outline-primary">
+      <i class="fas fa-arrow-left me-2"></i>Continue Donating
+    </a>
+  </div>
+
   {% if cart %}
-    <form action="{% url 'update_cart' %}" method="POST">
-      {% csrf_token %}
-      <table class="table table-bordered">
-        <thead class="thead-light">
-          <tr>
-            <th>Item</th>
-            <th>Price (₹)</th>
-            <th>Quantity</th>
-            <th>Subtotal (₹)</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for key, item in cart.items %}
-            <tr>
-              <td>{{ item.name }}</td>
-              <td>{{ item.price|floatformat:2 }}</td>
-              <td>
-                <input type="number" name="quantity_{{ key }}" value="{{ item.quantity }}" min="0" class="form-control" style="width:80px;">
-              </td>
-              <td>{{ item.subtotal|floatformat:2 }}</td>
-              <td>
-                <a href="{% url 'remove_from_cart' key %}" class="btn btn-danger btn-sm">Remove</a>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <h4>Total: ₹{{ total|floatformat:2 }}</h4>
-      <div class="mb-3">
-        <button type="submit" class="btn btn-secondary">Update Cart</button>
-        <a href="{% url 'clear_cart' %}" class="btn btn-warning">Clear Cart</a>
-        <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
-      </div>
-    </form>
+  <!-- Cart Items Card -->
+  <div class="card border-0 shadow-lg">
+    <div class="card-body p-4">
+      <form action="{% url 'update_cart' %}" method="POST">
+        {% csrf_token %}
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" class="py-3">Donation Item</th>
+                <th scope="col" class="py-3 text-end">Unit Price</th>
+                <th scope="col" class="py-3 text-center">Quantity</th>
+                <th scope="col" class="py-3 text-end">Subtotal</th>
+                <th scope="col" class="py-3 text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for key, item in cart.items %}
+              <tr class="cart-item">
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-hand-holding-heart text-primary me-3"></i>
+                    <div>
+                      <div class="fw-medium">{{ item.name }}</div>
+                      <small class="text-muted">Donation ID: {{ key|upper }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-end">₹{{ item.price|floatformat:2 }}</td>
+                <td class="text-center">
+                  <input type="number" name="quantity_{{ key }}" 
+                         value="{{ item.quantity }}" min="0" 
+                         class="form-control form-control-sm" 
+                         style="width: 80px;">
+                </td>
+                <td class="text-end">₹{{ item.subtotal|floatformat:2 }}</td>
+                <td class="text-end">
+                  <a href="{% url 'remove_from_cart' key %}" 
+                     class="btn btn-link text-danger p-0"
+                     data-bs-toggle="tooltip" title="Remove Item">
+                    <i class="fas fa-trash-alt"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="row justify-content-end mt-4">
+          <div class="col-lg-4">
+            <div class="card border-0 bg-light">
+              <div class="card-body">
+                <h5 class="mb-3 fw-semibold">Donation Summary</h5>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Total Donations:</span>
+                  <span>₹{{ total|floatformat:2 }}</span>
+                </div>
+                
+                <hr>
+                <div class="d-flex justify-content-between fw-bold">
+                  <span>Total Contribution:</span>
+                  <span class="text-primary">₹{{ total|floatformat:2 }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cart Actions -->
+        <div class="d-flex justify-content-between mt-4">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-outline-secondary">
+              <i class="fas fa-sync-alt me-2"></i>Update Donations
+            </button>
+            <a href="{% url 'clear_cart' %}" class="btn btn-outline-danger">
+              <i class="fas fa-eraser me-2"></i>Clear All
+            </a>
+          </div>
+          <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg px-5">
+            <i class="fas fa-lock me-2"></i>Secure Checkout
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
   {% else %}
-    <p>Your cart is empty.</p>
+  <!-- Empty Cart State -->
+  <div class="text-center py-5 my-5">
+    <div class="mb-4">
+      <i class="fas fa-heart fa-4x text-primary"></i>
+    </div>
+    <h3 class="h4 mb-3">Your Giving Cart is Empty</h3>
+    <p class="text-muted mb-4">You haven't added any charitable donations yet.</p>
+    <a href="{% url 'donation_category' %}" class="btn btn-primary px-5">
+      <i class="fas fa-hand-holding-heart me-2"></i>Start Giving
+    </a>
+  </div>
   {% endif %}
 </div>
+
+<style>
+  .cart-item:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+  }
+  
+  .table thead th {
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+
+  .fa-hand-holding-heart {
+    font-size: 1.5rem;
+    width: 40px;
+  }
+</style>
+
+<script>
+  // Initialize Bootstrap tooltips
+  document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  })
+</script>
 {% endblock %}

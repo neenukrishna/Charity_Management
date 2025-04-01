@@ -1,5 +1,72 @@
 {% extends "base.html" %}
 {% block content %}
+
+  <!-- Navbar Section -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-hands-helping me-2"></i>AKG Charitable Society
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#services">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'view_events' %}">Events</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'donation_category' %}">Donation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#gallery">Notification</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#contact">Contact</a>
+          </li>
+          {% if request.user.user_type == "beneficiary" %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'submit_feedback' %}">Feedback</a>
+          </li>
+          {% endif %}
+          <div class="d-flex align-items-center">
+            <div class="dropdown">
+              <a class="btn btn-light rounded-circle p-2" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{% url 'user_profile' %}">
+                    <i class="fas fa-user-circle me-2"></i>Profile
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_dashboard' %}">
+                    <i class="fas fa-user-cog me-2"></i>Account
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item text-danger" href="{% url 'home' %}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </nav>
 <div class="container mt-4">
   <h2 class="mb-4 text-primary fw-bold">Beneficiary Support Request</h2>
   
@@ -12,7 +79,7 @@
 
   <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
     {% csrf_token %}
-
+    
     <!-- On Behalf Section -->
     <div class="card shadow-sm mb-4">
       <div class="card-header bg-primary text-white">
@@ -28,9 +95,9 @@
         </div>
       </div>
     </div>
-
+    
     <!-- Beneficiary Details Section -->
-    <div id="on_behalf_details" style="display:none;">
+    <div id="on_behalf_details" style="display: none;">
       <div class="card shadow-sm mb-4">
         <div class="card-header bg-info text-white">
           <h5 class="mb-0">Beneficiary Information</h5>
@@ -65,7 +132,7 @@
             <div class="col-12">
               <label for="address" class="form-label">Address<span class="text-danger">*</span></label>
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Street Address" name="address">
+               
                 <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
               </div>
             </div>
@@ -89,7 +156,7 @@
         </div>
       </div>
     </div>
-
+    
     <!-- Emergency Details Section -->
     <div class="card shadow-sm mb-4">
       <div class="card-header bg-warning">
@@ -99,46 +166,42 @@
         <div class="row g-3">
           <div class="col-md-6">
             <label for="donation_category" class="form-label">Assistance Type<span class="text-danger">*</span></label>
-            <select name="donation_category" id="donation_category" class="form-select" 
-                    onchange="toggleOtherDonation(this.value)" required>
+            <select name="donation_category" id="donation_category" class="form-select" onchange="toggleOtherDonation(this.value)" required>
               <option value="">Select Assistance Type</option>
-              <option value="monetary">Financial Support</option>
-              <option value="medical">Medical Assistance</option>
-              <option value="meals">Nutrition Support</option>
-              <option value="grocery">Essential Supplies</option>
-              <option value="home">Home Care Services</option>
-              <option value="other">Other Support</option>
+              <option value="monetary">Monetary</option>
+              <option value="medical">Medical Expenses</option>
+              <option value="grocery">Essential Grocery Assistance</option>
+              <option value="home">Comprehensive Home Care</option>
+              <option value="other">Other Donations</option>
             </select>
           </div>
-
-          <div id="other_donation_section" style="display:none;">
+          
+          <!-- Other Donation Section -->
+          <div id="other_donation_section" style="display: none;">
             <div class="border-start border-4 border-primary ps-3 mb-4">
-              <h6 class="text-primary mb-3">Special Assistance Details</h6>
+              <h6 class="text-primary mb-3">Other Donation Category</h6>
               <div class="mb-3">
-                <select class="form-select" id="other_donation_type" name="other_donation_type" 
-                        onchange="toggleCustomOtherDonation(this.value)">
-                  <option value="">Select Assistance Type</option>
-                  <option value="Hospital Beds">Medical Equipment</option>
-                  <option value="Wheel Chairs">Mobility Aids</option>
-                  <option value="Walkers">Walking Assistance</option>
-                  <option value="Hygiene Products">Hygiene Kits</option>
-                  <option value="Nutritious Food">Specialized Nutrition</option>
+                <select class="form-select" id="other_donation_type" name="other_donation_type" onchange="toggleCustomOtherDonation(this.value)">
+                  <option value="">Select Other Donation Category</option>
+                  <option value="hospital_beds">Hospital Beds</option>
+                  <option value="wheel_chairs">Wheel Chairs</option>
+                  <option value="walkers">Walkers</option>
+                  <option value="hygiene_products">Hygiene Products</option>
+                  <option value="nutritious_food">Nutritious Food</option>
                   <option value="custom">Other Essential Support</option>
                 </select>
               </div>
-              <div class="mb-3" id="custom_other_donation_div" style="display:none;">
-                <input type="text" class="form-control" id="custom_other_donation" 
-                       placeholder="Please specify assistance type" name="custom_other_donation">
+              <div class="mb-3" id="custom_other_donation_div" style="display: none;">
+                <input type="text" class="form-control" id="custom_other_donation" placeholder="Please specify assistance type" name="custom_other_donation">
               </div>
             </div>
           </div>
-
+          
           <div class="col-12">
             <label for="details" class="form-label">Situation Details<span class="text-danger">*</span></label>
-            <textarea class="form-control" name="details" id="details" rows="4" 
-                      placeholder="Please describe the situation in detail..." required></textarea>
+            <textarea class="form-control" name="details" id="details" rows="4" placeholder="Please describe the situation in detail..." required></textarea>
           </div>
-
+          
           <div class="col-md-6">
             <label for="emergency_level" class="form-label">Urgency Level<span class="text-danger">*</span></label>
             <div class="input-group">
@@ -151,17 +214,65 @@
               <span class="input-group-text"><i class="bi bi-exclamation-triangle"></i></span>
             </div>
           </div>
-
+          
           <div class="col-md-6">
             <label for="proof" class="form-label">Supporting Documents</label>
-            <input type="file" class="form-control" name="proof" id="proof" 
-                   aria-describedby="fileHelp">
+            <input type="file" class="form-control" name="proof" id="proof" aria-describedby="fileHelp">
             <div id="fileHelp" class="form-text">Upload any relevant documents (medical reports, ID proof, etc.)</div>
           </div>
         </div>
       </div>
     </div>
-
+    
+    <!-- Payment Method Section -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Payment Method</h5>
+      </div>
+      <div class="card-body">
+         <div class="row g-3">
+           <div class="col-md-6">
+             <label for="payment_method" class="form-label">Select Payment Method<span class="text-danger">*</span></label>
+             <select name="disbursement_method" id="payment_method" class="form-select" onchange="toggleBankDetails(this.value)" required>
+              <option value="">Choose Payment Method</option>
+              <option value="bank_transfer">Bank Transfer</option>
+              <option value="pickup">Pickup</option>
+             </select>
+           </div>
+         </div>
+      </div>
+    </div>
+    
+    <!-- Bank Details Section (Shown only if Bank Transfer is selected) -->
+    <div id="bank_details_section" style="display: none;">
+      <div class="card shadow-sm mb-4">
+         <div class="card-header bg-info text-white">
+           <h5 class="mb-0">Bank Transfer Details</h5>
+         </div>
+         <div class="card-body bg-light">
+           <div class="row g-3">
+             <div class="col-md-6">
+               <label for="account_holder" class="form-label">Account Holder Name<span class="text-danger">*</span></label>
+               <input type="text" class="form-control" name="account_holder" id="account_holder">
+             </div>
+             <div class="col-md-6">
+               <label for="bank_name" class="form-label">Bank Name<span class="text-danger">*</span></label>
+               <input type="text" class="form-control" name="bank_name" id="bank_name">
+             </div>
+             <div class="col-md-6">
+               <label for="account_number" class="form-label">Account Number<span class="text-danger">*</span></label>
+               <input type="text" class="form-control" name="account_number" id="account_number">
+             </div>
+             <div class="col-md-6">
+              <label for="ifsc_code" class="form-label">IFSC Code<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="ifsc_code" id="ifsc_code">
+            </div>
+            
+           </div>
+         </div>
+      </div>
+    </div>
+    
     <div class="d-grid gap-2 col-md-6 mx-auto mb-5">
       <button type="submit" class="btn btn-primary btn-lg shadow">
         <i class="bi bi-send-check me-2"></i>Submit Assistance Request
@@ -195,7 +306,6 @@
   function toggleOnBehalfDetails(isChecked) {
     var onBehalfDiv = document.getElementById('on_behalf_details');
     onBehalfDiv.style.display = isChecked ? 'block' : 'none';
-    // Toggle required attribute for all inputs/selects inside the on_behalf_details section.
     var inputs = onBehalfDiv.querySelectorAll('input, select');
     inputs.forEach(function(input) {
       if (isChecked) {
@@ -205,11 +315,30 @@
       }
     });
   }
+  
   function toggleOtherDonation(value) {
     document.getElementById('other_donation_section').style.display = (value === 'other') ? 'block' : 'none';
   }
+  
   function toggleCustomOtherDonation(value) {
     document.getElementById('custom_other_donation_div').style.display = (value === 'custom') ? 'block' : 'none';
+  }
+  
+  function toggleBankDetails(value) {
+    var bankDetailsSection = document.getElementById('bank_details_section');
+    var inputs = bankDetailsSection.querySelectorAll('input');
+    // Change the condition to check for "bank_transfer"
+    if (value === 'bank_transfer') {
+      bankDetailsSection.style.display = 'block';
+      inputs.forEach(function(input) {
+        input.setAttribute('required', 'required');
+      });
+    } else {
+      bankDetailsSection.style.display = 'none';
+      inputs.forEach(function(input) {
+        input.removeAttribute('required');
+      });
+    }
   }
 </script>
 {% endblock %}

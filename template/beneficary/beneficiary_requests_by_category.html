@@ -1,43 +1,39 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-5">
-    <h3 class="text-primary mb-3">Beneficiary Requests for Category: {{ donation_category }}</h3>
-    <table class="table table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Beneficiary Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Emergency Level</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for req in requests %}
-            <tr>
-                <td>#{{ req.beneficiary_id }}</td>
-                <td>{{ req.beneficiary_name }}</td>
-                <td>{{ req.beneficiary_email }}</td>
-                <td>{{ req.beneficiary_phone }}</td>
-                <td>{{ req.emergency_level }}</td>
-                <td>{{ req.date|date:"M d, Y" }}</td>
-                <td>{{ req.status }}</td>
-                <td>
-                    <a href="{% url 'allocate_beneficiary_request' req.beneficiary_id %}" class="btn btn-sm btn-success">
-                        Allocate Now
-                    </a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="8" class="text-center">No beneficiary requests found for this category.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{% url 'manage_inventory' %}" class="btn btn-secondary mt-3">Back to Inventory Summary</a>
+    <h3>Beneficiary Requests for Category: {{ donation_category }}</h3>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Beneficiary Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr>
+                    <td>#{{ req.beneficiary_id }}</td>
+                    <td>{{ req.beneficiary_name }}</td>
+                    <td>{{ req.beneficiary_email }}</td>
+                    <td>{{ req.beneficiary_phone }}</td>
+                    <td>{{ req.date|date:"M d, Y" }}</td>
+                    <td>
+                        <!-- Allocation link: once clicked, allocation view should update status to "Resolved" -->
+                        <a href="{% url 'allocate_beneficiary_request' req.pk %}" class="btn btn-sm btn-primary">Allocate</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No pending requests in this category</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

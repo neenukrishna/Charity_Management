@@ -18,11 +18,14 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'view_cart' %}">
-              <i class="fas fa-shopping-cart"></i> View Cart
-            </a>
-          </li>
+                        {% if request.user.is_authenticated and request.user.user_type == "Donor" %}
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'view_cart' %}">
+                          <i class="fas fa-shopping-cart"></i> View Cart
+                      </a>
+                  </li>
+      {% endif %}
+
           <!-- other nav items -->
         </ul>
       </div>

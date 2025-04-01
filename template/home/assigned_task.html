@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #4f46e5;
+            --accent-color: #10b981;
+            --background-color: #f8fafc;
+            --text-color: #1e293b;
+            --card-border: 1px solid #e2e8f0;
+        }
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        .dashboard-header {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            border: var(--card-border);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        .section-header {
+            padding: 1.5rem;
+            border-bottom: var(--card-border);
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+        }
+        .task-card {
+            padding: 1.5rem;
+            border-bottom: var(--card-border);
+            transition: background-color 0.2s;
+        }
+        .task-card:last-child {
+            border-bottom: none;
+        }
+        .task-card:hover {
+            background-color: #f8fafc;
+        }
+        .patient-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .patient-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .task-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.75rem;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+        }
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+        .status-active {
+            background-color: #e0f2fe;
+            color: #0369a1;
+        }
+        .task-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .task-table th {
+            background-color: var(--background-color);
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+            border-bottom: var(--card-border);
+        }
+        .task-table td {
+            padding: 1rem;
+            background-color: white;
+            border-bottom: var(--card-border);
+        }
+        .priority-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+        .priority-high {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        .priority-medium {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        .priority-low {
+            background-color: #dcfce7;
+            color: #059669;
+        }
+        .btn-complete {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.2s;
+            border: none;
+        }
+        .btn-complete:hover {
+            background-color: #059669;
+            color: white;
+        }
+        .empty-state {
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #64748b;
+        }
+        .empty-state-icon {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="h4 mb-0">Assignment Dashboard</h1>
+            <a href="{% url 'volunteer_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left me-2"></i>Return to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    
+
+    <div class="container">
+        <!-- Palliative Care Section -->
+        <!-- Palliative Care Section -->
+<div class="section-card">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fas fa-hand-holding-medical me-2"></i>
+        Palliative Care Assignments
+      </h2>
+    </div>
+    {% if palliative_tasks %}
+      <div class="task-list">
+        {% for task in palliative_tasks %}
+        <div class="task-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+              <div class="patient-info">
+                <div class="patient-icon">
+                  <i class="fas fa-user-injured"></i>
+                </div>
+                <div>
+                  <h5 class="mb-1">{{ task.patient.patientName|default:"Unknown Patient" }}</h5>
+                  <div class="task-meta">
+                    <div class="meta-item">
+                      <i class="fas fa-id-card"></i>
+                      <span>ID: {{ task.patient_id }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <span>{{ task.district }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex flex-column align-items-end">
+              <span class="status-indicator status-active">
+                <i class="fas fa-circle fa-xs"></i>
+                {% if task.status == "Completed" %}
+                  Completed
+                {% else %}
+                  Active
+                {% endif %}
+              </span>
+              {% if task.patient_id and task.status != "Completed" %}
+              <form action="{% url 'complete_palliative_case' task.patient_id %}" method="post" style="margin-top: 0.5rem;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-complete">
+                  <i class="fas fa-check"></i>
+                  Complete
+                </button>
+              </form>
+              {% else %}
+                <span class="badge bg-success mt-2">Completed</span>
+              {% endif %}
+              {% if task.patient_id %}
+              <a href="{% url 'palliative_patient_detail' task.patient_id %}" class="btn btn-link text-primary mt-2">
+                View Details <i class="fas fa-arrow-right ms-2"></i>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+        <h4>No Palliative Assignments</h4>
+        <p class="text-muted">No active palliative care assignments found</p>
+      </div>
+    {% endif %}
+  </div>
+  
+        <!-- General Tasks Section -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-tasks me-2"></i>
+                    General Task Assignments
+                </h2>
+            </div>
+            {% if general_tasks %}
+                <div class="table-responsive">
+                    <table class="task-table">
+                        <thead>
+                            <tr>
+                                <th>Task</th>
+                                <th>Location</th>
+                                <th>Materials</th>
+                                <th>Instructions</th>
+                                <th>Due Date</th>
+                                <th>Priority</th>
+                                <th>Assigned Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in general_tasks %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">{{ task.task_description }}</div>
+                                    <div class="text-muted small">Assigned to: {{ task.volunteer }}</div>
+                                </td>
+                                <td>
+                                    <div>{{ task.district }}</div>
+                                    <div class="text-muted small">{{ task.location }}</div>
+                                </td>
+                                <td>{{task.materials}}</td>
+                                <td>{{task.instructions}}</td>
+                                <td>
+                                    <div class="fw-bold">{{ task.deadline }}</div>
+                        
+                                </td>
+                                <td>
+                                    {% if task.priority == 'High' %}
+                                    <span class="priority-label priority-high">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        High
+                                    </span>
+                                    {% elif task.priority == 'Medium' %}
+                                    <span class="priority-label priority-medium">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Medium
+                                    </span>
+                                    {% else %}
+                                    <span class="priority-label priority-low">
+                                        <i class="fas fa-info-circle"></i>
+                                        Low
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>{{task.assigned_at}}</td>
+                                <td>
+                                    {% if task.status == 'Completed' %}
+                                    <span class="badge bg-success rounded-pill">Completed</span>
+                                    {% elif task.status == 'In Progress' %}
+                                    <span class="badge bg-primary rounded-pill">In Progress</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary rounded-pill">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if task.id and task.status != "Completed" %}
+                                    <form action="{% url 'complete_task' task.id %}" method="post" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-complete">
+                                            <i class="fas fa-check"></i>
+                                            Complete
+                                        </button>
+                                    </form>
+                                    {% elif task.status == "Completed" %}
+                                    <span class="badge bg-success">Completed</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h4>No General Assignments</h4>
+                    <p class="text-muted">No general task assignments found</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

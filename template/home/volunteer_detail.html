@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0"><i class="fas fa-user-check me-2"></i>Volunteer Details</h3>
+                        <div class="btn-group">
+                            
+                            <a href="{% url 'manage_palliative_care' %}" class="btn btn-light btn-sm">
+                                <i class="fas fa-arrow-left me-1"></i>Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Basic Information -->
+                        <div class="col-md-6 border-end">
+                            <div class="mb-4">
+                                <h5 class="text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-5">Full Name</dt>
+                                    <dd class="col-sm-7">{{ volunteer.full_name }}</dd>
+                                    
+                                    <dt class="col-sm-5">Email</dt>
+                                    <dd class="col-sm-7">
+                                        <a href="mailto:{{ volunteer.email }}" class="text-decoration-none">{{ volunteer.email }}</a>
+                                    </dd>
+                                    
+                                    <dt class="col-sm-5">Phone</dt>
+                                    <dd class="col-sm-7">{{ volunteer.phone|default:"-" }}</dd>
+                                    
+                                    <dt class="col-sm-5">DOB</dt>
+                                    <dd class="col-sm-7">{{ volunteer.dob|date:"F j, Y" }}</dd>
+                                    
+                                    <dt class="col-sm-5">Gender</dt>
+                                    <dd class="col-sm-7">{{ volunteer.gender }}</dd>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <!-- Address Information -->
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <h5 class="text-primary mb-3"><i class="fas fa-map-marker-alt me-2"></i>Address Details</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-5">Place</dt>
+                                    <dd class="col-sm-7">{{ volunteer.place }}</dd>
+                                    
+                                    <dt class="col-sm-5">Post</dt>
+                                    <dd class="col-sm-7">{{ volunteer.post }}</dd>
+                                    
+                                    <dt class="col-sm-5">Pin</dt>
+                                    <dd class="col-sm-7">{{ volunteer.pin }}</dd>
+                                    
+                                    <dt class="col-sm-5">District</dt>
+                                    <dd class="col-sm-7">{{ volunteer.district }}</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Proof Section -->
+                    <div class="border-top pt-4">
+                        <h5 class="text-primary mb-3"><i class="fas fa-file-alt me-2"></i>Proof of Identity</h5>
+                        {% if volunteer.proof %}
+                        <a href="{{ volunteer.proof.url }}" target="_blank" class="btn btn-outline-primary">
+                            <i class="fas fa-eye me-1"></i>View Proof
+                        </a>
+                        {% else %}
+                        <p class="text-muted">Not provided</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-light text-end">
+                    <small class="text-muted">
+                        Account created {{ volunteer.created_at|timesince }} ago
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-5 bg-light min-vh-100">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Enhanced Header Section -->
+            <div class="d-flex align-items-center justify-content-between mb-5">
+                <div class="flex-grow-1">
+                    <h1 class="h2 fw-bold text-dark mb-2">
+                        <i class="fas fa-tasks text-primary me-2"></i>Task Assignment
+                    </h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb bg-white px-3 py-2 rounded-3 shadow-sm">
+                            <li class="breadcrumb-item"><a href="{% url 'coordinator_dashboard' %}" class="text-decoration-none"><i class="fas fa-home me-1"></i>Dashboard</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-user-check me-1"></i>Assign Task</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Messages with improved styling -->
+            {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Filter Card with improved visual hierarchy -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-primary text-white py-3">
+                    <h3 class="h5 mb-0"><i class="fas fa-filter me-2"></i>Filter Volunteers</h3>
+                </div>
+                <div class="card-body">
+                    <form method="get" id="filterForm">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-8">
+                                <label class="form-label fw-medium text-dark">Select Program Type</label>
+                                <select class="form-select form-select-lg shadow-sm" name="program_type" id="program_type" onchange="this.form.submit();" required>
+                                    {% for choice in volunteering_choices %}
+                                    <option value="{{ choice.0 }}" {% if selected_program %}{% if choice.0|lower == selected_program|lower %}selected{% endif %}{% else %}{% if choice.0 == 'Others' %}selected{% endif %}{% endif %}>
+                                        {{ choice.1 }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Main Assignment Form with enhanced visual structure -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h3 class="h5 mb-0 text-dark"><i class="fas fa-pencil-alt me-2 text-primary"></i>Create New Assignment</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-4">
+
+                            <!-- Volunteer Selection Section -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label fw-medium text-dark"><i class="fas fa-user-check me-2 text-primary"></i>Select Volunteer</label>
+                                    <select class="form-select shadow-sm" name="volunteer" id="volunteer_select" required>
+                                        <option value="">Choose Volunteer...</option>
+                                        {% for volunteer in volunteers %}
+                                        <option value="{{ volunteer.volunteer_id }}">
+                                            {{ volunteer.full_name }} - {{ volunteer.volunteering_in }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Task Details Section -->
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label fw-medium text-dark"><i class="fas fa-align-left me-2 text-primary"></i>Task Description</label>
+                                    <textarea class="form-control shadow-sm" name="task_description" rows="4" 
+                                            placeholder="Enter detailed task instructions..." required></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Location & Date Section -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label fw-medium text-dark"><i class="fas fa-map-marker-alt me-2 text-primary"></i>Location</label>
+                                    <input type="text" class="form-control shadow-sm" name="location" 
+                                           placeholder="Enter task location" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label fw-medium text-dark"><i class="fas fa-globe-asia me-2 text-primary"></i>District</label>
+                                    <input type="text" class="form-control shadow-sm" name="district" 
+                                           placeholder="District" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label fw-medium text-dark"><i class="fas fa-calendar-day me-2 text-primary"></i>Due Date</label>
+                                    <input type="date" class="form-control shadow-sm" name="due_date" 
+                                           min="{% now 'Y-m-d' %}" required>
+                                </div>
+                            </div>
+
+                            <!-- Additional Information Section -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label fw-medium text-dark"><i class="fas fa-tools me-2 text-primary"></i>Required Materials</label>
+                                    <input type="text" class="form-control shadow-sm" name="materials" 
+                                           placeholder="List required materials (if any)">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label fw-medium text-dark"><i class="fas fa-exclamation-circle me-2 text-primary"></i>Special Instructions</label>
+                                    <input type="text" class="form-control shadow-sm" name="instructions" 
+                                           placeholder="Any special instructions?">
+                                </div>
+                            </div>
+
+                            <!-- Status Section -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label fw-medium text-dark"><i class="fas fa-clipboard-check me-2 text-primary"></i>Task Status</label>
+                                    <select class="form-select shadow-sm" name="status">
+                                        <option value="Assigned">Assigned</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label fw-medium text-dark"><i class="fas fa-flag me-2 text-primary"></i>Priority Level</label>
+                                    <select class="form-select shadow-sm" name="priority">
+                                        <option value="Low">Low</option>
+                                        <option value="Medium" selected>Medium</option>
+                                        <option value="High">High</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions with improved button styling -->
+                            <div class="col-12 mt-5 border-top pt-4">
+                                <div class="d-flex gap-3 justify-content-end">
+                                    <button type="submit" class="btn btn-primary px-4 py-2 shadow-sm">
+                                        <i class="fas fa-save me-2"></i>Assign Task
+                                    </button>
+                                    <a href="{% url 'coordinator_dashboard' %}" class="btn btn-light px-4 py-2 shadow-sm border">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Enhanced Guidelines Section -->
+            <div class="mt-4 card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="text-dark mb-3"><i class="fas fa-lightbulb me-2 text-warning"></i>Assignment Best Practices</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6 d-flex">
+                            <div class="me-3 text-primary">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-dark mb-1">Availability Check</h6>
+                                <p class="text-muted small mb-0">Confirm volunteer availability through the dashboard before assignment</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex">
+                            <div class="me-3 text-primary">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-dark mb-1">Location Details</h6>
+                                <p class="text-muted small mb-0">Include GPS coordinates or nearby landmarks for easy navigation</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex">
+                            <div class="me-3 text-primary">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-dark mb-1">Time Management</h6>
+                                <p class="text-muted small mb-0">Specify clear timelines including setup and cleanup periods</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex">
+                            <div class="me-3 text-primary">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-dark mb-1">Contact Information</h6>
+                                <p class="text-muted small mb-0">Provide onsite coordinator contact details for emergencies</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    // Enhanced Date Picker
+    flatpickr("input[type='date']", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        theme: "material_blue"
+    });
+
+    // Enhanced Volunteer Select
+    $('#volunteer_select').select2({
+        placeholder: "Select Volunteer...",
+        allowClear: true,
+        theme: "bootstrap-5",
+        width: '100%'
+    });
+</script>
+<style>
+    .form-control:focus, .form-select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+    }
+    .card {
+        border-radius: 0.75rem;
+    }
+    .select2-container--bootstrap-5 .select2-selection {
+        height: calc(3.5rem + 2px);
+        padding: 0.5rem 1rem;
+    }
+</style>
+{% endblock %}

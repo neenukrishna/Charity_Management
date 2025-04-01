@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4>Edit Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name" value="{{ staff.full_name }}" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" value="{{ staff.email }}" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" name="phone" value="{{ staff.phone }}" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Place</label>
+                            <input type="text" name="place" value="{{ staff.place }}" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Post</label>
+                            <input type="text" name="post" value="{{ staff.post }}" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Pin</label>
+                            <input type="text" name="pin" value="{{ staff.pin }}" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">District</label>
+                            <input type="text" name="district" value="{{ staff.district }}" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-control">
+                                <option value="Male" {% if staff.gender == "Male" %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if staff.gender == "Female" %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if staff.gender == "Other" %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <a href="{% url 'coordinator_profile' %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

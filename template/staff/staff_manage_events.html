@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-lg">
+            <!-- Card Header -->
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-calendar-alt me-2"></i>View Events
+                </h3>
+                <a href="{% url 'staff_dashboard' %}" class="btn btn-light btn-sm">
+                    <i class="fas fa-home me-2"></i>Dashboard
+                </a>
+            </div>
+
+            <!-- Search Form -->
+            <div class="card-body">
+                <form method="GET" class="d-flex align-items-center gap-2 mb-4 flex-wrap">
+                    <input type="text" name="event_type" class="form-control" placeholder="Event Type"
+                        value="{{ request.GET.event_type }}" style="max-width: 200px;">
+                
+                    <input type="text" name="location" class="form-control" placeholder="Location"
+                        value="{{ request.GET.location }}" style="max-width: 200px;">
+                
+                    <select name="status" class="form-select" style="max-width: 200px;">
+                        <option value="">Select Status</option>
+                        <option value="Upcoming" {% if request.GET.status == "Upcoming" %}selected{% endif %}>Upcoming</option>
+                        <option value="Ongoing" {% if request.GET.status == "Ongoing" %}selected{% endif %}>Ongoing</option>
+                        <option value="Completed" {% if request.GET.status == "Completed" %}selected{% endif %}>Completed</option>
+                    </select>
+                
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i>Search
+                    </button>
+                
+                    <a href="{% url 'staff_manage_events' %}" class="btn btn-secondary">
+                        <i class="fas fa-sync-alt me-1"></i>Clear
+                    </a>
+                </form>
+
+                <!-- Events Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Event Type</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Target Budget</th>
+                                <th>Collected Amount</th>
+                                <th>Remaining Amount</th>
+                                <th>Sponsorship Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in events %}
+                            <tr>
+                                <td class="fw-bold">#{{ event.event_id }}</td>
+                                <td>{{ event.event_type }}</td>
+                                <td>{{ event.event_date }}</td>
+                                <td>{{ event.location }}</td>
+                                <td>{{ event.description }}</td>
+                                <td>{{ event.event_status }}</td>
+                                <td>${{ event.target_budget|floatformat:2 }}</td>
+                                <td>${{ event.collected_amount|floatformat:2 }}</td>
+                                <td>${{ event.remaining_amount|floatformat:2 }}</td>
+                                <td>
+                                    <a href="{% url 'sponsorship_details' event.event_id %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Details
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="9" class="text-center py-4">
+                                    <i class="fas fa-calendar-times fa-2x text-muted mb-3"></i>
+                                    <p class="text-muted mb-0">No events found</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

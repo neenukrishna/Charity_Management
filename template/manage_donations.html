@@ -14,8 +14,39 @@
                 </a>
             </div>
         </div>
-        <!-- Card Body -->
+
+        <!-- Search Form -->
         <div class="card-body">
+            <form method="get" class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <select name="donation_type" class="form-select">
+                        <option value="">Search by Donation Type</option>
+                        <option value="monetary" {% if request.GET.donation_type == 'monetary' %}selected{% endif %}>Monetary</option>
+                        <option value="medical" {% if request.GET.donation_type == 'medical' %}selected{% endif %}>Medical Expenses</option>
+                        <option value="meals" {% if request.GET.donation_type == 'meals' %}selected{% endif %}>Nourish the Needy</option>
+                        <option value="grocery" {% if request.GET.donation_type == 'grocery' %}selected{% endif %}>Essential Grocery Assistance</option>
+                        <option value="home" {% if request.GET.donation_type == 'home' %}selected{% endif %}>Comprehensive Home Care</option>
+                        <option value="other" {% if request.GET.donation_type == 'other' %}selected{% endif %}>Other Donations</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="details" class="form-control" placeholder="Search by Details" value="{{ request.GET.details }}">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="status" class="form-control" placeholder="Search by Status" value="{{ request.GET.status }}">
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-2"></i>Search
+                    </button>
+                    <a href="{% url 'manage_donations' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-times me-2"></i>Clear
+                    </a>
+                </div>
+            </form>
+            
+
+            <!-- Donations Table -->
             <div class="table-responsive">
                 <table class="table table-hover table-striped align-middle">
                     <thead class="table-dark">

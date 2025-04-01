@@ -4,79 +4,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Events - CharityConnect</title>
+    <title>Events - AKG Charitable Society</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2A5C82;
+            --secondary-color: #5C9BA5;
+            --accent-color: #FF6B6B;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 0.8rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--primary-color) !important;
+            font-size: 1.25rem;
+        }
+
         .event-card {
             transition: transform 0.3s, box-shadow 0.3s;
-            border-radius: 15px;
+            border: none;
+            border-radius: 12px;
             overflow: hidden;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
         }
+
         .event-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+        }
+
         .status-badge {
             position: absolute;
             top: 15px;
             right: 15px;
-            padding: 5px 15px;
+            padding: 6px 18px;
             border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .event-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .event-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(42, 92, 130, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-bar {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-sponsor {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-sponsor:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .event-description {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            color: #4a5568;
+            line-height: 1.6;
         }
     </style>
 </head>
+<nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-hands-helping me-2"></i>AKG Charitable Society
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#services">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'view_events' %}">Events</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'donation_category' %}">Donation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#gallery">Notification</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#contact">Contact</a>
+          </li>
+          {% if request.user.user_type == "beneficiary" %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'submit_feedback' %}">Feedback</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'view_cart' %}">
+              <i class="fas fa-shopping-cart"></i> Cart
+            </a>
+          </li>
+          <div class="d-flex align-items-center">
+            <div class="dropdown">
+              <a class="btn btn-light rounded-circle p-2" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{% url 'user_profile' %}">
+                    <i class="fas fa-user-circle me-2"></i>Profile
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_dashboard' %}">
+                    <i class="fas fa-user-cog me-2"></i>Account
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item text-danger" href="{% url 'home' %}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
 <body class="bg-light">
-    <div class="container py-5">
-        <h2 class="mb-4 text-primary fw-bold">Upcoming Events</h2>
-        
+    <!-- Navbar remains the same -->
+
+    <main class="container py-5 mt-5">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bold text-primary mb-3">Community Events</h1>
+            <p class="lead text-muted">Join us in making a difference through our upcoming initiatives</p>
+        </div>
+
         <div class="row g-4">
             {% for event in events %}
             <div class="col-lg-4 col-md-6">
                 <div class="event-card card h-100 position-relative">
-                    <div class="card-body">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">{{ event.event_type }}</h5>
+                    </div>
+                    <div class="card-body position-relative">
                         <span class="status-badge bg-{{ event.event_status|lower }} text-white">
                             {{ event.event_status }}
                         </span>
-                        <h5 class="card-title text-primary">{{ event.event_type }}</h5>
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="fas fa-calendar-day me-2 text-muted"></i>
-                            <!-- Format date as desired -->
-                            <span class="text-muted">{{ event.event_date|date:"F d, Y" }}</span>
+
+                        <div class="event-meta">
+                            <div class="event-icon text-primary">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 fw-medium">{{ event.event_date|date:"F d, Y" }}</p>
+                                <small class="text-muted">Event Date</small>
+                            </div>
                         </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="fas fa-map-marker-alt me-2 text-muted"></i>
-                            <span class="text-muted">{{ event.location }}</span>
+
+                        <div class="event-meta">
+                            <div class="event-icon text-primary">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 fw-medium">{{ event.location }}</p>
+                                <small class="text-muted">Location</small>
+                            </div>
                         </div>
-                        <p class="card-text">{{ event.description }}</p>
-                        
-                        <!-- Optional: Display budget details -->
-                        <!--
-                        <div class="mb-3">
-                            <small class="text-muted">Target Budget: ${{ event.target_budget|floatformat:2 }}</small><br>
-                            <small class="text-muted">Remaining: ${{ event.remaining_amount|floatformat:2 }}</small>
+
+                        <div class="mb-4">
+                            <p class="event-description">{{ event.description }}</p>
+                            <a href="#" class="text-primary text-decoration-none small">Read More</a>
                         </div>
-                        -->
-                        
+
+                        {% if event.target_budget %}
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Fundraising Progress</span>
+                                <span class="text-primary fw-medium">${{ event.remaining_amount|floatformat:2 }} remaining</span>
+                            </div>
+                            
+                        </div>
+                        {% endif %}
+
                         <a href="{% url 'sponsor_event' event.event_id %}" 
-                           class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-hand-holding-heart me-2"></i>Sponsor Event
+                           class="btn btn-sponsor w-100 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-hand-holding-heart me-2"></i>Support Initiative
                         </a>
                     </div>
                 </div>
             </div>
             {% empty %}
             <div class="col-12">
-                <div class="alert alert-info">No upcoming events found.</div>
+                <div class="alert alert-info text-center py-4">
+                    <i class="fas fa-calendar-exclamation fa-2x mb-3"></i>
+                    <h4 class="alert-heading">No Current Events</h4>
+                    <p>Check back later for upcoming community initiatives</p>
+                </div>
             </div>
             {% endfor %}
         </div>
-        
-        <div class="mt-4 text-center">
-            <a href="{% url 'user_home' %}" class="btn btn-outline-primary">
-                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+
+        <div class="mt-5 text-center">
+            <a href="{% url 'user_home' %}" class="btn btn-outline-primary px-4">
+                <i class="fas fa-arrow-left me-2"></i>Return to Dashboard
             </a>
         </div>
-    </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,169 @@
+<!-- templates/home/counscontact.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Now for Counseling - AKG Charitable Society</title>
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --secondary-color: #10b981;
+      --accent-color: #f59e0b;
+      --dark-color: #1e293b;
+      --light-color: #f8fafc;
+    }
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: var(--light-color);
+      padding-top: 70px;
+    }
+    /* Navbar */
+    .navbar {
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+    }
+    .navbar-brand,
+    .nav-link {
+      color: var(--dark-color) !important;
+      font-weight: 600;
+    }
+    .nav-link:hover {
+      color: var(--primary-color) !important;
+    }
+    /* Contact Section */
+    .contact-section {
+      padding: 40px 0;
+    }
+    .contact-card {
+      background-color: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .contact-card i {
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    .contact-card h5 {
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .map-container {
+      margin-top: 20px;
+      height: 400px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    /* Footer */
+    footer {
+      background: var(--dark-color);
+      color: #94a3b8;
+      padding: 20px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">        
+        <i class="fas fa-hands-helping me-2"></i>AKG Charitable Society
+        </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#feedback">Feedback</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#gallery">Gallery</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contact Section -->
+  <section class="contact-section">
+    <div class="container">
+      <h2 class="text-center mb-4">Get in Touch</h2>
+      <div class="row justify-content-center">
+        <!-- Visit Us -->
+        <div class="col-md-4">
+          <div class="contact-card">
+            <i class="fas fa-map-marker-alt"></i>
+            <h5>Visit Us</h5>
+            <p>
+            AKG Charitable Society<br />
+              Reg. No. KKD/CA/1698/2014,<br />
+              Kakkodi, kozhikode-<br />
+                Kerala, India
+            </p>
+          </div>
+        </div>
+        <!-- Email -->
+        <div class="col-md-4">
+          <div class="contact-card">
+            <i class="fas fa-envelope"></i>
+            <h5>Email</h5>
+            <p>akgcharitable@gmail.com</p>
+          </div>
+        </div>
+        <!-- Phone -->
+        <div class="col-md-4">
+          <div class="contact-card">
+            <i class="fas fa-phone-alt"></i>
+            <h5>Give us a call</h5>
+            <p>94463151690 / 94472195360<br />94446335690 / 0484 2972490</p>
+          </div>
+        </div>
+      </div>
+      <!-- Google Map -->
+      <div class="row">
+        <div class="col-12">
+          <div class="map-container">
+            <!-- Replace the src below with your actual Google Maps embed link -->
+           
+
+            <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3912.195439671788!2d75.79631947504988!3d11.320421088863355!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e0!3m2!1sen!2sin!4v1741512562116!5m2!1sen!2sin" width="1400" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>  </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 AKG Charitable Society. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  ></script>
+</body>
+</html>

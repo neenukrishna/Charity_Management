@@ -1,0 +1,55 @@
+<!-- templates/group_notifs.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ group|capfirst }} Notifications</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-bell me-2"></i> {{ group|capfirst }} Notifications
+                </h3>
+                <a href="{% url 'manage_notifs' %}" class="btn btn-light btn-sm">
+                    <i class="fas fa-arrow-left me-2"></i> Back
+                </a>
+            </div>
+            <div class="card-body">
+                <!-- Group Notifs Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>User</th>
+                                <th>Message</th>
+                                <th>Date & Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for notif in notifs %}
+                            <tr>
+                                <td class="fw-bold">{{ notif.user.get_full_name|default:notif.user.username }}</td>
+                                <td>{{ notif.message }}</td>
+                                <td>{{ notif.date_time }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4">
+                                    <i class="fas fa-bell-slash fa-2x text-muted mb-3"></i>
+                                    <p class="text-muted mb-0">No notifications found for {{ group }}</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

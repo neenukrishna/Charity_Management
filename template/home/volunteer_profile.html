@@ -1,75 +1,115 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<style>
-  .profile-card {
-    border: none;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    background: #fff;
-    margin-bottom: 50px;
-  }
-  .profile-header {
-    background: linear-gradient(135deg, #3498db, #2ecc71);
-    padding: 40px 20px;
-    text-align: center;
-    color: #fff;
-    position: relative;
-  }
-  .profile-header h2 {
-    margin: 0;
-    font-weight: 700;
-  }
-  .profile-header p {
-    margin: 5px 0 0;
-    font-size: 16px;
-  }
-  .profile-picture {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 5px solid #fff;
-    position: absolute;
-    bottom: -60px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #fff;
-  }
-  .profile-body {
-    padding: 80px 30px 30px; /* Top padding to clear the overlapping profile picture */
-  }
-  .profile-details p {
-    font-size: 16px;
-    margin-bottom: 15px;
-  }
-  .profile-details i {
-    color: #3498db;
-    margin-right: 10px;
-    width: 20px;
-    text-align: center;
-  }
-</style>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0"><i class="fas fa-hands-helping me-2"></i>Volunteer Profile</h3>
+                        <div class="btn-group">
+                            <a href="{% url 'edit_volunteer_profile' %}" class="btn btn-light btn-sm">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </a>
+                            <a href="{% url 'volunteer_dashboard' %}" class="btn btn-light btn-sm">
+                                <i class="fas fa-calendar-alt me-1"></i>Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Personal Information -->
+                        <div class="col-md-6 border-end">
+                            <div class="mb-4">
+                                <h5 class="text-primary mb-3"><i class="fas fa-id-card me-2"></i>Personal Information</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-5">Full Name</dt>
+                                    <dd class="col-sm-7">{{ volunteer.full_name }}</dd>
 
-<div class="container mt-5">
-  <div class="card profile-card mx-auto" style="max-width: 600px;">
-    <div class="profile-header">
-      
-      <h2>{{ volunteer.full_name }}</h2>
-      <p>{{ volunteer.email }}</p>
+                                    <dt class="col-sm-5">Date of Birth</dt>
+                                    <dd class="col-sm-7">{{ volunteer.dob|date:"F j, Y" }}</dd>
+
+                                    <dt class="col-sm-5">Gender</dt>
+                                    <dd class="col-sm-7">{{ volunteer.gender }}</dd>
+
+                                    <dt class="col-sm-5">Volunteer ID</dt>
+                                    <dd class="col-sm-7 text-muted">#{{ volunteer.volunteer_id }}</dd>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <h5 class="text-primary mb-3"><i class="fas fa-address-book me-2"></i>Contact Details</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-5">Email</dt>
+                                    <dd class="col-sm-7">
+                                        <a href="mailto:{{ volunteer.email }}" class="text-decoration-none">
+                                            {{ volunteer.email }}
+                                        </a>
+                                    </dd>
+
+                                    <dt class="col-sm-5">Phone</dt>
+                                    <dd class="col-sm-7">{{ volunteer.phone|default:"-" }}</dd>
+
+                                    <dt class="col-sm-5">Address</dt>
+                                    <dd class="col-sm-7">
+                                        {{ volunteer.place }}<br>
+                                        {{ volunteer.post }}, {{ volunteer.district }}<br>
+                                        PIN: {{ volunteer.pin }}
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Volunteer Specific Information -->
+                    <div class="border-top pt-4">
+                        <h5 class="text-primary mb-3"><i class="fas fa-tasks me-2"></i>Volunteer Details</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-1">
+                                    <strong>Program:</strong> 
+                                    <span class="badge bg-primary">{{ volunteer.volunteering_in }}</span>
+                                </p>
+                                
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1">
+                                    <strong>Availability:</strong> 
+                                    {{ volunteer.availability_date|date:"M j, Y" }}
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Status:</strong> 
+                                    <span class="badge bg-{% if volunteer.status == 'Active' %}success{% else %}warning{% endif %}">
+                                        {{ volunteer.status }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Information -->
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar-plus me-1"></i>
+                            Registered {{ volunteer.registration_date|timesince }} ago
+                        </small>
+                        {% if volunteer.proof %}
+                        <a href="{{ volunteer.proof.url }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-file-contract me-1"></i>View Proof
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="profile-body">
-      <div class="profile-details">
-        <p><i class="fas fa-phone"></i> <strong>Phone:</strong> {{ volunteer.phone }}</p>
-        <p><i class="fas fa-birthday-cake"></i> <strong>Date of Birth:</strong> {{ volunteer.dob }}</p>
-        <p><i class="fas fa-venus-mars"></i> <strong>Gender:</strong> {{ volunteer.gender }}</p>
-        <p>
-          <i class="fas fa-map-marker-alt"></i> 
-          <strong>Address:</strong> {{ volunteer.place }}, {{ volunteer.post }}, {{ volunteer.pin }}, {{ volunteer.district }}
-        </p>
-        <p><i class="fas fa-calendar-check"></i> <strong>Availability Date:</strong> {{ volunteer.availability_date }}</p>
-      </div>
-    </div>
-  </div>
 </div>
 {% endblock %}

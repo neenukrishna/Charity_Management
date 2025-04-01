@@ -1,86 +1,43 @@
-<!------------
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Manage Notifications</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-</head>
-<body>
-    <div class="container mt-4">
-        <h2>Manage Notifications</h2>
-
-        <a href="{% url 'add_notification' %}" class="btn btn-primary mb-3">
-            <i class="fas fa-plus me-2"></i>Add Notification
-        </a>
-
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Message</th>
-                    <th>Date & Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for notification in notifications %}
-                <tr>
-                    <td>{{ notification.user.fullname }}</td>
-                    <td>{{ notification.message }}</td>
-                    <td>{{ notification.date_time }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="3">No notifications found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
-    </div>
-</body>
-</html>
-------------->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Manage Notifications</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-light">
     <div class="container mt-5">
         <div class="card shadow-lg">
-            <!-- Card Header -->
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h3 class="mb-0">
-                    <i class="fas fa-bell me-2"></i>Manage Notifications
+                    <i class="fas fa-bell me-2"></i> Manage Notifications
                 </h3>
                 <div>
-                    <a href="{% url 'add_notification' %}" class="btn btn-light btn-sm">
-                        <i class="fas fa-plus-circle me-2"></i>Add Notification
-                    </a>
+                    
+                    <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#addNotificationModal">
+                        <i class="fas fa-plus-circle me-2"></i> Add Notification
+                    </button>
                     <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
-                        <i class="fas fa-home me-2"></i>Dashboard
+                        <i class="fas fa-home me-2"></i> Dashboard
                     </a>
                 </div>
             </div>
-            <!-- Card Body -->
+
             <div class="card-body">
+                <!-- Notification Table -->
                 <div class="table-responsive">
                     <table class="table table-hover table-striped align-middle">
                         <thead class="table-dark">
                             <tr>
                                 <th>User</th>
                                 <th>Message</th>
-                                <th>Date &amp; Time</th>
+                                <th>Date & Time</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for notification in notifications %}
                             <tr>
-                                <td class="fw-bold">{{ notification.user.fullname }}</td>
+                                <td class="fw-bold">{{ notification.user.get_full_name|default:notification.user.username }}</td>
                                 <td>{{ notification.message }}</td>
                                 <td>{{ notification.date_time }}</td>
                             </tr>
@@ -97,9 +54,49 @@
                 </div>
             </div>
         </div>
-        <!-- Back to Dashboard Button -->
-        
     </div>
+
+    <!-- Add Notification Modal -->
+    <div class="modal fade" id="addNotificationModal" tabindex="-1" aria-labelledby="addNotificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="addNotificationModalLabel">
+                        <i class="fas fa-bell"></i> Send Notification
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Send To</label>
+                            <select name="user" class="form-control" required>
+                                <option value="all">Select...</option>
+                                <option value="donors">All Donors</option>
+                                <option value="beneficiaries">All Beneficiaries</option>
+                                <option value="volunteers">All Volunteers</option>
+                                <option value="coordinators">All Coordinators</option>
+                                <option value="managers">All Managers</option>
+                            </select>
+                            
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Message</label>
+                            <textarea name="message" class="form-control" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

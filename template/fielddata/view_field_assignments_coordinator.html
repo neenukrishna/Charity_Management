@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0">Assigned Field Areas</h2>
+        </div>
+        <div class="card-body">
+            {% if assignments %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Volunteer</th>
+                            <th>Responsibilities</th>
+                            <th>Location</th>
+                            <th>Completion Date</th>
+                            <th>Assigned At</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for assignment in assignments %}
+                        <tr>
+                            <td>{{ assignment.volunteer.full_name }}</td>
+                            <td>{{ assignment.responsibilities }}</td>
+                            <td>{{ assignment.location|default:"N/A" }}</td>
+                            <td>
+                                {% if assignment.status == 'completed' %}
+                                    {{ assignment.completion_date|date:"M d, Y" }}
+                                {% else %}
+                                    <span class="text-muted">{{ assignment.completion_date|date:"M d, Y" }} (due)</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ assignment.assigned_at|date:"M d, Y H:i" }}</td>
+                            <td>
+                                <span class="badge {% if assignment.status == 'completed' %}bg-success{% else %}bg-dark text-white{% endif %}">
+                                    {{ assignment.status|title }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">No field assignments found.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Staff Dashboard - Humanitarian Hub</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    /* Sidebar */
+    .sidebar {
+      min-height: 100vh;
+      background-color: #343a40;
+    }
+    .sidebar a {
+      color: #cfd8dc;
+      text-decoration: none;
+      padding: 15px;
+      display: block;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #495057;
+      color: #ffffff;
+    }
+    /* Top Navbar */
+    .navbar {
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: #343a40;
+    }
+    /* Dashboard Cards */
+    .card {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border: none;
+      margin-bottom: 20px;
+    }
+    .card-header {
+      background-color: #ffffff;
+      border-bottom: none;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    .card-body {
+      background-color: #ffffff;
+    }
+    /* Quick Actions */
+    .quick-actions a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <nav class="sidebar d-flex flex-column p-3" style="width: 250px;">
+      <a href="#" class="d-flex align-items-center mb-3">
+        <span class="fs-4 text-white">Coordinator Dashboard</span>
+      </a>
+      <hr class="text-white" />
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a href="#" class="nav-link active">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'coordinator_profile' %}" class="nav-link">
+            <i class="fas fa-user me-2"></i>Profile
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'coordinator_manage_events' %}" class="nav-link">
+            <i class="fas fa-calendar-alt me-2"></i>Events
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'coordinator_manage_volunteers' %}" class="nav-link">
+            <i class="fas fa-users me-2"></i>Volunteers
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'search_volunteers' %}" class="nav-link">
+            <i class="fas fa-tasks me-2"></i> Area Assignment
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'view_field_assignments_coordinator' %}" class="nav-link">
+            <i class="fas fa-map-marker-alt me-2"></i> Assigned Field Areas
+          </a>
+        </li>
+        
+            
+        </li>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'coordinator_manage_tasks' %}" class="nav-link">
+            <i class="fas fa-clipboard-list me-2"></i>Task Assignments
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'view_assigned_tasks_coordinator' %}" class="nav-link">
+            <i class="fas fa-check-circle me-2"></i>View Assigned Task
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'coordinator_manage_palliative' %}" class="nav-link">
+            <i class="fas fa-medkit me-2"></i>Palliative Care
+          </a>
+        </li>
+        <hr class="text-white" />
+        <div>
+          <a href="{% url 'home' %}" class="nav-link text-danger">
+            <i class="fas fa-sign-out-alt me-2"></i>Logout
+          </a>
+        </div>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex-grow-1">
+      <!-- Top Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Coordinator Dashboard</a>
+          <span class="nav-link badge bg-primary">{{ staff_member.role }}</span>
+        </div>
+      </nav>
+
+      <div class="container-fluid p-4">
+        <div class="row g-4">
+          <!-- Task Overview Card -->
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <i class="fas fa-tasks me-2"></i> Task Overview
+              </div>
+              <div class="card-body">
+          
+                <a href="{% url 'coordinator_manage_tasks' %}" class="btn btn-sm btn-outline-primary">Assign Tasks</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Volunteer Availability Card -->
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <i class="fas fa-user-check me-2"></i> Volunteer Availability
+              </div>
+              <div class="card-body">
+             
+                <a href="{% url 'coordinator_manage_volunteers' %}" class="btn btn-sm btn-outline-success">Assign Volunteers</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Events Card -->
+          <div class="col-md-4">
+            
+            <div class="card">
+              <div class="card-header">
+                <i class="fas fa-calendar-check me-2"></i> Next Event
+              </div>
+              <div class="card-body">
+                <a href="{% url 'coordinator_manage_events' %}" class="btn btn-sm btn-outline-success">Add Events</a>
+
+              </div>
+            </div>
+          </div>
+        </div>
+ <!-- Volunteer Search Section -->
+ <div class="row mt-4">
+  <div class="col-12">
+    <!-- Header -->
+    <div class="text-center mb-5">
+      <h2 class="text-primary">
+        <i class="fas fa-search me-2"></i>Volunteer Search
+      </h2>
+      <p class="text-muted">Find volunteers by location or area</p>
+    </div>
+
+    <!-- Display Django messages -->
+    {% if messages %}
+    <div class="row mb-4">
+      <div class="col-12">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Search Form -->
+    <div class="row justify-content-center mb-4">
+      <div class="col-lg-8">
+        <form method="get" action="" class="card shadow-sm">
+          <div class="card-body">
+            <div class="input-group">
+              <input type="text"
+                     name="q"
+                     class="form-control form-control-lg"
+                     placeholder="Search by district, place, or post..."
+                     value="{{ search_query }}">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-search me-2"></i>Search
+              </button>
+            </div>
+            <small class="text-muted mt-2 d-block">
+              Try searching by location or postal code
+            </small>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Search Results -->
+    {% if volunteers %}
+    <div class="row">
+      <div class="col-12 mb-4">
+        <h3 class="h5 border-bottom pb-2">
+          <i class="fas fa-users me-2"></i>Search Results
+          <span class="badge bg-primary ms-2">{{ volunteers.count }}</span>
+        </h3>
+      </div>
+
+      {% for volunteer in volunteers %}
+      <div class="col-md-6 col-lg-4 mb-4">
+        <a href="{% url 'assign_field_to_volunteer' volunteer.volunteer_id %}" class="card h-100 volunteer-card text-decoration-none">
+          <div class="card-body">
+            <h4 class="card-title text-primary mb-3">
+              <i class="fas fa-user-circle me-2"></i>{{ volunteer.full_name }}
+            </h4>
+            <div class="text-muted">
+              <p class="mb-1">
+                <i class="fas fa-map-marker-alt me-2"></i>{{ volunteer.district }}
+              </p>
+              <p class="mb-1">
+                <i class="fas fa-location-arrow me-2"></i>{{ volunteer.place }}
+              </p>
+              <p class="mb-0">
+                <i class="fas fa-mail-bulk me-2"></i>{{ volunteer.post }}
+              </p>
+            </div>
+          </div>
+          <div class="card-footer bg-transparent">
+            <small class="text-muted">Click to assign field</small>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="row">
+      <div class="col-12 text-center py-5">
+        <div class="empty-state">
+          <i class="fas fa-user-slash fa-3x text-muted mb-4"></i>
+          <h3 class="h5">No volunteers found</h3>
+          <p class="text-muted">Try adjusting your search terms</p>
+          <a href="?q=" class="btn btn-outline-primary">
+            <i class="fas fa-list me-2"></i>View All Volunteers
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

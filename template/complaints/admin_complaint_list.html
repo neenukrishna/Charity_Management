@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>All Complaints (Admin)</h2>
+  {% if complaints %}
+    <ul class="list-group">
+      {% for complaint in complaints %}
+        <li class="list-group-item">
+          <p><strong>From:</strong> {{ complaint.sender.username }}</p>
+          <p><strong>Complaint:</strong> {{ complaint.message }}</p>
+          <p><small>Submitted on: {{ complaint.created_at }}</small></p>
+          {% if complaint.reply %}
+            <div class="alert alert-info mt-2">
+              <p><strong>Reply:</strong> {{ complaint.reply }}</p>
+              <p><small>Replied on: {{ complaint.replied_at }}</small></p>
+            </div>
+          {% else %}
+            <p><em>No reply yet.</em></p>
+            <a href="{% url 'admin_reply_complaint' complaint.id %}" class="btn btn-primary btn-sm">Reply</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No complaints found.</p>
+  {% endif %}
+</div>
+{% endblock %}

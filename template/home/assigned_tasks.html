@@ -20,7 +20,7 @@
           <tr>
             <td>{{ task.title }}</td>
             <td>{{ task.description }}</td>
-            <td>{{ task.assigned_by.get_full_name|default:task.assigned_by }}</td>
+            <td>{{ task.assigned_by }}</td>
             <td>{{ task.deadline|date:"M d, Y" }}</td>
             <td>{{ task.status }}</td>
           </tr>

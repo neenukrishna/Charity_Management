@@ -23,11 +23,6 @@ class CustomUserAdmin(UserAdmin):
     )
     
 
-# # Customizing other models in admin
-# class DonationAdmin(admin.ModelAdmin):
-#     list_display = ('user', 'donation_type', 'amount', 'status', 'date_time')
-#     list_filter = ('status', 'donation_type')
-#     search_fields = ('user__fullname', 'donation_type')
 
 class EventAdmin(admin.ModelAdmin):
     list_display = ('event_type', 'event_date', 'location', 'event_status')
@@ -122,7 +117,7 @@ from .models import PalliativeCare
 from .models import Inventory
 from .models import Payment
 from .models import FieldData
-from .models import Notification
+# from .models import Notification
 from .models import Feedback
 from .models import Staff
 
@@ -139,13 +134,11 @@ admin.site.register(FieldData)
 admin.site.register(Feedback,FeedbackAdmin)
 # admin.site.register(Inventory,InventoryAdmin)
 admin.site.register(PalliativeCare)
-admin.site.register(Notification)
+# admin.site.register(Notification)
 admin.site.register(Payment)
 # admin.site.register(BeneficiarySupport)
 admin.site.register(Staff)
 admin.site.register(Contact)
-
-
 @admin.register(BeneficiarySupport)
 class BeneficiarySupportAdmin(admin.ModelAdmin):
     list_display = (
@@ -154,18 +147,35 @@ class BeneficiarySupportAdmin(admin.ModelAdmin):
         'beneficiary_name',
         'emergency_type',
         'emergency_level',
+        'disbursement_method',  # use the actual field name
         'date',
         'status',
     )
-    list_filter = ('status', 'emergency_level', 'date')
+    list_filter = ('status', 'emergency_level', 'date', 'disbursement_method')  # use the actual field
     search_fields = (
         'beneficiary_name', 
         'user__username', 
         'beneficiary_email', 
         'beneficiary_phone',
         'other_donation_type',
-        'custom_other_donation'
+        'custom_other_donation',
+        'disbursement_method',  # if needed for search
+        'bank_name',             # optional: to search by bank name if required
     )
+
+    
+from .models import PalliativePatient
+
+@admin.register(PalliativePatient)
+class PalliativePatientAdmin(admin.ModelAdmin):
+    list_display = (
+        'patientName',
+        'age',
+        'gender',
+        'contactNumber',
+        'created_at',
+    )
+    search_fields = ('patientName', 'contactNumber')
 
 def admin_only(user):
     return user.is_superuser

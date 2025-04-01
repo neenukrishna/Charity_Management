@@ -1,0 +1,113 @@
+<!-- templates/home/palliative_success.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Successful | Palliative Care</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+        }
+
+        nav {
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 3rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: #27ae60;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            color: #27ae60;
+            margin-bottom: 1rem;
+            font-size: 2.2rem;
+        }
+
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .home-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #27ae60;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .home-link:hover {
+            background-color: #219a52;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 2rem 1rem;
+                padding: 2rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="/" class="brand"> 
+                <i class="fas fa-hands-helping me-2"></i>AKG Charitable Society
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="success-icon">✓</div>
+        <h1>Registration Successful</h1>
+        <p>Thank you for completing your registration. We've received your details and a confirmation email has been sent to your registered email address.</p>
+        <p>Our team will be in touch with you shortly to discuss next steps.</p>
+        <a href="/" class="home-link">Return to Homepage</a>
+    </div>
+</body>
+</html>

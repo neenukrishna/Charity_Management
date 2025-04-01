@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Header Section -->
+            <div class="d-flex align-items-center mb-4">
+                <a href="{% url 'search_volunteers' %}" class="btn btn-light btn-sm mr-3">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="h4 mb-0">
+                    Assign Field Area to<br>
+                    <span class="text-primary">{{ volunteer.full_name }}</span>
+                </h1>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Assignment Form -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        
+                        <!-- Specific Responsibilities Field -->
+                        <div class="form-group mb-4">
+                            <label for="responsibilities" class="form-label font-weight-bold">
+                                <i class="fas fa-tasks mr-2"></i>Specific Responsibilities
+                            </label>
+                            <textarea 
+                                id="responsibilities" 
+                                name="responsibilities" 
+                                class="form-control form-control-lg" 
+                                rows="4"
+                                placeholder="Describe the specific responsibilities..."
+                                required
+                            ></textarea>
+                        </div>
+
+                        <!-- Location Field -->
+                        <div class="form-group mb-4">
+                            <label for="location" class="form-label font-weight-bold">
+                                <i class="fas fa-map-marker-alt mr-2"></i>Location
+                            </label>
+                            <input 
+                                type="text" 
+                                id="location" 
+                                name="location" 
+                                class="form-control form-control-lg"
+                                placeholder="Enter the location..."
+                                required
+                            >
+                        </div>
+
+                        <!-- Completion Date Field -->
+                        <div class="form-group mb-4">
+                            <label for="completion_date" class="form-label font-weight-bold">
+                                <i class="fas fa-calendar-alt mr-2"></i>Target Completion Date
+                            </label>
+                            <div class="input-group">
+                                <input 
+                                    type="date" 
+                                    id="completion_date" 
+                                    name="completion_date" 
+                                    class="form-control form-control-lg"
+                                    required
+                                >
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                Assign Field Area
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Back Link -->
+            <div class="text-center mt-4">
+                <a href="{% url 'search_volunteers' %}" class="text-secondary">
+                    <i class="fas fa-search mr-2"></i>Back to Volunteer Search
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control-lg {
+        border-radius: 0.5rem;
+        border: 2px solid #e9ecef;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control-lg:focus {
+        border-color: #80bdff;
+        box-shadow: none;
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-left: none;
+    }
+
+    .alert {
+        border-radius: 0.5rem;
+    }
+
+    .card {
+        border-radius: 1rem;
+        border: none;
+    }
+</style>
+{% endblock %}

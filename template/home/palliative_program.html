@@ -25,14 +25,17 @@
     }
     /* Navbar */
     .navbar {
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      background: rgba(255,255,255,0.95);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.95) !important;
       backdrop-filter: blur(10px);
     }
-    .navbar-brand,
     .nav-link {
       color: var(--dark-color) !important;
-      font-weight: 600;
+      font-weight: 500;
+    }
+    .navbar-brand {
+      font-weight: 700;
+      color: var(--dark-color) !important;
     }
     .nav-link:hover {
       color: var(--primary-color) !important;
@@ -77,28 +80,31 @@
   </style>
 </head>
 <body>
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="#">AKG Charitable Society</a>
+      <a class="navbar-brand" href="#">     
+           <i class="fas fa-hands-helping me-2"></i>AKG Charitable Society
+      </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="mainNavbar">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="/projects.html">Projects</a></li>
-          <li class="nav-item"><a class="nav-link" href="/contact.html">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#feedback">Feedback</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#gallery">Gallery</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
         </ul>
       </div>
     </div>
   </nav>
-
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="container">
       <h1>Palliative Care Program</h1>
-      <p class="lead">Compassionate End-of-Life Care & Support</p>
+      <p class="lead">Compassionate End-of-Life Care &amp; Support</p>
     </div>
   </section>
 
@@ -116,6 +122,14 @@
           <p>
             At AKG Charitable Society, Kakkodi, Kozhikode, we are committed to offering a humane and supportive environment that honors the lives and experiences of those facing end-of-life challenges.
           </p>
+
+          <!-- Registration Button -->
+          <div class="text-center mt-4">
+            <!-- Update the href to match the actual path or URL of your registration page -->
+            <a href="{% url 'palliative_register' %}" class="btn btn-primary btn-lg">
+              Register for Palliative Care
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -124,7 +138,7 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p>&copy; 2023 AKG Charitable Society, Kakkodi, Kozhikode. All rights reserved.</p>
+      <p>&copy; 2025 AKG Charitable Society. All rights reserved.</p>
     </div>
   </footer>
 

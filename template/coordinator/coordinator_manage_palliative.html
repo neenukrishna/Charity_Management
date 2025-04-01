@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Palliative Care Cases</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="card shadow-lg">
+      <!-- Card Header -->
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">
+          <i class="fas fa-hand-holding-medical me-2"></i>Manage Palliative Care Registrations
+        </h3>
+        <div>
+          <!-- Link to add a new palliative care registration -->
+          <a href="{% url 'add_palliative_care' %}" class="btn btn-light btn-sm">
+            <i class="fas fa-plus-circle me-2"></i>Add Palliative Registration
+          </a>
+          <!-- Link back to admin dashboard -->
+          <a href="{% url 'coordinator_dashboard' %}" class="btn btn-light btn-sm">
+            <i class="fas fa-home me-2"></i>Dashboard
+          </a>
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover table-striped align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Patient Name</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Address</th>
+                <th>Contact Number</th>
+                <th>Email</th>
+                <th>Medical Condition</th>
+                <th>Additional Details</th>
+                <th>Registered On</th>
+                <th>Assigned Volunteer</th>
+                <th>Actions</th>
+                <th>Status</th>
+            
+              </tr>
+            </thead>
+            <tbody>
+              {% for patient in palliative_cases %}
+                <tr>
+                  <td class="fw-bold">{{ patient.patientName }}</td>
+                  <td>{{ patient.age }}</td>
+                  <td>{{ patient.gender }}</td>
+                  <td>{{ patient.address }}</td>
+                  <td>{{ patient.contactNumber }}</td>
+                  <td>{{ patient.email }}</td>
+                  <td>{{ patient.medicalCondition }}</td>
+                  <td>{{ patient.additionalDetails }}</td>
+                  <td>{{ patient.created_at|date:"Y-m-d" }}</td>
+                  <td>
+                    {% if patient.volunteer %}
+                      <a href="{% url 'volunteer_detail' patient.volunteer.pk %}">
+                        {{ patient.volunteer.full_name }}
+                      </a>
+                    {% else %}
+                      <span class="text-muted">Not Assigned</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <!-- Button to assign or change volunteer -->
+                    <a href="{% url 'assign_volunteer' patient.id %}" class="btn btn-warning btn-sm">
+                      <i class="fas fa-user-plus"></i>
+                      Assign Volunteer
+                    </a>
+                  </td>
+                  <td>
+                    {% if patient.status == "Completed" %}
+                      <span class="badge bg-success">Completed</span>
+                    {% else %}
+                      <span class="badge bg-secondary">Pending</span>
+                    {% endif %}
+                  </td>
+                  
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="12" class="text-center py-4">
+                    <i class="fas fa-notes-medical fa-2x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">No palliative care registrations found</p>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

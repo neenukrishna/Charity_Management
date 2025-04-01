@@ -1,19 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-    <h2>Donor Details</h2>
-    <div class="card shadow-sm">
+<div class="container my-5">
+    <div class="card border-0 shadow-lg rounded-3">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Donor Details</h2>
+        </div>
         <div class="card-body">
-            <p><strong>Full Name:</strong> {{ donor.fullname }}</p>
-            <p><strong>Email:</strong> {{ donor.email }}</p>
-            <p><strong>Phone:</strong> {{ donor.phone }}</p>
-            <p><strong>Date of Birth:</strong> {{ donor.dob|date:"M d, Y" }}</p>
-            <p><strong>Place:</strong> {{ donor.place }}</p>
-            <p><strong>Post:</strong> {{ donor.post }}</p>
-            <p><strong>PIN:</strong> {{ donor.pin }}</p>
-            <p><strong>District:</strong> {{ donor.district }}</p>
-            <p><strong>Gender:</strong> {{ donor.gender }}</p>
-            <p><strong>User Type:</strong> {{ donor.get_user_type_display }}</p>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>Full Name:</strong> {{ donor.fullname }}</p>
+                    <p><strong>Email:</strong> {{ donor.email }}</p>
+                    <p><strong>Phone:</strong> {{ donor.phone }}</p>
+                    <p><strong>Date of Birth:</strong> {{ donor.dob|date:"M d, Y" }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Place:</strong> {{ donor.place }}</p>
+                    <p><strong>Post:</strong> {{ donor.post }}</p>
+                    <p><strong>PIN:</strong> {{ donor.pin }}</p>
+                    <p><strong>District:</strong> {{ donor.district }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Gender:</strong> {{ donor.gender }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>User Type:</strong> {{ donor.get_user_type_display }}</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

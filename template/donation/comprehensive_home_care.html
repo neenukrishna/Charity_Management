@@ -1,13 +1,77 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
-  <!-- Breadcrumbs -->
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'user_home' %}">Home</a></li>
-      <li class="breadcrumb-item"><a href="#">Donation</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Comprehensive Home Care</li>
-    </ol>
+  
+  <!-- Navbar Section -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-hands-helping me-2"></i>AKG Charitable Society
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#services">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'view_events' %}">Events</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'donation_category' %}">Donation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#gallery">Notification</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-home/#contact">Contact</a>
+          </li>
+          {% if request.user.user_type == "beneficiary" %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'submit_feedback' %}">Feedback</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'view_cart' %}">
+              <i class="fas fa-shopping-cart"></i> Cart
+            </a>
+          </li>
+          <div class="d-flex align-items-center">
+            <div class="dropdown">
+              <a class="btn btn-light rounded-circle p-2" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{% url 'user_profile' %}">
+                    <i class="fas fa-user-circle me-2"></i>Profile
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_dashboard' %}">
+                    <i class="fas fa-user-cog me-2"></i>Account
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item text-danger" href="{% url 'home' %}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </ul>
+      </div>
+    </div>
   </nav>
 
   <!-- Donation Section -->
@@ -20,7 +84,7 @@
       <p class="h4 text-primary mb-3">₹3,000.00</p>
       <p>Support in‑home care services for patients.</p>
       <!-- Add-to-Cart Form -->
-      <form method="POST" action="{% url 'add_to_cart_homecare' %}">
+      <form id="homecareForm">
         {% csrf_token %}
         <div class="mb-3" style="max-width: 150px;">
           <label for="quantity" class="form-label">Quantity:</label>
@@ -30,5 +94,105 @@
       </form>
     </div>
   </div>
+
+  <!-- Offcanvas Cart Sidebar -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="cartOffcanvasLabel">Your Donation Cart</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="cartItems">
+        <!-- Cart items will be loaded here -->
+      </div>
+      <hr>
+      <div class="text-end mb-3" id="cartTotal">Subtotal: ₹0.00</div>
+      <div class="d-grid">
+        <a href="{% url 'checkout' %}" class="btn btn-primary">Checkout</a>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Function to get CSRF token from cookies
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let cookie of cookies) {
+              cookie = cookie.trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+
+  // AJAX function to add Comprehensive Home Care donation to the cart
+  function ajaxAddToCartHomecare(event) {
+    event.preventDefault(); // Prevent default form submission
+    const quantity = parseInt(document.getElementById('quantity').value) || 1;
+    const csrfToken = getCookie('csrftoken');
+
+    fetch("{% url 'add_to_cart_homecare' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': csrfToken,
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: new URLSearchParams({ quantity: quantity })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        updateCartOffcanvas(data.cart);
+        // Show the offcanvas cart sidebar
+        const offcanvasEl = document.getElementById('cartOffcanvas');
+        const cartOffcanvas = new bootstrap.Offcanvas(offcanvasEl);
+        cartOffcanvas.show();
+      } else {
+        alert("Error adding to cart.");
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+
+  // Function to update the offcanvas cart display
+  function updateCartOffcanvas(cart) {
+    let cartHTML = '';
+    let total = 0;
+    for (const key in cart) {
+      const item = cart[key];
+      const itemTotal = item.price * item.quantity;
+      total += itemTotal;
+      cartHTML += `
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div>
+            <strong>${item.name}</strong><br>
+            Qty: ${item.quantity} x ₹${item.price}
+          </div>
+          <div>₹${itemTotal}</div>
+        </div>
+      `;
+    }
+    if (cartHTML === '') {
+      cartHTML = '<p>Your cart is empty.</p>';
+    }
+    document.getElementById('cartItems').innerHTML = cartHTML;
+    document.getElementById('cartTotal').innerHTML = `Subtotal: ₹${total}`;
+  }
+
+  // Attach the event listener to the homecare donation form
+  document.getElementById('homecareForm').addEventListener('submit', ajaxAddToCartHomecare);
+</script>
 {% endblock %}

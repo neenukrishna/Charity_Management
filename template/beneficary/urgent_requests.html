@@ -16,9 +16,8 @@
         });
     </script>
     {% endif %}
-    
+
     <div class="card shadow-lg">
-        <!-- Card Header with a red background for urgency -->
         <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
             <h3 class="mb-0">
                 <i class="fas fa-exclamation-triangle me-2"></i>Urgent Beneficiary Support Requests
@@ -29,18 +28,54 @@
                 </a>
             </div>
         </div>
-        <!-- Card Body -->
+
+        <!-- Search Form -->
+        <form method="get" class="p-3 d-flex gap-2">
+            <input type="text" name="assistance_type" class="form-control" placeholder="Search by Assistance Type" value="{{ request.GET.assistance_type }}">
+            
+            <select name="emergency_level" class="form-select">
+                <option value="">Emergency Level</option>
+                <option value="High" {% if request.GET.emergency_level == 'High' %}selected{% endif %}>High</option>
+                <option value="Medium" {% if request.GET.emergency_level == 'Medium' %}selected{% endif %}>Medium</option>
+                <option value="Low" {% if request.GET.emergency_level == 'Low' %}selected{% endif %}>Low</option>
+            </select>
+
+            <select name="payment_method" class="form-select">
+                <option value="">Payment Method</option>
+                <option value="bank_transfer" {% if request.GET.payment_method == 'bank_transfer' %}selected{% endif %}>Bank Transfer</option>
+                <option value="pickup" {% if request.GET.payment_method == 'pickup' %}selected{% endif %}>Pickup</option>
+                <option value="other" {% if request.GET.payment_method == 'other' %}selected{% endif %}>Other</option>
+            </select>
+
+            <select name="status" class="form-select">
+                <option value="">Status</option>
+                <option value="Pending" {% if request.GET.status == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Approved" {% if request.GET.status == 'Approved' %}selected{% endif %}>Approved</option>
+                <option value="Rejected" {% if request.GET.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="{% url 'urgent_requests' %}" class="btn btn-secondary">Clear</a>
+        </form>
+
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover table-striped align-middle">
                     <thead class="table-dark">
                         <tr>
                             <th>ID</th>
-                            <th>User</th>
+                        
                             <th>Beneficiary Name</th>
+                            <th>Age</th>
+                            <th>Gender</th>
                             <th>Email</th>
                             <th>Phone</th>
+                            <th>Address</th>
+
+                            <th>Assistance Type</th>
                             <th>Emergency Level</th>
+                            <th>Proof</th>
+                            <th>Payment Method</th>
                             <th>Date</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -50,22 +85,64 @@
                         {% for req in requests %}
                         <tr>
                             <td>#{{ req.beneficiary_id }}</td>
-                            <td>{{ req.user.username }}</td>
+                           
                             <td>{{ req.beneficiary_name }}</td>
+                            <td>{{ req.age }}</td>
+                            <td>{{ req.gender }}</td>
+
                             <td>{{ req.beneficiary_email }}</td>
                             <td>{{ req.beneficiary_phone }}</td>
+                            <td>
+                                {% if req.address %}
+                                  <div class="address-info">
+                                    <div class="text-break">{{ req.address|linebreaksbr }}</div>
+                                    {% if req.place %}<div><strong>City:</strong> {{ req.place }}</div>{% endif %}
+                                    {% if req.post %}<div><strong>Post:</strong> {{ req.post }}</div>{% endif %}
+                                    {% if req.pin %}<div><strong>PIN:</strong> {{ req.pin }}</div>{% endif %}
+                                    {% if req.district %}<div><strong>District:</strong> {{ req.district }}</div>{% endif %}
+                                  </div>
+                                {% else %}
+                                  <span class="text-muted">Not Provided</span>
+                                {% endif %}
+                              </td>
+                            <td>{{ req.emergency_type }}</td>
                             <td>{{ req.emergency_level }}</td>
+                            <td>
+                                {% if req.proof %}
+                                  <a href="{{ req.proof.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    View Proof
+                                  </a>
+                                {% else %}
+                                  <span class="text-muted">Not Provided</span>
+                                {% endif %}
+                              </td>
+                            <td>
+                                {% if req.disbursement_method == "bank_transfer" %}
+                                    <strong>Bank Transfer</strong><br>
+                                    <small>Account Holder: {{ req.account_holder }}<br>
+                                           Bank: {{ req.bank_name }}<br>
+                                           Account No: {{ req.account_number }}<br>
+                                           IFSC: {{ req.ifsc_code }}</small>
+                                {% elif req.disbursement_method == "pickup" %}
+                                    Pickup
+                                {% else %}
+                                    Not Specified
+                                {% endif %}
+                            </td>
                             <td>{{ req.date|date:"M d, Y" }}</td>
                             <td>{{ req.status }}</td>
                             <td>
-                                <a href="{% url 'update_request' req.beneficiary_id %}" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-edit me-1"></i>Update
-                                </a>
+                                {% if req.approval_status != "Pending" %}
+                                    <span class="fw-bold">{{ req.approval_status }}</span>
+                                {% else %}
+                                    <a href="{% url 'approve_request' req.beneficiary_id %}" class="btn btn-sm btn-success">Approve</a>
+                                    <a href="{% url 'reject_request' req.beneficiary_id %}" class="btn btn-sm btn-danger">Reject</a>
+                                {% endif %}
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="9" class="text-center">No urgent requests found.</td>
+                            <td colspan="11" class="text-center">No urgent requests found.</td>
                         </tr>
                         {% endfor %}
                     </tbody>

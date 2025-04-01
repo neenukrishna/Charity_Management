@@ -1,144 +1,303 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<style>
-  /* Dashboard Section Card Style */
-  .dashboard-section {
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      padding: 2rem;
-      margin-bottom: 2rem;
-  }
-  .dashboard-section h3 {
-      border-bottom: 2px solid var(--secondary-color);
-      padding-bottom: 0.5rem;
-      margin-bottom: 1.5rem;
-      color: var(--primary-color);
-  }
-  .table-dashboard th, .table-dashboard td {
-      vertical-align: middle;
-  }
-  .empty-message {
-      text-align: center;
-      color: #888;
-      padding: 1rem;
-  }
-  /* Badge Styling for Beneficiary Request Status */
-  .badge-pending {
-      background-color: #ffc107;
-      color: #212529;
-  }
-  .badge-resolved {
-      background-color: #28a745;
-      color: #fff;
-  }
-</style>
-
-<div class="container my-5">
-  <h1 class="mb-4 text-center">My Account Dashboard</h1>
-  
-  <!-- Donations Section -->
-  <section class="dashboard-section">
-    <h3>My Donations</h3>
-    {% if donations %}
-      <div class="table-responsive">
-        <table class="table table-striped table-hover table-dashboard">
-          <thead class="table-dark">
-            <tr>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for donation in donations %}
-            <tr>
-              <td>{{ donation.date_time|date:"F j, Y" }}</td>
-              <td>${{ donation.amount }}</td>
-              <td>{{ donation.donation_type }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+<div class="container-lg py-4">
+  <!-- Account Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-5">
+    <div class="d-flex align-items-center mb-3 mb-md-0">
+      <div class="bg-primary rounded-circle p-3 me-3">
+        <i class="fas fa-user-circle fa-2x text-white"></i>
       </div>
-    {% else %}
-      <div class="empty-message">You haven't made any donations yet.</div>
-    {% endif %}
-  </section>
-
-  <!-- Beneficiary Requests Section -->
-  <section class="dashboard-section">
-    <h3>My Beneficiary Requests</h3>
-    {% if beneficiary_requests %}
-      <div class="table-responsive">
-        <table class="table table-striped table-hover table-dashboard">
-          <thead class="table-dark">
-            <tr>
-              <th>Date</th>
-              <th>Emergency Type</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for req in beneficiary_requests %}
-            <tr>
-              <td>{{ req.date|date:"F j, Y" }}</td>
-              <td>{{ req.emergency_type }}</td>
-              <td>
-                {% if req.status == "Pending" %}
-                  <span class="badge badge-pending">Pending</span>
-                {% else %}
-                  <span class="badge badge-resolved">Resolved</span>
-                {% endif %}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      <div>
+        <h1 class="h3 mb-1">{{ user.fullname }}</h1>
+        <div class="text-muted">
+          <span class="badge bg-secondary">{{ user.user_type }} Account</span>
+          <span class="ms-2">Member since {{ user.date_joined|date:"Y" }}</span>
+        </div>
       </div>
-    {% else %}
-      <div class="empty-message">You haven't submitted any beneficiary requests yet.</div>
-    {% endif %}
-  </section>
+    </div>
+    <a href="{% url 'user_profile' %}" class="btn btn-outline-primary">
+      <i class="fas fa-cog me-2"></i>Account Settings
+    </a>
+  </div>
 
-  <!-- Feedback Section -->
-  <section class="dashboard-section">
-    <h3>My Feedback</h3>
-    {% if feedbacks %}
-      <div class="table-responsive">
-        <table class="table table-striped table-hover table-dashboard">
-          <thead class="table-dark">
-            <tr>
-              <th>Date</th>
-              <th>Rating</th>
-              <th>Comments</th>
-              <th>Admin Reply</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for fb in feedbacks %}
-            <tr>
-              <td>{{ fb.date|date:"F j, Y" }}</td>
-              <td>
-                {% for star in "12345"|make_list %}
-                  {% if forloop.counter <= fb.rating %}
-                    <i class="fas fa-star text-warning"></i>
+  <!-- Account Navigation -->
+  <ul class="nav nav-tabs mb-4" id="accountTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="donations-tab" data-bs-toggle="tab" data-bs-target="#donations" type="button" role="tab">
+        <i class="fas fa-donate me-2"></i>Donations
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests" type="button" role="tab">
+        <i class="fas fa-hands-helping me-2"></i>Requests
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">
+        <i class="fas fa-calendar-alt me-2"></i>Events
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab">
+        <i class="fas fa-bell me-2"></i>Notifications
+      </button>
+    </li>
+  </ul>
+
+  <!-- Account Content Sections -->
+  <div class="tab-content">
+   <!-- Donations Section -->
+<div class="tab-pane fade show active" id="donations" role="tabpanel">
+  <h2 class="h4 mb-4 border-bottom pb-3">Contribution History</h2>
+  <div class="row g-3">
+    {% for donation in donations %}
+    <div class="col-12">
+      <div class="card border-0 shadow-sm donation-card">
+        <div class="card-body p-4">
+          <div class="row align-items-center">
+            <!-- Donation Meta -->
+            <div class="col-lg-4 mb-3 mb-lg-0">
+              <div class="d-flex align-items-center">
+                <div class="donation-type-icon bg-soft-primary rounded-3 p-3 me-3">
+                  {% if donation.donation_type == 'monetary' %}
+                  <i class="fas fa-hand-holding-heart fa-lg text-primary"></i>
                   {% else %}
-                    <i class="far fa-star text-warning"></i>
+                  <i class="fas fa-box-open fa-lg text-primary"></i>
                   {% endif %}
-                {% endfor %}
-              </td>
-              <td>{{ fb.comments }}</td>
-              <td>{{ fb.reply|default:"No reply yet" }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+                </div>
+                <div>
+                  <h3 class="h6 mb-1 text-uppercase text-primary">
+                    {{ donation.get_donation_type_display }}
+                  </h3>
+                  <div class="text-muted small">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    {{ donation.date_time|date:"d M Y, H:i" }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contribution Details -->
+            <div class="col-lg-5 mb-3 mb-lg-0">
+              <div class="row g-2">
+                <div class="col-6">
+                  <div class="d-flex align-items-center h-100">
+                    <div class="pe-3 border-end">
+                      <div class="h5 mb-0">
+                        {% if donation.donation_type == 'monetary' %}
+                          ₹{{ donation.amount|floatformat:2 }}
+                        {% else %}
+                          {{ donation.quantity }} Items
+                        {% endif %}
+                      </div>
+                      <small class="text-muted">
+                        {% if donation.donation_type == 'monetary' %}Amount{% else %}Quantity{% endif %}
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="ps-3">
+                    <div class="small text-muted mb-1">Donation ID</div>
+                    <div class="font-monospace small">DON-{{ donation.donation_id }}</div>
+                    {% if donation.donation_details %}
+                    <div class="small text-muted mt-2 text-truncate">
+                      {{ donation.donation_details }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="col-lg-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge rounded-pill 
+                  {% if donation.status == 'Paid' %}bg-success
+                  {% elif donation.status == 'Pending' %}bg-warning
+                  {% else %}bg-danger{% endif %} py-2 px-3">
+                  <i class="fas 
+                    {% if donation.status == 'Paid' %}fa-check-circle 
+                    {% elif donation.status == 'Pending' %}fa-clock 
+                    {% else %}fa-exclamation-triangle{% endif %} 
+                    me-2"></i>
+                  {{ donation.status }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    {% else %}
-      <div class="empty-message">You haven't provided any feedback yet.</div>
-    {% endif %}
-  </section>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        No donations found in your account history.
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 </div>
+    <!-- Requests Section -->
+    <div class="tab-pane fade" id="requests" role="tabpanel">
+      <h2 class="h4 mb-4 border-bottom pb-3">Support Requests</h2>
+      <div class="row g-3">
+        {% for req in beneficiary_requests %}
+        <div class="col-12">
+          <div class="card shadow-sm border-start border-3 border-{{ req.status|lower }}">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-md-4">
+                  <h3 class="h5 mb-1">{{ req.emergency_type }}</h3>
+                  <div class="text-muted small">
+                    <i class="fas fa-calendar me-2"></i>
+                    {{ req.date|date:"d M Y" }}
+                  </div>
+                </div>
+                
+                <div class="col-md-4">
+                  <div class="small mb-1">Beneficiary Details</div>
+                  <div class="text-muted">
+                    {{ req.beneficiary_name }} ({{ req.age }} years)
+                    <div class="mt-1">
+                      {{ req.address }}, {{ req.district }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="badge bg-{{ req.status|lower }}">
+                        {{ req.status }}
+                      </span>
+                      {% if req.allocation_amount %}
+                      <div class="mt-2 small">
+                        Allocated: ₹{{ req.allocation_amount }}
+                      </div>
+                      {% endif %}
+                    </div>
+                    <a href="#" 
+                       class="btn btn-sm btn-outline-primary">
+                      Details
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            No support requests found in your account.
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Events Section -->
+    <div class="tab-pane fade" id="events" role="tabpanel">
+      <h2 class="h4 mb-4 border-bottom pb-3">Sponsored Events</h2>
+      <div class="row g-4">
+        {% for sponsorship in sponsorships %}
+        <div class="col-md-6 col-lg-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <h3 class="h5 mb-3">{{ sponsorship.event.event_type }}</h3>
+              <div class="d-flex align-items-center mb-3">
+                <i class="fas fa-rupee-sign text-muted me-2"></i>
+                <span class="fw-bold">₹{{ sponsorship.sponsorship_amount }}</span>
+              </div>
+              <div class="d-flex justify-content-between text-muted small">
+                <div>
+                  <i class="fas fa-calendar-alt me-2"></i>
+                  {{ sponsorship.timestamp|date:"d M Y" }}
+                </div>
+                <span class="badge bg-primary">
+                  {{ sponsorship.event.get_status_display }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            You haven't sponsored any events yet.
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Notifications Section -->
+    <div class="tab-pane fade" id="notifications" role="tabpanel">
+      <h2 class="h4 mb-4 border-bottom pb-3">Recent Alerts</h2>
+      <div class="row g-3">
+        {% for note in notifications %}
+        <div class="col-12">
+          <div class="card shadow-sm {% if note.unread %}border-start border-3 border-primary{% endif %}">
+            <div class="card-body d-flex align-items-center py-3">
+              <div class="flex-shrink-0 me-3">
+                <i class="fas fa-{{ note.icon }} fa-lg text-primary"></i>
+              </div>
+              <div class="flex-grow-1">
+                <p class="mb-1">{{ note.message }}</p>
+                <small class="text-muted">{{ note.timestamp|timesince }} ago</small>
+              </div>
+              {% if note.unread %}<span class="badge bg-primary ms-3">New</span>{% endif %}
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            No notifications to display.
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.donation-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.donation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,.08);
+  border-left-color: var(--bs-primary);
+}
+
+.font-monospace {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.bg-soft-primary { background-color: rgba(13,110,253,0.1); }
+.bg-pending { background-color: #ffc107; color: #000; }
+.bg-resolved { background-color: #28a745; color: #fff; }
+.bg-failed { background-color: #dc3545; color: #fff; }
+
+.text-truncate {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card.border-primary {
+  border-color: var(--bs-primary)!important;
+}
+</style>
 {% endblock %}

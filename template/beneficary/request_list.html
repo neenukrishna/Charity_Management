@@ -1,15 +1,85 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-  <h2 class="mb-4">Your Support Requests</h2>
-  <ul class="list-group">
-    {% for req in requests %}
-      <li class="list-group-item">
-        <strong>{{ req.emergency_type }}</strong> - Status: {{ req.status }} - Submitted on: {{ req.date }}
-      </li>
-    {% empty %}
-      <li class="list-group-item">No requests found.</li>
-    {% endfor %}
-  </ul>
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <!-- Card Header -->
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">
+                <i class="fas fa-exclamation-triangle me-2"></i>Beneficiary Support Requests
+            </h3>
+            <div>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
+                    <i class="fas fa-home me-2"></i>Dashboard
+                </a>
+            </div>
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Beneficiary Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Assistance Type</th>
+                            <th>Emergency Level</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Approval</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                        <tr>
+                            <td>#{{ req.beneficiary_id }}</td>
+                            <td>{{ req.user.username }}</td>
+                            <td>{{ req.beneficiary_name }}</td>
+                            <td>{{ req.beneficiary_email }}</td>
+                            <td>{{ req.beneficiary_phone }}</td>
+                            <td>
+                                {% if req.address %}
+                                    {{ req.address }}<br>
+                                    {% if req.place %}City: {{ req.place }}<br>{% endif %}
+                                    {% if req.post %}Post Office: {{ req.post }}<br>{% endif %}
+                                    {% if req.pin %}PIN Code: {{ req.pin }}<br>{% endif %}
+                                    {% if req.district %}District: {{ req.district }}{% endif %}
+                                {% else %}
+                                    Not Provided
+                                {% endif %}
+                            </td>
+                            <td>{{ req.emergency_type }}</td>
+                            <td>{{ req.emergency_level }}</td>
+                            <td>{{ req.date|date:"M d, Y" }}</td>
+                            <td>{{ req.status }}</td>
+                            <td>
+                                {% if req.approval_status %}
+                                    <span class="fw-bold">{{ req.approval_status }}</span>
+                                {% else %}
+                                    <a href="{% url 'approve_request' req.beneficiary_id %}" class="btn btn-sm btn-success">
+                                        Approve
+                                    </a>
+                                    <a href="{% url 'reject_request' req.beneficiary_id %}" class="btn btn-sm btn-danger">
+                                        Reject
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="11" class="text-center py-4">
+                                <i class="fas fa-exclamation-circle fa-2x text-muted mb-3"></i>
+                                <p class="text-muted mb-0">No beneficiary support requests found</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

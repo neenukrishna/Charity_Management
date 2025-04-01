@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Assign Field Area to Volunteer</h1>
+  
+  <!-- Display messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Search Bar -->
+  <form method="get" action="">
+    <input type="text" name="q" placeholder="Search by district, place, or post" value="{{ search_query }}">
+    <button type="submit">Search</button>
+  </form>
+  
+  <!-- Volunteers List -->
+  {% if volunteers %}
+    <h2>Volunteers in Area</h2>
+    <ul>
+      {% for volunteer in volunteers %}
+        <li style="margin-bottom: 20px;">
+          <strong>{{ volunteer.full_name }}</strong> - {{ volunteer.district }}<br>
+          <form method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" name="volunteer_id" value="{{ volunteer.volunteer_id }}">
+            <label for="assignment_details_{{ volunteer.volunteer_id }}">Assignment Details:</label><br>
+            <textarea id="assignment_details_{{ volunteer.volunteer_id }}" name="assignment_details" rows="3" placeholder="Enter field area details"></textarea><br>
+            <label for="completion_date_{{ volunteer.volunteer_id }}">Completion Date:</label><br>
+            <input type="date" id="completion_date_{{ volunteer.volunteer_id }}" name="completion_date"><br>
+            <button type="submit">Assign Field Area</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No volunteers found for the searched area.</p>
+  {% endif %}
+  
+{% endblock %}
