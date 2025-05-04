@@ -40,13 +40,11 @@ def home(request):
     return render(request, 'home.html', {'feedbacks': feedbacks})
 
 
-def all_feedbacks(request):
-    feedbacks = Feedback.objects.order_by('-date')
-    return render(request, 'feedback/all_feedbacks.html', {'feedbacks': feedbacks})
 
 @login_required
 def user_home(request):
     return render(request, 'user_home.html')
+
 @login_required
 def account_dashboard(request):
     donations = Donation.objects.filter(user=request.user).order_by('-date_time')
@@ -92,6 +90,11 @@ def contact_view(request):
             messages.error(request, 'Please fill out all fields.')
     
     return render(request, 'user_home.html')
+
+
+def all_feedbacks(request):
+    feedbacks = Feedback.objects.order_by('-date')
+    return render(request, 'feedback/all_feedbacks.html', {'feedbacks': feedbacks})
 
 
 def admin_contact_list(request):
@@ -155,37 +158,6 @@ def staff_dashboard(request):
 
     return render(request, 'staff_dashboard.html', context)
 
-@login_required
-@user_passes_test(is_admin)
-def admin_dashboard(request):
-    # Counts and totals
-    total_beneficiaries = BeneficiarySupport.objects.count()
-    total_volunteers = Volunteer.objects.count()
-    total_donations = Donation.objects.aggregate(total=Sum('amount'))['total'] or 0
-    urgent_requests_count = BeneficiarySupport.objects.filter(emergency_level="High").count()
-    urgent_requests = BeneficiarySupport.objects.filter(
-        emergency_level="High",
-        status="Pending"
-    ).order_by('-date')[:5]
-    # Donations by type
-    donations_by_type = Donation.objects.values('donation_type').annotate(total=Sum('amount'))
-    
-    # Monthly activity data
-    monthly_activity = {
-        'labels': ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-        'data': [30, 50, 40, 60, 70, 80],
-    }
-    
-    context = {
-        'total_beneficiaries': total_beneficiaries,
-        'total_volunteers': total_volunteers,
-        'total_donations': total_donations,
-        'urgent_requests_count': urgent_requests_count,
-        'urgent_requests': urgent_requests,
-        'donations_by_category': donations_by_type,  # Consider renaming to donations_by_type
-        'monthly_activity': monthly_activity,
-    }
-    return render(request, 'admin_dashboard.html', context)
 #---------------------------------------------------REGISTER-LOGIN--------------------------------------------------------------------
 
 # User Registration View (Without Forms)
@@ -264,8 +236,39 @@ def user_login(request):
     return render(request, 'login.html')
 
 
+#------------------------------Admin----------------------------------------------------
 
-
+@login_required
+@user_passes_test(is_admin)
+def admin_dashboard(request):
+    # Counts and totals
+    total_beneficiaries = BeneficiarySupport.objects.count()
+    total_volunteers = Volunteer.objects.count()
+    total_donations = Donation.objects.aggregate(total=Sum('amount'))['total'] or 0
+    urgent_requests_count = BeneficiarySupport.objects.filter(emergency_level="High").count()
+    urgent_requests = BeneficiarySupport.objects.filter(
+        emergency_level="High",
+        status="Pending"
+    ).order_by('-date')[:5]
+    # Donations by type
+    donations_by_type = Donation.objects.values('donation_type').annotate(total=Sum('amount'))
+    
+    # Monthly activity data
+    monthly_activity = {
+        'labels': ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        'data': [30, 50, 40, 60, 70, 80],
+    }
+    
+    context = {
+        'total_beneficiaries': total_beneficiaries,
+        'total_volunteers': total_volunteers,
+        'total_donations': total_donations,
+        'urgent_requests_count': urgent_requests_count,
+        'urgent_requests': urgent_requests,
+        'donations_by_category': donations_by_type,  # Consider renaming to donations_by_type
+        'monthly_activity': monthly_activity,
+    }
+    return render(request, 'admin_dashboard.html', context)
 
 @login_required
 @user_passes_test(is_admin)
@@ -434,11 +437,7 @@ def manage_palliative_care(request):
         'palliative_cases': palliative_cases
     })
 
-# Manage Resources & Inventory
-# @login_required
-# @user_passes_test(is_admin)
 
-# Helper function: checks if user is a donor (customize as needed)
 
 def is_donor(user):
     return user.user_type == "donor"
@@ -487,16 +486,7 @@ def is_manager(user):
     """
     return Staff.objects.filter(role__iexact="Manager", email=user.email).exists()
 
-# @login_required
-# @user_passes_test(is_manager)
-# def manager_notifications(request):
-#     """
-#     Manager view: Display notifications for the logged-in manager.
-#     """
-#     notifications = Notification.objects.filter(user=request.user).order_by('-date_time')
-#     print("Logged-in Manager ID:", request.user.id, "Email:", request.user.email)
-#     print("Manager notifications count:", notifications.count())
-#     return render(request, 'home/manager_notifications.html', {'notifications': notifications})
+
 
 def is_coordinator(user):
     """
@@ -544,14 +534,6 @@ def mark_field_solved(request, field_id):
     return redirect('manage_field_data')
 
 
-# # Manage Notifications
-# @login_required
-# @user_passes_test(is_admin)
-# def manage_notifications(request):
-#     notifications = Notification.objects.all()
-#     return render(request, 'manage_notifications.html', {'notifications': notifications})
-
-# Manage Field Data Collection
 @login_required
 @user_passes_test(is_admin)
 def manage_field_data(request):
@@ -815,33 +797,6 @@ def add_inventory(request):
 
 
 
-#--------------------------------------------NOTIFICATION---------------------------------------------------------------------------
-
-# @login_required
-# @user_passes_test(is_admin)
-# def add_notification(request):
-#     if request.method == 'POST':
-#         # Get data from the form
-#         user_id = request.POST.get('user_id')
-#         message = request.POST.get('message')
-
-#         user = CustomUser.objects.get(id=user_id)
-
-#         # Create the new notification
-#         Notification.objects.create(
-#             user=user,
-#             message=message
-#         )
-
-#         messages.success(request, "Notification added successfully!")
-#         return redirect('manage_notifications')  # Redirect to manage notifications page
-    
-#     # Get all users to display in the form
-#     users = CustomUser.objects.all()
-#     return render(request, 'add_notification.html', {'users': users})
-
-
-
 #--------------------------------------------FIELD DATA---------------------------------------------------------------------------
 
 @login_required
@@ -981,42 +936,7 @@ def add_staff(request):
     return render(request, "add_staff.html")
 
 
-#--------------------------------------CHAT-------------------------------------------------------------------------
-@login_required
-def chat_view(request):
-    # Get all messages between the logged-in user and admin
-    admin = CustomUser.objects.filter(is_superuser=True).first()
-    messages = ChatMessage.objects.filter(sender=request.user) | ChatMessage.objects.filter(receiver=request.user)
-    messages = messages.order_by('timestamp')
 
-    if request.method == 'POST':
-        message_text = request.POST.get('message')
-        if message_text:
-            ChatMessage.objects.create(sender=request.user, receiver=admin, message=message_text)
-            return redirect('chat_view')
-
-    return render(request, 'chat.html', {'messages': messages})
-
-
-@login_required
-@user_passes_test(is_admin)
-def admin_chat_view(request):
-    users = CustomUser.objects.exclude(is_superuser=True)  
-    selected_user = None
-    messages = None
-
-    if 'user_id' in request.GET:
-        selected_user = CustomUser.objects.get(id=request.GET['user_id'])
-        messages = ChatMessage.objects.filter(sender=selected_user) | ChatMessage.objects.filter(receiver=selected_user)
-        messages = messages.order_by('timestamp')
-
-    if request.method == 'POST':
-        message_text = request.POST.get('message')
-        if message_text and selected_user:
-            ChatMessage.objects.create(sender=request.user, receiver=selected_user, message=message_text)
-            return redirect(f"{request.path}?user_id={selected_user.id}")
-
-    return render(request, 'admin_chat.html', {'users': users, 'messages': messages, 'selected_user': selected_user})
 
 
 #---------------------------------------------------started user views ---------------------------------------------------------------------
@@ -1284,12 +1204,6 @@ def staff_manage_palliative_cases(request):
     # Retrieve all palliative care registrations from the database.
     palliative_cases = PalliativePatient.objects.all()
 
-    # Optional: Add filtering based on GET parameters if needed.
-    # For example, you might filter by patient name, date, etc.
-    # search_query = request.GET.get('search', '')
-    # if search_query:
-    #     palliative_cases = palliative_cases.filter(patientName__icontains=search_query)
-
     context = {
         'palliative_cases': palliative_cases,
     }
@@ -1430,33 +1344,6 @@ from datetime import timedelta
 
 
 
-# @login_required
-# def staff_manage_notifications(request):
-#     # Restrict access to staff users only.
-#     if not request.user.is_staff:
-#         return redirect('login')
-    
-#     # Define a time threshold (e.g., last 1 hour)
-#     time_threshold = timezone.now() - timedelta(hours=1)
-    
-#     # Count new donations created in the last hour
-#     new_donations_count = Donation.objects.filter(date_time__gte=time_threshold).count()
-    
-#     # Count new urgent requests created in the last hour.
-#     new_requests_count = BeneficiarySupport.objects.filter(date__gte=time_threshold).count()
-    
-#     # Prepare notifications messages (if count > 0)
-#     notifications = []
-#     if new_donations_count:
-#         notifications.append(f"{new_donations_count} new donation(s) received.")
-#     if new_requests_count:
-#         notifications.append(f"{new_requests_count} new urgent request(s) received.")
-    
-#     context = {
-#         'notifications': notifications
-#     }
-    
-#     return render(request, 'staff/manager_notifications.html', context)
 
 
 @staff_member_required
@@ -1569,17 +1456,7 @@ def assign_volunteer(request, patient_id):
         'volunteers': volunteers
     })
 
-    
-# @login_required
-# def assigned_tasks_view(request):
-#     # Retrieve the Volunteer instance linked to the current user
-#     volunteer = get_object_or_404(Volunteer, user=request.user)
-#     # Query all tasks/patients assigned to this volunteer
-#     tasks = PalliativePatient.objects.filter(volunteer=volunteer)
-#     return render(request, 'home/assigned_task.html', {
-#         'tasks': tasks,
-#         'volunteer': volunteer,
-#     })
+ 
 
 @login_required
 def assigned_tasks_view(request):
@@ -2239,17 +2116,19 @@ def monetary_donation(request):
 
 @login_required
 def monetary_receipt(request):
+    # Retrieve session data for donation and billing details.
     donation_details = request.session.get('monetary_donation_details', {})
     razorpay_order = request.session.get('monetary_razorpay_order', {})
-    
+    billing = request.session.get('billing', {})
+
     if not donation_details or not razorpay_order:
         messages.error(request, "Donation details missing.")
         return redirect('monetary_donation')
-    
+
     amount_val = donation_details.get('amount')
     donation_details_text = donation_details.get('donation_details')
-    
-    # Create the donation record with status Paid
+
+    # Create the Donation record with status 'Paid'.
     donation = Donation.objects.create(
         user=request.user,
         donation_type='monetary',
@@ -2258,45 +2137,47 @@ def monetary_receipt(request):
         quantity=None,
         status='Paid'
     )
-    
-    # Create a Payment record
+
+    # Create a Payment record.
     Payment.objects.create(
         donation=donation,
         method='Razorpay',
         status='Completed'
     )
-    
-    # Clear session donation data
+
+    # Clear the monetary donation session data.
     request.session.pop('monetary_donation_details', None)
     request.session.pop('monetary_razorpay_order', None)
     request.session.modified = True
-    
+
     receipt_number = f"RCPT-{uuid.uuid4().hex[:8].upper()}"
     donation_date = timezone.now()
-    
+
+    # Build context similar to the receipt view.
     context = {
-        'organization_name': 'Charitable Trust Name',
-        'organization_address': '123 Charity Street, City, State, ZIP',
-        'organization_phone': '123-456-7890',
-        'organization_email': 'info@charity.org',
+        'organization_name': 'AKG Charitable Society',
+        'organization_address': 'Kakkodi, Kozhikode, Kerala, 673611',
+        'organization_phone': '7907447256',
+        'organization_email': 'akgcharitable@gmail.com',
         'organization_website': 'www.charity.org',
         'receipt_number': receipt_number,
         'donation_date': donation_date,
         'amount_donated': amount_val,
         'donation_method': 'Razorpay',
-        'donor_name': request.user.username,
-        'donor_address': '',  
-        'donor_contact': '',
+        # Use billing data if available, otherwise fall back to the logged-in user's details.
+        'donor_name': billing.get('fullname', request.user.fullname),
+        'donor_email': billing.get('email', request.user.email),
+        'donor_contact': billing.get('phone', ''),
     }
-    
+
     return render(request, 'donation/monetary_receipt.html', context)
 
 def donation_category(request):
     categories = [
-        {'slug': 'medical', 'name': 'Medical Expenses', 'description': 'Support medical care for those in need.'},
-        {'slug': 'meals', 'name': 'Nourish the Needy', 'description': 'Provide meals to the underprivileged.'},
-        {'slug': 'grocery', 'name': 'Essential Grocery Assistance', 'description': 'Offer grocery kits to families.'},
-        {'slug': 'home', 'name': 'Comprehensive Home Care', 'description': 'Help with essential home care supplies.'},
+        {'slug': 'Medical Expenses', 'name': 'Medical Expenses', 'description': 'Support medical care for those in need.'},
+        {'slug': 'Nourish the Needy', 'name': 'Nourish the Needy', 'description': 'Provide meals to the underprivileged.'},
+        {'slug': 'Essential Grocery Assistance', 'name': 'Essential Grocery Assistance', 'description': 'Offer grocery kits to families.'},
+        {'slug': 'Comprehensive Home Care', 'name': 'Comprehensive Home Care', 'description': 'Help with essential home care supplies.'},
     ]
     return render(request, 'donation_category.html', {'categories': categories})
 
@@ -2304,10 +2185,10 @@ def donation_category(request):
 def donation_products(request, category):
     products = DonationProduct.objects.filter(category=category)
     category_titles = {
-        'medical': 'Medical Expenses',
-        'meals': 'Nourish the Needy',
-        'grocery': 'Essential Grocery Assistance',
-        'home': 'Comprehensive Home Care',
+        'Medical Expenses': 'Medical Expenses',
+        'Nourish the Needy': 'Nourish the Needy',
+        'Essential Grocery Assistance': 'Essential Grocery Assistance',
+        'Comprehensive Home Care': 'Comprehensive Home Care',
     }
     title = category_titles.get(category, 'Donations')
     return render(request, 'donation/donation_products.html', {
@@ -2774,10 +2655,9 @@ def payment_success(request):
     return redirect('monetary_donation')
 
 # ----------------------------
-# Beneficiary Request Functions
-# ----------------------------
-# Manage Emergency Support
-# A simple test for admin/staff users.admin
+# Beneficiary Request Functions----------------------------------------------------------------------
+
+
 
 from datetime import date
 
@@ -3325,6 +3205,39 @@ def coordinator_manage_events(request):
 
     return render(request, 'coordinator/coordinator_manage_events.html', {'events': events})
 
+
+def add_eventscord(request):
+    if request.method == 'POST':
+        # Get data from the form
+        event_type = request.POST.get('event_type')
+        event_date = request.POST.get('event_date')
+        description = request.POST.get('description')
+        location = request.POST.get('location')
+        event_status = request.POST.get('event_status')
+        sponsor_details = request.POST.get('sponsor_details')
+        target_budget = request.POST.get('target_budget')
+        
+        # Create the new event (converting target_budget to Decimal if provided)
+        Event.objects.create(
+            event_type=event_type,
+            event_date=event_date,
+            description=description,
+            location=location,
+            event_status=event_status,
+            sponsor_details=sponsor_details,
+            target_budget=Decimal(target_budget) if target_budget else Decimal('0.00')
+        )
+
+        messages.success(request, "Event added successfully!")
+        
+        # Conditionally redirect based on the user role:
+        if request.user.is_superuser:
+            return redirect('coordinator_manage_events')
+        else:
+            return redirect(' coordinator_manage_events')
+    
+    return render(request, 'add_eventscord.html')
+
 @login_required
 def coordinator_update_event(request, event_id):
     event = get_object_or_404(Event, event_id=event_id)
@@ -3693,7 +3606,7 @@ def volunteer_notifs(request):
 from django.shortcuts import render, get_object_or_404
 from django.http import FileResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Sum, Q
+from django.db.models import Sum, Count, Q
 from .models import Donation, BeneficiarySupport
 from datetime import datetime, timedelta
 import io
@@ -3903,68 +3816,163 @@ def monthly_report(request):
         ]
     })
     
-# from .models import Complaint
-
-# def volunteer_send_complaint(request):
-#     if request.method == "POST":
-#         message_text = request.POST.get('message', '').strip()
-#         if message_text:
-#             Complaint.objects.create(
-#                 sender=request.user,
-#                 message=message_text
-#             )
-#             messages.success(request, "Your complaint has been submitted.")
-#             return redirect('volunteer_complaint_list')
-#         else:
-#             messages.error(request, "Please enter your complaint message.")
-#     return render(request, 'complaints/volunteer_complaint_form.html')
-
-# def volunteer_complaint_list(request):
-#     # Show only complaints from the current volunteer or admin
-#     if request.user.is_staff:  # Admin can see all complaints
-#         complaints = Complaint.objects.all().order_by('-created_at')
-#     else:
-#         complaints = Complaint.objects.filter(sender=request.user).order_by('-created_at')
-#     return render(request, 'complaints/volunteer_complaint_list.html', {'complaints': complaints})
 
 
-# def staff_send_complaint(request):
-#     if request.method == "POST":
-#         message_text = request.POST.get('message', '').strip()
-#         if message_text:
-#             Complaint.objects.create(
-#                 sender=request.user,
-#                 message=message_text
-#             )
-#             messages.success(request, "Your complaint has been submitted.")
-#             return redirect('staff_complaint_list')
-#         else:
-#             messages.error(request, "Please enter your complaint message.")
-#     return render(request, 'complaints/staff_complaint_form.html')
+#-------------------------------beneficiary report ----------------------------------------------------------------------------
 
-# def staff_complaint_list(request):
-#     # Staff can only see their own complaints or all complaints if they are admin
-#     if request.user.is_staff:  # Admin can see all complaints
-#         complaints = Complaint.objects.all().order_by('-created_at')
-#     else:
-#         complaints = Complaint.objects.filter(sender=request.user).order_by('-created_at')
-#     return render(request, 'complaints/staff_complaint_list.html', {'complaints': complaints})
+@login_required
+@user_passes_test(lambda u: u.is_staff or u.is_superuser)
+def beneficiary_support_report(request):
+    if request.method == 'POST':
+        # Parse selected month/year
+        month = int(request.POST.get('month'))
+        year = int(request.POST.get('year'))
+        start = datetime(year, month, 1).date()
+        nxt = datetime(year, month, 28) + timedelta(days=4)
+        end = (nxt - timedelta(days=nxt.day)).date()
 
-# def admin_complaint_list(request):
-#     # Admin sees all complaints (from both volunteers and staff)
-#     complaints = Complaint.objects.all().order_by('-created_at')
-#     return render(request, 'complaints/admin_complaint_list.html', {'complaints': complaints})
+        # Filter supports in date range
+        qs = BeneficiarySupport.objects.filter(date__range=(start, end))
 
-# def admin_reply_complaint(request, complaint_id):
-#     complaint = get_object_or_404(Complaint, pk=complaint_id)
-#     if request.method == "POST":
-#         reply_text = request.POST.get('reply', '').strip()
-#         if reply_text:
-#             complaint.reply = reply_text
-#             complaint.replied_at = timezone.now()
-#             complaint.save()
-#             messages.success(request, "Reply has been sent.")
-#             return redirect('admin_complaint_list')
-#         else:
-#             messages.error(request, "Please enter a reply.")
-#     return render(request, 'complaints/admin_complaint_reply.html', {'complaint': complaint})
+        # Group by beneficiary AND category
+        supports = (
+            qs
+            .values('beneficiary_id', 'beneficiary_name', 'emergency_type')
+            .annotate(
+                total_allocated=Sum('allocation_amount'),
+                total_requests=Count('beneficiary_id'),
+                resolved_count=Count('beneficiary_id', filter=Q(status='Resolved'))
+            )
+            .order_by('-total_allocated')
+        )
+
+        # Build table data including Category column
+        table_data = [[
+            'Beneficiary',
+            'Category',
+            'Allocated (₹)',
+            'Requests',
+            'Resolved',
+            'Pending'
+        ]]
+        for s in supports:
+            pending = s['total_requests'] - s['resolved_count']
+            table_data.append([
+                s['beneficiary_name'],
+                s['emergency_type'].title(),
+                f"{s['total_allocated'] or 0:,.2f}",
+                s['total_requests'],
+                s['resolved_count'],
+                pending
+            ])
+
+        # Overall summary counts
+        total_requests = qs.count()
+        total_resolved = qs.filter(status='Resolved').count()
+        total_pending = total_requests - total_resolved
+
+        # Create a professional bar chart
+        plt.figure(figsize=(5, 3), dpi=100, facecolor='white')
+        labels = ['Resolved', 'Pending']
+        values = [total_resolved, total_pending]
+        x_pos = range(len(labels))
+        bars = plt.bar(x_pos, values, width=0.4)
+
+        # Styling for professional look
+        ax = plt.gca()
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.set_ylabel('Number of Requests', fontsize=10)
+        ax.set_xticks(x_pos)
+        ax.set_xticklabels(labels, fontsize=10)
+        ax.set_yticks(range(0, max(values) + 1, max(1, max(values)//5)))
+        ax.grid(axis='y', linestyle='--', linewidth=0.5, alpha=0.7)
+        plt.title('Support Requests Status', fontsize=12, pad=12)
+
+        # Annotate bar values
+        for bar in bars:
+            yval = bar.get_height()
+            plt.text(bar.get_x() + bar.get_width()/2, yval + 0.1, int(yval),
+                     ha='center', va='bottom', fontsize=9)
+
+        plt.tight_layout()
+        chart_buf = io.BytesIO()
+        plt.savefig(chart_buf, format='png', bbox_inches='tight')
+        plt.close()
+        chart_buf.seek(0)
+
+        # Build PDF
+        pdf_buf = io.BytesIO()
+        doc = SimpleDocTemplate(
+            pdf_buf,
+            pagesize=letter,
+            leftMargin=0.5 * inch, rightMargin=0.5 * inch,
+            topMargin=0.3 * inch, bottomMargin=0.5 * inch
+        )
+        styles = getSampleStyleSheet()
+        elems = []
+
+        # Header
+        header = Paragraph(
+            "<b>AKG Charitable Society</b><br/>"
+            "Kakkodi, Kozhikode, Kerala, 673611<br/>"
+            "Email: akgcharitable@gmail.com<br/>"
+            "Registration Number: KKD/CA/1698/2014<br/>"
+            "Phone: 7907447256",
+            ParagraphStyle('Header', parent=styles['Normal'], fontSize=10, alignment=1)
+        )
+        elems.extend([header, Spacer(1, 0.2 * inch)])
+
+        # Title & period
+        elems.append(Paragraph(
+            "BENEFICIARY SUPPORT REPORT",
+            ParagraphStyle('Title', parent=styles['Heading1'], fontSize=16, alignment=1, textColor=colors.navy)
+        ))
+        elems.append(Paragraph(
+            f"<b>Period:</b> {start.strftime('%B %Y')}",
+            ParagraphStyle('Date', parent=styles['Normal'], fontSize=12, alignment=1)
+        ))
+        elems.append(Spacer(1, 0.3 * inch))
+
+        # Table
+        widths = [1.8 * inch, 1.2 * inch, 1.2 * inch, 0.8 * inch, 0.8 * inch, 0.8 * inch]
+        tbl = Table(table_data, colWidths=widths)
+        tbl.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#003366')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ]))
+        elems.extend([tbl, Spacer(1, 0.3 * inch)])
+
+        # Chart image with adjusted size
+        elems.extend([Image(chart_buf, width=5 * inch, height=2 * inch), Spacer(1, 0.2 * inch)])
+
+        # Summary
+        summary = Paragraph(
+            f"<b>Total Requests:</b> {total_requests}<br/>"
+            f"<b>Resolved:</b> {total_resolved}<br/>"
+            f"<b>Pending:</b> {total_pending}",
+            ParagraphStyle('Summary', parent=styles['Normal'], fontSize=11, textColor=colors.darkblue)
+        )
+        elems.extend([summary, Spacer(1, 0.2 * inch)])
+
+        # Footer
+        footer = Paragraph(
+            "Generated on: " + datetime.now().strftime("%d-%m-%Y %H:%M"),
+            ParagraphStyle('Footer', parent=styles['Normal'], fontSize=8, textColor=colors.grey)
+        )
+        elems.append(footer)
+
+        doc.build(elems)
+        pdf_buf.seek(0)
+        filename = f"beneficiary_support_{year}_{month:02}.pdf"
+        return FileResponse(pdf_buf, as_attachment=True, filename=filename)
+
+    # GET: render form
+    now = datetime.now()
+    years = range(now.year - 1, now.year + 5)
+    months = [(i, datetime(2000, i, 1).strftime('%B')) for i in range(1, 13)]
+    return render(request, 'reports/beneficiary_support_form.html', {'years': years, 'months': months})

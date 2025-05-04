@@ -32,9 +32,9 @@
             <!-- Assignment Form -->
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <form method="post" action="">
+                    <form method="post" action="" novalidate onsubmit="return validateForm();">
                         {% csrf_token %}
-                        
+
                         <!-- Specific Responsibilities Field -->
                         <div class="form-group mb-4">
                             <label for="responsibilities" class="form-label font-weight-bold">
@@ -133,4 +133,44 @@
         border: none;
     }
 </style>
+
+<script>
+    function validateForm() {
+        // grab values
+        const resp    = document.getElementById('responsibilities').value.trim();
+        const loc     = document.getElementById('location').value.trim();
+        const cDate   = document.getElementById('completion_date').value;
+
+        // regex patterns
+        const respRegex = /^[\w\s.,;:'"!?@#\$%\^&*\)\(+=_\-–—]+$/;
+        const locRegex  = /^[A-Za-z\s.,'’\-–]+$/;
+
+        // 1) Responsibilities: letters, digits, common special chars
+        if (!respRegex.test(resp) || resp.length < 10) {
+            alert('Specific Responsibilities must be at least 10 characters and may include letters, numbers, and common punctuation.');
+            return false;
+        }
+
+        // 2) Location: letters and selected punctuation only
+        if (!locRegex.test(loc) || loc.length < 5) {
+            alert('Enter a valid location details.');
+            return false;
+        }
+
+        // 3) Completion Date: must be in the future
+        if (!cDate) {
+            alert('Please select a target completion date.');
+            return false;
+        }
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const selected = new Date(cDate);
+        if (selected <= today) {
+            alert('Target Completion Date must be a future date.');
+            return false;
+        }
+
+        return true;
+    }
+</script>
 {% endblock %}

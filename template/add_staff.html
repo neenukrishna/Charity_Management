@@ -1,112 +1,18 @@
-<!---------------
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Add Staff</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Staff | AKG Charitable Society</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-</head>
-<body>
-    <div class="container mt-4">
-        <h2>Add New Staff Member</h2>
-
-        <form method="POST">
-            {% csrf_token %}
-            
-           
-            <div class="mb-3">
-                <label for="role" class="form-label">Role</label>
-                <input type="text" class="form-control" id="role" name="role" required>
-            </div>
-
-            
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-
-           
-            <div class="mb-3">
-                <label for="phone" class="form-label">Phone</label>
-                <input type="text" class="form-control" id="phone" name="phone" required>
-            </div>
-
-            
-            <div class="mb-3">
-                <label for="dob" class="form-label">Date of Birth</label>
-                <input type="date" class="form-control" id="dob" name="dob" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="gender" class="form-label">Gender</label>
-                <select class="form-control" id="gender" name="gender" required>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="place" class="form-label">Place</label>
-                <input type="text" class="form-control" id="place" name="place" required>
-            </div>
-
-            
-            <div class="mb-3">
-                <label for="post" class="form-label">Post</label>
-                <input type="text" class="form-control" id="post" name="post" required>
-            </div>
-
-            
-            <div class="mb-3">
-                <label for="pin" class="form-label">Pin</label>
-                <input type="text" class="form-control" id="pin" name="pin" required>
-            </div>
-
-            
-            <div class="mb-3">
-                <label for="district" class="form-label">District</label>
-                <input type="text" class="form-control" id="district" name="district" required>
-            </div>
-
-           
-            <div class="mb-3">
-                <label for="join_date" class="form-label">Join Date</label>
-                <input type="date" class="form-control" id="join_date" name="join_date" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-control" id="status" name="status" required>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-success">Add Staff</button>
-        </form>
-
-        <a href="{% url 'manage_staff' %}" class="btn btn-secondary mt-3">Back to Staff</a>
-    </div>
-</body>
-</html>
-------------------->
-
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Staff</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body class="bg-light">
     <div class="container mt-5">
         <div class="card shadow-lg">
-            <!-- Card Header -->
             <div class="card-header bg-success text-white">
                 <h3 class="mb-0"><i class="fas fa-user-plus me-2"></i>Add New Staff</h3>
             </div>
-            <!-- Card Body -->
             <div class="card-body">
                 {% if error_message %}
                 <div class="alert alert-danger d-flex align-items-center">
@@ -114,58 +20,51 @@
                     <div>{{ error_message }}</div>
                 </div>
                 {% endif %}
-
-                <form method="POST" class="row g-4">
+                <form id="staffForm" method="POST" class="row g-4">
                     {% csrf_token %}
-
-                    <!-- Full Name -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Full Name" required>
+                            <input type="text" class="form-control" id="fullname" name="fullname"
+                                   placeholder="Full Name" required pattern="^[A-Za-z\s]+$" minlength="3"
+                                   title="Only letters and spaces allowed, at least 3 characters">
                             <label for="fullname"><i class="fas fa-user me-2"></i>Full Name</label>
                         </div>
                     </div>
-
-                    <!-- Role -->
-                                        <!-- Role -->
                     <div class="col-md-6">
                         <div class="form-floating">
                             <select class="form-select" id="role" name="role" required>
+                                <option value="">Select Role</option>
                                 <option value="Manager">Manager</option>
                                 <option value="Coordinator">Coordinator</option>
                             </select>
                             <label for="role"><i class="fas fa-briefcase me-2"></i>Role</label>
                         </div>
                     </div>
-
-                    <!-- Email -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+                            <input type="email" class="form-control" id="email" name="email"
+                                   placeholder="name@example.com" required>
                             <label for="email"><i class="fas fa-envelope me-2"></i>Email</label>
                         </div>
                     </div>
-
-                    <!-- Phone -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="phone" name="phone" placeholder="+91 1234567890" required>
+                            <input type="tel" class="form-control" id="phone" name="phone"
+                                   placeholder="1234567890" required pattern="^[6-9]\d{9}$" inputmode="numeric"
+                                   title="Enter a 10-digit phone number starting with 6,7,8, or 9">
                             <label for="phone"><i class="fas fa-phone me-2"></i>Phone</label>
                         </div>
                     </div>
-
-                    <!-- Date of Birth -->
                     <div class="col-md-6">
                         <div class="form-floating">
                             <input type="date" class="form-control" id="dob" name="dob" required>
                             <label for="dob"><i class="fas fa-birthday-cake me-2"></i>Date of Birth</label>
                         </div>
                     </div>
-
-                    <!-- Gender -->
                     <div class="col-md-6">
                         <div class="form-floating">
                             <select class="form-select" id="gender" name="gender" required>
+                                <option value="">Select Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
@@ -173,52 +72,49 @@
                             <label for="gender"><i class="fas fa-venus-mars me-2"></i>Gender</label>
                         </div>
                     </div>
-
-                
-                    <!-- Address Details -->
                     <div class="col-12">
                         <h5 class="text-muted mb-4"><i class="fas fa-map-marker-alt me-2"></i>Address Details</h5>
                         <div class="row g-3">
-                            <!-- Place -->
                             <div class="col-md-4">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="place" name="place" placeholder="City/Town" required>
+                                    <input type="text" class="form-control" id="place" name="place"
+                                           placeholder="City/Town" required pattern="^[A-Za-z\s]+$"
+                                           title="Only letters and spaces allowed">
                                     <label for="place">City/Town</label>
                                 </div>
                             </div>
-                            <!-- Post -->
                             <div class="col-md-4">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="post" name="post" placeholder="Post Office" required>
+                                    <input type="text" class="form-control" id="post" name="post"
+                                           placeholder="Post Office" required pattern="^[A-Za-z\s]+$"
+                                           title="Only letters and spaces allowed">
                                     <label for="post">Post Office</label>
                                 </div>
                             </div>
-                            <!-- District -->
                             <div class="col-md-4">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="district" name="district" placeholder="District" required>
+                                    <input type="text" class="form-control" id="district" name="district"
+                                           placeholder="District" required pattern="^[A-Za-z\s]+$"
+                                           title="Only letters and spaces allowed">
                                     <label for="district">District</label>
                                 </div>
                             </div>
-                            <!-- PIN Code -->
                             <div class="col-md-4">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="pin" name="pin" placeholder="PIN Code" required>
+                                    <input type="text" class="form-control" id="pin" name="pin"
+                                           placeholder="PIN Code" required pattern="^6\d{5}$" inputmode="numeric"
+                                           title="PIN must start with 6 and be 6 digits long">
                                     <label for="pin">PIN Code</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Join Date -->
                     <div class="col-md-6">
                         <div class="form-floating">
                             <input type="date" class="form-control" id="join_date" name="join_date" required>
                             <label for="join_date"><i class="fas fa-calendar-check me-2"></i>Join Date</label>
                         </div>
                     </div>
-
-                    <!-- Status -->
                     <div class="col-md-6">
                         <div class="form-floating">
                             <select class="form-select" id="status" name="status" required>
@@ -228,8 +124,6 @@
                             <label for="status"><i class="fas fa-toggle-on me-2"></i>Status</label>
                         </div>
                     </div>
-
-                    <!-- Form Actions -->
                     <div class="col-12 text-end mt-4">
                         <a href="{% url 'manage_staff' %}" class="btn btn-outline-secondary me-3">
                             <i class="fas fa-arrow-left me-2"></i>Cancel
@@ -242,5 +136,71 @@
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('staffForm');
+        const dobInput = document.getElementById('dob');
+        const joinInput = document.getElementById('join_date');
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        const eighteenYearsAgoStr = eighteenYearsAgo.toISOString().split('T')[0];
+
+        // DOB validation
+        dobInput.addEventListener('change', () => {
+          const dob = dobInput.value;
+          if (dob > todayStr) {
+            alert('DOB cannot be in the future'); dobInput.value = ''; dobInput.focus();
+          } else if (dob > eighteenYearsAgoStr) {
+            alert('Staff must be at least 18 years old'); dobInput.value = ''; dobInput.focus();
+          }
+        });
+        // Join date validation: must be today or future
+        joinInput.addEventListener('change', () => {
+          if (joinInput.value < todayStr) {
+            alert('Join date cannot be in the past'); joinInput.value = ''; joinInput.focus();
+          }
+        });
+
+        form.addEventListener('submit', e => {
+          const letters = /^[A-Za-z\s]+$/;
+          const phoneRe = /^[6-9]\d{9}$/;
+          const pinRe = /^6\d{5}$/;
+          const v = {
+            name: document.getElementById('fullname').value.trim(),
+            role: document.getElementById('role').value,
+            email: document.getElementById('email').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            dob: dobInput.value,
+            gender: document.getElementById('gender').value,
+            place: document.getElementById('place').value.trim(),
+            post: document.getElementById('post').value.trim(),
+            district: document.getElementById('district').value.trim(),
+            pin: document.getElementById('pin').value.trim(),
+            join: joinInput.value,
+            status: document.getElementById('status').value
+          };
+          if (v.name.length < 3)             { alert('Full Name: at least 3 chars'); e.preventDefault(); return; }
+          if (!letters.test(v.name))         { alert('Full Name: only letters & spaces'); e.preventDefault(); return; }
+          if (!v.role)                       { alert('Select a Role'); e.preventDefault(); return; }
+          if (!v.email.includes('@') || !v.email.includes('.')) { alert('Enter valid Email'); e.preventDefault(); return; }
+          if (!phoneRe.test(v.phone))        { alert('Phone: 10 digits starting 6-9'); e.preventDefault(); return; }
+          if (!v.dob)                        { alert('Select DOB'); e.preventDefault(); return; }
+          if (v.dob > todayStr)              { alert('DOB cannot be future'); e.preventDefault(); return; }
+          if (v.dob > eighteenYearsAgoStr)   { alert('Must be 18+'); e.preventDefault(); return; }
+          if (!v.gender)                     { alert('Select Gender'); e.preventDefault(); return; }
+          if (!letters.test(v.place))        { alert('Place: only letters'); e.preventDefault(); return; }
+          if (!letters.test(v.post))         { alert('Post: only letters'); e.preventDefault(); return; }
+          if (!letters.test(v.district))     { alert('District: only letters'); e.preventDefault(); return; }
+          if (!pinRe.test(v.pin))            { alert('PIN: start 6, 6 digits'); e.preventDefault(); return; }
+          if (!v.join)                       { alert('Select Join Date'); e.preventDefault(); return; }
+          if (v.join < todayStr)             { alert('Join date cannot be in the past'); e.preventDefault(); return; }
+          if (!v.status)                     { alert('Select Status'); e.preventDefault(); return; }
+        });
+      });
+    </script>
 </body>
 </html>

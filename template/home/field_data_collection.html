@@ -1,163 +1,172 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Field Data Collection for Assistance</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-      body {
-          background-color: #f1f3f5;
-          font-family: 'Roboto', sans-serif;
-          color: #343a40;
-      }
-      .container-fluid {
-          padding: 3rem;
-      }
-      h3 {
-          font-weight: 700;
-          color: #212529;
-          margin-bottom: 2rem;
-      }
-      .custom-card {
-          background-color: #ffffff;
-          border-radius: 8px;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-          padding: 2rem;
-      }
-      .form-control, .form-select {
-          border: 1px solid #ced4da;
-          border-radius: 4px;
-          font-size: 1rem;
-          padding: 0.75rem;
-          transition: border-color 0.3s ease;
-      }
-      .form-control:focus, .form-select:focus {
-          border-color: #007bff;
-          box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-      }
-      .form-label {
-          font-weight: 500;
-          margin-bottom: 0.5rem;
-          color: #495057;
-      }
-      .btn-primary {
-          background-color: #007bff;
-          border: none;
-          font-weight: 500;
-          font-size: 1.1rem;
-          padding: 0.75rem;
-          border-radius: 4px;
-          transition: background-color 0.3s ease;
-      }
-      .btn-primary:hover {
-          background-color: #0056b3;
-      }
-    </style>
+  <meta charset="UTF-8">
+  <title>Field Data Collection for Assistance</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #f1f3f5;
+      font-family: 'Roboto', sans-serif;
+      color: #343a40;
+    }
+    .container-fluid {
+      padding: 3rem;
+    }
+    h3 {
+      font-weight: 700;
+      color: #212529;
+      margin-bottom: 2rem;
+    }
+    .custom-card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+    .form-control, .form-select {
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 1rem;
+      padding: 0.75rem;
+      transition: border-color 0.3s ease;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #495057;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border: none;
+      font-weight: 500;
+      font-size: 1.1rem;
+      padding: 0.75rem;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
   <div class="container-fluid p-5" style="min-height: 100vh;">
     <h3 class="mb-4 text-center text-dark fw-bold">Field Data Collection for Assistance</h3>
     <div class="card shadow custom-card mx-auto" style="max-width: 1200px;">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <h3>
-          <i class="fas fa-clipboard-list me-2"></i>Submit Field Data
-        </h3>
+        <h3><i class="fas fa-clipboard-list me-2"></i>Submit Field Data</h3>
         <div>
-          <a href="{%  url 'volunteer_dashboard' %}" class="btn btn-light btn-sm me-2">
+          <a href="{% url 'volunteer_dashboard' %}" class="btn btn-light btn-sm me-2">
             <i class="fas fa-home me-2"></i>Dashboard
           </a>
         </div>
       </div>
       <div class="card-body">
-        <!-- Form: make sure your view processes these keys from request.POST -->
-        <form method="post" enctype="multipart/form-data" novalidate>
+        <form method="post" enctype="multipart/form-data" novalidate onsubmit="return validateForm()">
           {% csrf_token %}
           <!-- Full Name -->
           <div class="mb-4">
             <label class="form-label" for="full_name">Full Name</label>
-            <input type="text" name="full_name" id="full_name" class="form-control" placeholder="Enter beneficiary full name">
+            <input type="text" name="full_name" id="full_name" class="form-control"
+                   placeholder="Enter beneficiary full name" required>
           </div>
 
-          <!-- Row for Age, Gender, Phone -->
+          <!-- Age, Gender, Phone -->
           <div class="row mb-4">
             <div class="col-md-4">
               <label class="form-label" for="age">Age</label>
-              <input type="number" name="age" id="age" class="form-control" placeholder="Enter age">
+              <input type="number" name="age" id="age" class="form-control"
+                     placeholder="Enter age" required>
             </div>
             <div class="col-md-4">
               <label class="form-label" for="gender">Gender</label>
-              <select name="gender" id="gender" class="form-select">
+              <select name="gender" id="gender" class="form-select" required>
                 <option value="">Select</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
               </select>
             </div>
             <div class="col-md-4">
               <label class="form-label" for="phone">Phone Number</label>
-              <input type="text" name="phone" id="phone" class="form-control" placeholder="Enter phone number">
+              <input type="text" name="phone" id="phone" class="form-control"
+                     placeholder="Enter phone number" required>
             </div>
           </div>
 
-          <!-- Address and Location -->
-         
+          <!-- Address -->
           <div class="row mb-4">
             <div class="col-md-4">
               <label class="form-label" for="place">City/Place</label>
-              <input type="text" name="place" id="place" class="form-control" placeholder="Enter city or place">
+              <input type="text" name="place" id="place" class="form-control"
+                     placeholder="Enter city or place" required>
             </div>
             <div class="col-md-4">
               <label class="form-label" for="post">Post Office</label>
-              <input type="text" name="post" id="post" class="form-control" placeholder="Enter post office">
+              <input type="text" name="post" id="post" class="form-control"
+                     placeholder="Enter post office" required>
             </div>
             <div class="col-md-4">
               <label class="form-label" for="pin">PIN Code</label>
-              <input type="text" name="pin" id="pin" class="form-control" placeholder="Enter PIN code">
+              <input type="text" name="pin" id="pin" class="form-control"
+                     placeholder="Enter PIN code" required>
             </div>
           </div>
           <div class="mb-4">
             <label class="form-label" for="district">District</label>
-            <input type="text" name="district" id="district" class="form-control" placeholder="Enter district">
+            <input type="text" name="district" id="district" class="form-control"
+                   placeholder="Enter district" required>
           </div>
 
           <!-- Contact & Assistance Details -->
           <div class="mb-4">
-            <label class="form-label" for="email">Email (Optional)</label>
-            <input type="email" name="email" id="email" class="form-control" placeholder="Enter email address">
+            <label class="form-label" for="email">Email <span class="text-danger">*</span></label>
+            <input type="email" name="email" id="email" class="form-control"
+                   placeholder="Enter email address" required>
           </div>
           <div class="mb-4">
             <label class="form-label" for="details">Assistance Details</label>
-            <textarea name="details" id="details" class="form-control" rows="3" placeholder="Describe the assistance needed"></textarea>
+            <textarea name="details" id="details" class="form-control" rows="3"
+                      placeholder="Describe the assistance needed" required></textarea>
           </div>
 
-          <!-- Optional Fields -->
+          <!-- Medical, Family, Urgency, Additional -->
           <div class="mb-4">
             <label class="form-label" for="medical_conditions">Medical Conditions/Disability</label>
-            <textarea name="medical_conditions" id="medical_conditions" class="form-control" rows="2" placeholder="Enter any medical conditions or disabilities"></textarea>
+            <textarea name="medical_conditions" id="medical_conditions" class="form-control"
+                      rows="2" placeholder="Enter any medical conditions or disabilities"
+                      required></textarea>
           </div>
           <div class="mb-4">
             <label class="form-label" for="family_size">Family Members</label>
-            <input type="number" name="family_size" id="family_size" class="form-control" placeholder="Enter number of family members">
+            <input type="number" name="family_size" id="family_size" class="form-control"
+                   placeholder="Enter number of family members" required>
           </div>
           <div class="mb-4">
             <label class="form-label" for="urgency_level">Urgency Level</label>
-            <select name="urgency_level" id="urgency_level" class="form-select">
+            <select name="urgency_level" id="urgency_level" class="form-select" required>
               <option value="">Select</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
             </select>
           </div>
           <div class="mb-4">
             <label class="form-label" for="additional_info">Additional Information</label>
-            <textarea name="additional_info" id="additional_info" class="form-control" rows="3" placeholder="Any additional information"></textarea>
+            <textarea name="additional_info" id="additional_info" class="form-control"
+                      rows="3" placeholder="Any additional information" required></textarea>
           </div>
 
           <!-- File Upload -->
           <div class="mb-4">
             <label class="form-label" for="proof">Upload ID Proof</label>
-            <input type="file" name="proof" id="proof" class="form-control">
+            <input type="file" name="proof" id="proof" class="form-control" required>
           </div>
 
           <button type="submit" class="btn btn-primary w-100">Submit Data</button>
@@ -165,5 +174,94 @@
       </div>
     </div>
   </div>
-</body>
+
+  <script>
+    function validateForm() {
+      const name            = document.getElementById('full_name').value.trim();
+      const age             = document.getElementById('age').value.trim();
+      const gender          = document.getElementById('gender').value;
+      const phone           = document.getElementById('phone').value.trim();
+      const place           = document.getElementById('place').value.trim();
+      const post            = document.getElementById('post').value.trim();
+      const district        = document.getElementById('district').value.trim();
+      const pin             = document.getElementById('pin').value.trim();
+      const email           = document.getElementById('email').value.trim();
+      const details         = document.getElementById('details').value.trim();
+      const medical         = document.getElementById('medical_conditions').value.trim();
+      const familySize      = document.getElementById('family_size').value.trim();
+      const urgency         = document.getElementById('urgency_level').value;
+      const additional      = document.getElementById('additional_info').value.trim();
+  
+      const nameRegex       = /^[A-Za-z\s]{3,}$/;
+      const cityRegex       = /^[A-Za-z\s]+$/;
+      const phoneRegex      = /^[6-9]\d{9}$/;
+      const pinRegex        = /^6\d{5}$/;
+      const generalText     = /^[\w\s.,;:'"!?()-]+$/;
+      const emailRegex      = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+      if (!nameRegex.test(name)) {
+        alert("Full Name must be at least 3 letters long and contain only letters and spaces.");
+        return false;
+      }
+      if (!age || isNaN(age) || age <= 0 || age > 120) {
+        alert("Please enter a valid age between 1 and 120.");
+        return false;
+      }
+      if (!gender) {
+        alert("Please select a gender.");
+        return false;
+      }
+      if (!phoneRegex.test(phone)) {
+        alert("Phone number must be 10 digits starting with 6, 7, 8, or 9.");
+        return false;
+      }
+      if (!cityRegex.test(place)) {
+        alert("City/Place must contain only letters and spaces.");
+        return false;
+      }
+      if (!cityRegex.test(post)) {
+        alert("Post Office must contain only letters and spaces.");
+        return false;
+      }
+      if (!cityRegex.test(district)) {
+        alert("District must contain only letters and spaces.");
+        return false;
+      }
+      if (!pinRegex.test(pin)) {
+        alert("PIN code must be exactly 6 digits starting with 6.");
+        return false;
+      }
+      if (!email) {
+        alert("Email address is required.");
+        return false;
+      }
+      if (!emailRegex.test(email)) {
+        alert("Please enter a valid email address.");
+        return false;
+      }
+      if (!generalText.test(details)) {
+        alert("Assistance Details can contain letters, numbers, and allowed punctuation only.");
+        return false;
+      }
+      if (!generalText.test(medical)) {
+        alert("Medical Conditions/Disability must contain valid characters.");
+        return false;
+      }
+      if (!familySize || isNaN(familySize) || familySize <= 0) {
+        alert("Please enter a valid number of family members.");
+        return false;
+      }
+      if (!urgency) {
+        alert("Please select an urgency level.");
+        return false;
+      }
+      if (!generalText.test(additional)) {
+        alert("Additional Information must contain valid characters.");
+        return false;
+      }
+  
+      return true;
+    }
+  </script>
+  </body>
 </html>

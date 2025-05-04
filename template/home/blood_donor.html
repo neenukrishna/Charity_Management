@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      /* Same color theme as the Volunteer page */
       --primary-color: #2563eb;
       --dark-color: #1e293b;
       --light-color: #f8fafc;
@@ -20,7 +19,6 @@
       background-color: var(--light-color);
       padding-top: 70px;
     }
-    /* Navbar */
     .navbar {
       box-shadow: 0 2px 15px rgba(0,0,0,0.1);
       background: rgba(255,255,255,0.95);
@@ -33,7 +31,6 @@
     .nav-link:hover {
       color: var(--primary-color) !important;
     }
-    /* Hero Section */
     .hero-section {
       background: linear-gradient(135deg, rgba(37,99,235,0.95) 0%, rgba(16,185,129,0.95) 100%),
                   url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center;
@@ -46,52 +43,18 @@
       color: white;
       padding: 40px 0;
     }
-    .hero-section h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-    }
-    .hero-section p {
-      font-size: 1.25rem;
-    }
-    /* Donation Section */
-    .donation-section {
-      padding: 60px 0;
-    }
-    .donation-desc {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: var(--dark-color);
-    }
-    .donation-desc h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      color: var(--primary-color);
-    }
-    .donation-form {
-      background: #fff;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .donation-form h2 {
-      font-size: 1.75rem;
-      margin-bottom: 20px;
-      color: var(--primary-color);
-    }
-    .form-control:focus {
-      border-color: var(--primary-color);
-      box-shadow: none;
-    }
-    footer {
-      background: var(--dark-color);
-      color: #94a3b8;
-      padding: 20px 0;
-      text-align: center;
-    }
+    .hero-section h1 { font-size: 3rem; margin-bottom: 0.5rem; }
+    .hero-section p { font-size: 1.25rem; }
+    .donation-section { padding: 60px 0; }
+    .donation-desc { font-size: 1.1rem; line-height: 1.6; color: var(--dark-color); }
+    .donation-desc h2 { font-size: 2rem; margin-bottom: 20px; color: var(--primary-color); }
+    .donation-form { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .donation-form h2 { font-size: 1.75rem; margin-bottom: 20px; color: var(--primary-color); }
+    .form-control:focus { border-color: var(--primary-color); box-shadow: none; }
+    footer { background: var(--dark-color); color: #94a3b8; padding: 20px 0; text-align: center; }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
       <a class="navbar-brand" href="#">AKG Charitable Society</a>
@@ -110,43 +73,31 @@
       </div>
     </div>
   </nav>
-  
-  <!-- Hero Section -->
   <section class="hero-section" id="donation-hero">
     <div class="container text-center">
       <h1>Blood Donation</h1>
       <p class="lead">Donate Blood, Save Lives</p>
     </div>
   </section>
-  
-  <!-- Donation Content Section -->
   <section class="donation-section">
     <div class="container">
       <div class="row g-4">
-        <!-- Description Column -->
         <div class="col-md-6">
           <div class="donation-desc">
             <h2>Give the Gift of Life</h2>
-            <p>
-              Blood donation is a simple yet powerful way to help others in need. At AKG Charitable Society, we organize regular blood donation drives to support local hospitals and patients.
-            </p>
-            <p>
-              By donating blood, you can make a significant difference in the lives of those facing medical emergencies. Your contribution is invaluable in creating a healthier, safer community.
-            </p>
-            <p>
-              Join us in this life-saving effort and experience the profound impact of giving back.
-            </p>
+            <p>Blood donation is a simple yet powerful way to help others in need. At AKG Charitable Society, we organize regular blood donation drives to support local hospitals and patients.</p>
+            <p>By donating blood, you can make a significant difference in the lives of those facing medical emergencies. Your contribution is invaluable in creating a healthier, safer community.</p>
+            <p>Join us in this life-saving effort and experience the profound impact of giving back.</p>
           </div>
         </div>
-        <!-- Form Column -->
         <div class="col-md-6">
           <div class="donation-form">
             <h2>Blood Donor Registration</h2>
-            <form action="{% url 'blood_donation' %}" method="post">
+            <form id="donationForm" action="{% url 'blood_donation' %}" method="post" novalidate>
               {% csrf_token %}
               <div class="mb-3">
                 <label for="donorFullName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="donorFullName" name="full_name" required>
+                <input type="text" class="form-control" id="donorFullName" name="full_name" required pattern="^[A-Za-z\s]+$" minlength="3" title="Only letters and spaces allowed, at least 3 characters">
               </div>
               <div class="mb-3">
                 <label for="bloodGroup" class="form-label">Blood Group</label>
@@ -168,23 +119,23 @@
               </div>
               <div class="mb-3">
                 <label for="donorPhone" class="form-label">Phone Number</label>
-                <input type="tel" class="form-control" id="donorPhone" name="phone" required>
+                <input type="tel" class="form-control" id="donorPhone" name="phone" required pattern="^[6-9]\d{9}$" inputmode="numeric" title="Enter a 10-digit number starting with 6, 7, 8, or 9">
               </div>
               <div class="mb-3">
                 <label for="donorPlace" class="form-label">Place</label>
-                <input type="text" class="form-control" id="donorPlace" name="place" required>
+                <input type="text" class="form-control" id="donorPlace" name="place" required pattern="^[A-Za-z\s]+$" title="Only letters and spaces allowed">
               </div>
               <div class="mb-3">
                 <label for="donorPost" class="form-label">Post</label>
-                <input type="text" class="form-control" id="donorPost" name="post" required>
+                <input type="text" class="form-control" id="donorPost" name="post" required pattern="^[A-Za-z\s]+$" title="Only letters and spaces allowed">
               </div>
               <div class="mb-3">
                 <label for="donorPin" class="form-label">Pin</label>
-                <input type="text" class="form-control" id="donorPin" name="pin" required>
+                <input type="text" class="form-control" id="donorPin" name="pin" required pattern="^6\d{5}$" inputmode="numeric" title="PIN must start with 6 and be 6 digits">
               </div>
               <div class="mb-3">
                 <label for="donorDistrict" class="form-label">District</label>
-                <input type="text" class="form-control" id="donorDistrict" name="district" required>
+                <input type="text" class="form-control" id="donorDistrict" name="district" required pattern="^[A-Za-z\s]+$" title="Only letters and spaces allowed">
               </div>
               <div class="mb-3">
                 <label for="donorGender" class="form-label">Gender</label>
@@ -205,15 +156,70 @@
       </div>
     </div>
   </section>
-  
-  <!-- Footer -->
   <footer>
-    <div class="container">
-      <p>&copy; 2023 AKG Charitable Society, Kakkodi, Kozhikode. All rights reserved.</p>
+    <div class="container text-center">
+      <p>&copy; 2025 AKG Charitable Society, Kakkodi, Kozhikode. All rights reserved.</p>
     </div>
   </footer>
-  
-  <!-- Bootstrap 5 JS Bundle -->
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('donationForm');
+      const dobInput = document.getElementById('donorDOB');
+      const today = new Date();
+      const todayStr = today.toISOString().split('T')[0];
+      const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+      const eighteenYearsAgoStr = eighteenYearsAgo.toISOString().split('T')[0];
+
+      // DOB change validation
+      dobInput.addEventListener('change', () => {
+        const dob = dobInput.value;
+        if (!dob) return;
+        if (dob > todayStr) {
+          alert('Date of birth cannot be in the future');
+          dobInput.value = '';
+          dobInput.focus();
+        } else if (dob > eighteenYearsAgoStr) {
+          alert('You must be at least 18 years old');
+          dobInput.value = '';
+          dobInput.focus();
+        }
+      });
+
+      // Form submit validation
+      form.addEventListener('submit', function(e) {
+        const letters = /^[A-Za-z\s]+$/;
+        const phoneRe = /^[6-9]\d{9}$/;
+        const pinRe = /^6\d{5}$/;
+        const v = {
+          name: document.getElementById('donorFullName').value.trim(),
+          blood: document.getElementById('bloodGroup').value,
+          email: document.getElementById('donorEmail').value.trim(),
+          phone: document.getElementById('donorPhone').value.trim(),
+          place: document.getElementById('donorPlace').value.trim(),
+          post: document.getElementById('donorPost').value.trim(),
+          pin: document.getElementById('donorPin').value.trim(),
+          district: document.getElementById('donorDistrict').value.trim(),
+          gender: document.getElementById('donorGender').value,
+          dob: dobInput.value
+        };
+
+        if (v.name.length < 3)          { alert('Full Name must be at least 3 characters long'); e.preventDefault(); return; }
+        if (!letters.test(v.name))      { alert('Full Name: only letters and spaces allowed'); e.preventDefault(); return; }
+        if (!v.blood)                  { alert('Select Blood Group'); e.preventDefault(); return; }
+        if (!v.email.includes('@') || !v.email.includes('.')) { alert('Valid Email required'); e.preventDefault(); return; }
+        if (!phoneRe.test(v.phone))    { alert('Phone: exactly 10 digits start with 6,7,8 or 9'); e.preventDefault(); return; }
+        if (!letters.test(v.place))    { alert('Place: only letters and spaces'); e.preventDefault(); return; }
+        if (!letters.test(v.post))     { alert('Post: only letters and spaces'); e.preventDefault(); return; }
+        if (!pinRe.test(v.pin))        { alert('PIN must start with 6 and be 6 digits long'); e.preventDefault(); return; }
+        if (!letters.test(v.district)) { alert('District: only letters and spaces'); e.preventDefault(); return; }
+        if (!v.gender)                 { alert('Select Gender'); e.preventDefault(); return; }
+        if (!v.dob)                    { alert('Select Date of Birth'); e.preventDefault(); return; }
+        if (v.dob > todayStr)         { alert('DOB cannot be in the future'); e.preventDefault(); return; }
+        if (v.dob > eighteenYearsAgoStr) { alert('You must be at least 18 years old'); e.preventDefault(); return; }
+      });
+    });
+  </script>
 </body>
 </html>

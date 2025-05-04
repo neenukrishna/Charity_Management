@@ -33,9 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'charity',
-    'channels',
-    'chat',  # new chat app
+    'charity',  # new chat app
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -133,8 +131,8 @@ EMAIL_HOST_USER = 'akgcharitable@gmail.com'
 EMAIL_HOST_PASSWORD = 'edyd iske qcrp epfu'
 DEFAULT_FROM_EMAIL = 'akgcharitable@gmail.com'
 
-RAZORPAY_KEY_ID = "rzp_test_lwvilRyd2xizjv"
-RAZORPAY_KEY_SECRET = "OED4i658sR3bTTJhAi454pDu"
+RAZORPAY_KEY_ID = "rzp_test_rNdfihBaZdBvXY"
+RAZORPAY_KEY_SECRET = "xkmJgIZs4SslrLakvM8RPJzF"
 
 
 

@@ -72,81 +72,47 @@
     }
 </style>
 
-  <!-- Navbar Section -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
-    <div class="container">
-      <a class="navbar-brand" href="#">
-        <i class="fas fa-hands-helping me-2"></i>AKG Charitable Society
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="mainNavbar">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/user-home/#home">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/user-home/#about">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/user-home/#services">Services</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'view_events' %}">Events</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'donation_category' %}">Donation</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/user-home/#gallery">Notification</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/user-home/#contact">Contact</a>
-          </li>
-          {% if request.user.user_type == "beneficiary" %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'submit_feedback' %}">Feedback</a>
-          </li>
-          {% endif %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'view_cart' %}">
-              <i class="fas fa-shopping-cart"></i> Cart
+<nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <i class="fas fa-hands-helping me-2"></i>AKG Charitable Society
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/user-home/#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user-home/#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user-home/#services">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'view_events' %}">Events</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'donation_category' %}">Donation</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user-home/#contact">Contact</a></li>
+        {% if request.user.user_type == "beneficiary" %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'submit_feedback' %}">Feedback</a></li>
+        {% endif %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'view_cart' %}"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+        <div class="d-flex align-items-center">
+          <div class="dropdown">
+            <a class="btn btn-light rounded-circle p-2" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user"></i>
             </a>
-          </li>
-          <div class="d-flex align-items-center">
-            <div class="dropdown">
-              <a class="btn btn-light rounded-circle p-2" href="#" role="button" data-bs-toggle="dropdown">
-                <i class="fas fa-user"></i>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li>
-                  <a class="dropdown-item" href="{% url 'user_profile' %}">
-                    <i class="fas fa-user-circle me-2"></i>Profile
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="{% url 'account_dashboard' %}">
-                    <i class="fas fa-user-cog me-2"></i>Account
-                  </a>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <a class="dropdown-item text-danger" href="{% url 'home' %}">
-                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                  </a>
-                </li>
-              </ul>
-            </div>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'user_profile' %}"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'account_dashboard' %}"><i class="fas fa-user-cog me-2"></i>Account</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="{% url 'home' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+            </ul>
           </div>
-        </ul>
-      </div>
+        </div>
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
 
 <div class="feedback-form-wrapper">
     <h2 class="text-center mb-4">Share Your Experience</h2>
-    <form method="post">
+    <form method="post" id="feedbackForm">
         {% csrf_token %}
         <div class="rating-container">
             <div class="star-rating">
@@ -161,8 +127,7 @@
         
         <div class="mb-4">
             <label for="comments" class="form-label">Your Feedback</label>
-            <textarea name="comments" id="comments" class="form-control" rows="5" 
-                      placeholder="Share your thoughts with us..." required></textarea>
+            <textarea name="comments" id="comments" class="form-control" rows="5" placeholder="Share your thoughts with us..." required></textarea>
         </div>
         
         <button type="submit" class="submit-btn">Submit Feedback</button>
@@ -173,6 +138,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         const stars = document.querySelectorAll('.star');
         const ratingInput = document.getElementById('rating');
+        const comments = document.getElementById('comments');
+        const form = document.getElementById('feedbackForm');
 
         stars.forEach(star => {
             star.addEventListener('mouseover', () => {
@@ -190,6 +157,22 @@
                     s.classList.remove('hover');
                 });
             });
+        });
+
+        form.addEventListener('submit', function(e) {
+            // Validate rating
+            if (!ratingInput.value) {
+                e.preventDefault();
+                alert('Please select a star rating before submitting.');
+                return;
+            }
+            // Validate comments length (minimum 10 characters)
+            if (comments.value.trim().length < 10) {
+                e.preventDefault();
+                alert('Please provide more detailed feedback.');
+                comments.focus();
+                return;
+            }
         });
     });
 </script>

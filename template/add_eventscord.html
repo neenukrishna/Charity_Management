@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Event</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="card shadow-lg">
+      <!-- Card Header -->
+      <div class="card-header bg-success text-white">
+        <h3 class="mb-0">
+          <i class="fas fa-plus-circle me-2"></i>Add New Event
+        </h3>
+      </div>
+      <!-- Card Body -->
+      <div class="card-body">
+        {% if error_message %}
+        <div class="alert alert-danger d-flex align-items-center">
+          <i class="fas fa-exclamation-triangle me-3"></i>
+          <div>{{ error_message }}</div>
+        </div>
+        {% endif %}
+        <form method="POST" class="row g-4" novalidate onsubmit="return validateForm();">
+          {% csrf_token %}
+          
+          <!-- Event Type -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="event_type" name="event_type"
+                     placeholder="Event Type" required autofocus>
+              <label for="event_type"><i class="fas fa-calendar-alt me-2"></i>Event Type</label>
+            </div>
+          </div>
+          
+          <!-- Event Date -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="date" class="form-control" id="event_date" name="event_date"
+                     placeholder="Event Date" required>
+              <label for="event_date"><i class="fas fa-calendar-day me-2"></i>Event Date</label>
+            </div>
+          </div>
+          
+          <!-- Description -->
+          <div class="col-12">
+            <div class="form-floating">
+              <textarea class="form-control" id="description" name="description" rows="3"
+                        placeholder="Description" required></textarea>
+              <label for="description"><i class="fas fa-align-left me-2"></i>Description</label>
+            </div>
+          </div>
+          
+          <!-- Location -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="location" name="location"
+                     placeholder="Location" required>
+              <label for="location"><i class="fas fa-map-marker-alt me-2"></i>Location</label>
+            </div>
+          </div>
+          
+          <!-- Event Status -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <select class="form-select" id="event_status" name="event_status" required>
+                <option value="">Select status</option>
+                <option value="Upcoming">Upcoming</option>
+                <option value="Ongoing">Ongoing</option>
+              </select>
+              <label for="event_status"><i class="fas fa-info-circle me-2"></i>Event Status</label>
+            </div>
+          </div>
+          
+          <!-- Target Budget -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="number" class="form-control" id="target_budget" name="target_budget"
+                     placeholder="Target Budget" step="0.01" required>
+              <label for="target_budget"><i class="fas fa-dollar-sign me-2"></i>Target Budget</label>
+            </div>
+          </div>
+          
+          <!-- Form Actions -->
+          <div class="col-12 text-end mt-4">
+            <a href="{% if request.user.is_superuser %}{% url 'manage_events' %}{% else %}{% url 'staff_events' %}{% endif %}"
+               class="btn btn-outline-secondary me-3">
+              <i class="fas fa-arrow-left me-2"></i>Cancel
+            </a>
+            <button type="submit" class="btn btn-success px-4">
+              <i class="fas fa-save me-2"></i>Add Event
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Validation Script -->
+  <script>
+    function validateForm() {
+      const eventType    = document.getElementById("event_type").value.trim();
+      const eventDate    = document.getElementById("event_date").value;
+      const description  = document.getElementById("description").value.trim();
+      const location     = document.getElementById("location").value.trim();
+      const eventStatus  = document.getElementById("event_status").value;
+      const targetBudget = document.getElementById("target_budget").value.trim();
+
+      // Regex patterns
+      const eventTypeRegex   = /^[A-Za-z\s]+$/;
+      const descriptionRegex = /^[A-Za-z0-9\s.,'"!@#$%^&*()+=_-]+$/;
+      const locationRegex    = /^[A-Za-z\s.,'-]+$/;
+
+      // 1) Event Type: only letters & spaces
+      if (!eventTypeRegex.test(eventType)) {
+        alert("Event Type must contain only letters and spaces.");
+        return false;
+      }
+
+      // 2) Event Date: must be future
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const selDate = new Date(eventDate);
+      if (!eventDate || selDate <= today) {
+        alert("Event Date must be a future date.");
+        return false;
+      }
+
+      // 3) Description: letters, numbers, common special chars
+      if (!descriptionRegex.test(description)) {
+        alert("Description can contain only letters, numbers, and common special characters.");
+        return false;
+      }
+
+      // 4) Location: letters, spaces, commas, periods, apostrophes, hyphens
+      if (!locationRegex.test(location)) {
+        alert("Location must contain only letters, spaces, commas, periods, apostrophes, or hyphens.");
+        return false;
+      }
+
+      // 5) Event Status: must select
+      if (!eventStatus) {
+        alert("Please select an event status.");
+        return false;
+      }
+
+      // 6) Target Budget: positive number
+      if (!targetBudget || isNaN(targetBudget) || Number(targetBudget) <= 0) {
+        alert("Please enter a valid target budget greater than zero.");
+        return false;
+      }
+
+      return true;
+    }
+  </script>
+</body>
+</html>

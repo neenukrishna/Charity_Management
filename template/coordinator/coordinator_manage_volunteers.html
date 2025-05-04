@@ -13,9 +13,9 @@
                     <i class="fas fa-user-friends me-2"></i>Manage Volunteers
                 </h3>
                 <div>
-                    <a href="{% url 'add_volunteer' %}" class="btn btn-light btn-sm">
+                    <!-- <a href="{% url 'add_volunteer' %}" class="btn btn-light btn-sm">
                         <i class="fas fa-plus-circle me-2"></i>Add Volunteer
-                    </a>
+                    </a> -->
                     <a href="{% url 'coordinator_dashboard' %}" class="btn btn-light btn-sm">
                         <i class="fas fa-home me-2"></i>Dashboard
                     </a>
@@ -63,10 +63,8 @@
                                 <th>Phone</th>
                                 <th>DOB</th>
                                 <th>Gender</th>
-                                <th>Place</th>
-                                <th>Post</th>
-                                <th>Pin</th>
-                                <th>District</th>
+                                <th>Address</th>
+                                
                                 <th>Availability</th>
                                 <th>Volunteer Program</th>
                                 <th>Proof</th>
@@ -84,10 +82,10 @@
                                 <td>{{ volunteer.phone }}</td>
                                 <td>{{ volunteer.dob|date:"Y-m-d" }}</td>
                                 <td>{{ volunteer.gender }}</td>
-                                <td>{{ volunteer.place }}</td>
-                                <td>{{ volunteer.post }}</td>
-                                <td>{{ volunteer.pin }}</td>
-                                <td>{{ volunteer.district }}</td>
+                                <td>{{ volunteer.place }},
+                                     {{ volunteer.post }},
+                                    {{ volunteer.pin }},
+                                   {{ volunteer.district }}</td>
                                 <td>{{ volunteer.availability_date|date:"Y-m-d" }}</td>
                                 <!-- In manage_volunteers.html -->
                                 <td>{{ volunteer.get_volunteering_in_display }}</td>

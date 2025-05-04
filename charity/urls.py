@@ -29,30 +29,23 @@ urlpatterns = [
     path('update-events/<int:event_id>/', views.update_event, name='update_event'),
     path('delete-events/<int:event_id>/', views.delete_event, name='delete_event'),
     path('manage-staff/', views.manage_staff, name='manage_staff'),
-
     path('manage-blood-donors/', views.manage_blood_donors, name='manage_blood_donors'),
     path('manage-emergency-support/', views.manage_emergency_support, name='manage_emergency_support'),
     path('manage-palliative-care/', views.manage_palliative_care, name='manage_palliative_care'),
-#     path('manage-inventory/', views.manage_inventory, name='manage_inventory'),
-    # path('manage-notifications/', views.manage_notifications, name='manage_notifications'),
     path('manage-field-data/', views.manage_field_data, name='manage_field_data'),
     path('mark-solved/<int:field_id>/', views.mark_field_solved, name='mark_field_solved'),
-
     path('manage-feedbacks/', views.manage_feedbacks, name='manage_feedbacks'),
     path('manage-inventory/', views.manage_inventory, name='manage_inventory'),
-    # path('manage-notifications/', views.manage_notifications, name='manage_notifications'),
     path('add-user/', views.add_user, name='add_user'),
     path('add-donation/', views.add_donation, name='add_donation'),
     path('add-blood-donor/', views.add_blood_donor, name='add_blood_donor'),
     path('add-emergency-request/', views.add_emergency_request, name='add_emergency_request'),
     path('add-palliative-care/', views.add_palliative_care, name='add_palliative_care'),
     path('add-inventory/', views.add_inventory, name='add_inventory'),
-    # path('add-notification/', views.add_notification, name='add_notification'),
     path('add-field-data/', views.add_field_data, name='add_field_data'),
     path('send-feedback-reply/<int:feedback_id>/', views.send_feedback_reply, name='send_feedback_reply'),
     path('add-staff/', views.add_staff, name='add_staff'), 
-    path('chat/', views.chat_view, name='chat_view'),
-    path('admin-chat/', views.admin_chat_view, name='manage_chat'),
+   
     
     
     #USER URLS
@@ -62,11 +55,12 @@ urlpatterns = [
     path('user-update-profile/', views.user_update_profile, name='user_update_profile'),
     path('user-password-change/', auth_views.PasswordChangeView.as_view(template_name='userhome/user_password_change.html'), name='password_change'),
     path('user-password-change-done/', auth_views.PasswordChangeDoneView.as_view(template_name='userhome/user_password_change_done.html'), name='password_change_done'),
-
-
     path('donation/', views.make_donation, name='make_donation'),
-    # path('request-emergency-support/', views.request_emergency_support, name='request_emergency_support'),
     path('register-blood-donation/', views.register_blood_donation, name='register_blood_donation'),
+    path('donor-notifications/', views.donor_notifications, name='donor_notifications'),
+    path('beneficiary-notification/', views.beneficiary_notifications, name='beneficiary_notifications'),
+    path('beneficiary-requests/<str:d_type>/', views.beneficiary_requests_by_category, name='beneficiary_requests_by_category'),
+
     
     #STAFF URLS
     path('staff-dashboard/', views.staff_dashboard, name='staff_dashboard'),
@@ -74,9 +68,23 @@ urlpatterns = [
     path('update-staff/', views.update_profile, name='update_profile'),
     path('staff/change-password-staff/', views.change_password, name='change_password'),
     path('staff/<int:staff_id>/', views.staff_profile, name='staff_profile'),
+    path('staff-manage-blood-donors/', views.staff_manage_blood_donors, name='staff_manage_blood_donors'),
+    path('staff-manage-donations/', views.staff_manage_donations, name='staff_manage_donations'),
+    path('staff-manage-palliative-cases/', views.staff_manage_palliative_cases, name='staff_manage_palliative_cases'),
+    path('staff-urgent-requests/', views.staff_urgent_requests, name='staff_urgent_requests'),
+    path('staff-manage-emergency-support/', views.staff_manage_emergency_support, name='staff_manage_emergency_support'),
+    path('staff/manage-inventory/', views.staff_manage_inventory, name='staff_manage_inventory'),
+    path('manage-events/', views.manage_events, name='manage_events'),
+    path('add-event/', views.add_event, name='add_event'),
+    path('view-events/', views.view_events, name='view_events'),
+    path('sponsor-event/<int:event_id>/', views.sponsor_event, name='sponsor_event'),
+    path('sponsorship-details/<int:event_id>/', views.sponsorship_details, name='sponsorship_details'),
+    path('staff-manage-events/', views.staff_manage_events, name='staff_manage_events'),
+    path('staff-dashboard/donation-details/<int:donation_id>/', views.staff_donation_details, name='staff_donation_details'),
     
     
-    #HOME PAGE U
+    
+    #HOME PAGE URLS
     path('meal/', views.hospital_without_hunger, name='hospital_without_hunger'),
     path('grocery/', views.grocery_assistance, name='grocery_assistance'),
     path('cancer_patient/', views.cancer_patient, name='cancer_patient'),
@@ -86,14 +94,11 @@ urlpatterns = [
     path('palliative-success/', views.palliative_register_success, name='palliative_register_success'),
     path('palliative-assign/<int:patient_id>/', views.assign_volunteer, name='assign_volunteer'),
     path('volunteer-detail/<int:volunteer_id>/', views.volunteer_detail, name='volunteer_detail'),
-
-
     path('counseling/',views.counselling,name='counseling'),
     path('councontact/', views.councontact, name='councontact'),
-
     path('blood-donor/', views.blood_donation, name='blood_donation'),
 
-    
+    #VOLUNTEER URLS
     path('volunteer/', views.volunteer, name='volunteer'),
     path('volunteer/thank-you/', views.volunteer_thankyou, name='volunteer_thankyou'),
     path('manage-volunteers/approve/<int:volunteer_id>/', views.approve_volunteer, name='approve_volunteer'),
@@ -101,40 +106,10 @@ urlpatterns = [
     path('manage-volunteers/', views.manage_volunteers, name='manage_volunteers'),
     path('staff/volunteers/', views.staff_manage_volunteers, name='staff_manage_volunteers'),
     path('add-volunteer/', views.add_volunteer, name='add_volunteer'), 
-    
-    path('staff-manage-blood-donors/', views.staff_manage_blood_donors, name='staff_manage_blood_donors'),
-    path('staff-manage-donations/', views.staff_manage_donations, name='staff_manage_donations'),
-    path('staff-manage-palliative-cases/', views.staff_manage_palliative_cases, name='staff_manage_palliative_cases'),
-    path('staff-urgent-requests/', views.staff_urgent_requests, name='staff_urgent_requests'),
-    path('staff-manage-emergency-support/', views.staff_manage_emergency_support, name='staff_manage_emergency_support'),
-    path('staff/manage-inventory/', views.staff_manage_inventory, name='staff_manage_inventory'),
-    # path('staff-manage-notifications/', views.staff_manage_notifications, name='staff_manage_notifications'),
-    path('donor-notifications/', views.donor_notifications, name='donor_notifications'),
-    path('beneficiary-notification/', views.beneficiary_notifications, name='beneficiary_notifications'),
-    # path('manager-notifications/', views.manager_notifications, name='manager_notifications'),
-    # path('coordinator-notifications/', views.coordinator_notifications, name='coordinator_notifications'),
-
-    # urls.py
-    path('reports/monthly-report-form/', views.monthly_report, name='monthly_report'),
-
-
-
-
-
-
-
-
-
-    
-    
     path('assigned-task/', views.assigned_tasks_view, name='assigned_tasks_view'),
     path('complete_task/<int:task_id>/', views.complete_task, name='complete_task'),
     path('complete_palliative_case/<int:case_id>/', views.complete_palliative_case, name='complete_palliative_case'),
-
-
     path('palliative-patient/<int:patient_id>/', views.palliative_patient_detail, name='palliative_patient_detail'),
-
-
     path('volunteer_profile/', views.profile, name='profile'),
     path('change_password/', auth_views.PasswordChangeView.as_view(
          template_name='home/change_password.html',
@@ -149,42 +124,22 @@ urlpatterns = [
     path('assign-field/<int:volunteer_id>/', views.assign_field_to_volunteer, name='assign_field_to_volunteer'),
 
 
-
-    
-
-
-    
-    
-    
-    #EVENT URLS
-    path('manage-events/', views.manage_events, name='manage_events'),
-    path('add-event/', views.add_event, name='add_event'),
-    path('view-events/', views.view_events, name='view_events'),
-    path('sponsor-event/<int:event_id>/', views.sponsor_event, name='sponsor_event'),
-    path('sponsorship-details/<int:event_id>/', views.sponsorship_details, name='sponsorship_details'),
-    path('staff-manage-events/', views.staff_manage_events, name='staff_manage_events'),
-    path('staff-dashboard/donation-details/<int:donation_id>/', views.staff_donation_details, name='staff_donation_details'),
-    # urls.py
-    path('beneficiary-requests/<str:d_type>/', views.beneficiary_requests_by_category, name='beneficiary_requests_by_category'),
-
-
-    
-    
-    
-    
-    
-    
-    #donations
+    #DONATION URLS
     path('donation/monetary/', views.monetary_donation, name='monetary_donation'),
     path('donation/monetary-receipt/', views.monetary_receipt, name='monetary_receipt'),
-    
     path('donation/blood_donor/', views.blood_donor, name='blood_donor'),
     path('donation-category/', views.donation_category, name='donation_category'),
     path('donation/products/<str:category>/', views.donation_products, name='donation_products'),
     path('donation/grocery-donation/', views.grocery_kit_donation, name='grocery_kit_donation'),
     path('donation/medical-expenses/', views.medical_expenses_donation, name='medical_expenses_donation'),
-    
-    path('beneficiary-requests/<str:d_type>/', views.beneficiary_requests_by_category, name='beneficiary_requests_by_category'),
+    path('donation/nourish-the-needy/', views.nourish_the_needy_donation, name='nourish_the_needy_donation'),
+    path('donation/add-to-cart-needy/', views.add_to_cart_needy, name='add_to_cart_needy'),
+    path('donation/comprehensive-home-care/', views.comprehensive_home_care_donation, name='comprehensive_home_care_donation'),
+    path('donation/add-to-cart-homecare/', views.add_to_cart_homecare, name='add_to_cart_homecare'),
+    path('donation/other-donations/', views.other_donations, name='other_donations'),
+    path('donation/add-to-cart-other/', views.add_to_cart_other, name='add_to_cart_other'),
+    path('donation/goods-checkout/', views.goods_checkout, name='goods_checkout'),
+    path('donor/<int:user_id>/', views.donor_detail, name='donor_detail'),
 
     
     # Cart Management
@@ -201,14 +156,7 @@ urlpatterns = [
     path('donation/receipt/', views.receipt, name='receipt'),
     
     
-    path('donation/nourish-the-needy/', views.nourish_the_needy_donation, name='nourish_the_needy_donation'),
-    path('donation/add-to-cart-needy/', views.add_to_cart_needy, name='add_to_cart_needy'),
-    path('donation/comprehensive-home-care/', views.comprehensive_home_care_donation, name='comprehensive_home_care_donation'),
-    path('donation/add-to-cart-homecare/', views.add_to_cart_homecare, name='add_to_cart_homecare'),
-    path('donation/other-donations/', views.other_donations, name='other_donations'),
-    path('donation/add-to-cart-other/', views.add_to_cart_other, name='add_to_cart_other'),
-    path('donation/goods-checkout/', views.goods_checkout, name='goods_checkout'),
-    path('donor/<int:user_id>/', views.donor_detail, name='donor_detail'),
+
     
     
     path('submit-request/', views.submit_request, name='submit_request'),
@@ -218,13 +166,11 @@ urlpatterns = [
     path('admin-request-list/', views.admin_request_list, name='admin_request_list'),
     path('approve-request/<int:beneficiary_id>/', views.approve_request, name='approve_request'),
     path('reject-request/<int:beneficiary_id>/', views.reject_request, name='reject_request'),
-    # path('request-list/', views.request_list, name='request_list'),
     path('update-request/<int:pk>/', views.update_request, name='update_request'),
     path('monetary/payment-success/', views.payment_success, name='payment_success'),
     path('inventory/', views.inventory_list, name='inventory_list'),
     
     
-    # path('submit/', views.submit_feedback, name='submit_feedback'),
     path('all/', views.all_feedbacks, name='all_feedbacks'),
     path('submit-feedback/', views.submit_feedback, name='submit_feedback'),
 
@@ -246,6 +192,7 @@ urlpatterns = [
     path('coordinator-dashboard/', views.coordinator_dashboard, name='coordinator_dashboard'),
     path('coordinator-profile/', views.coordinator_profile, name='coordinator_profile'),
     path('coordinator_manage_events/', views.coordinator_manage_events, name='coordinator_manage_events'),
+    path('add-eventscord/',views.add_eventscord, name='add_eventscord'),
     path('coordinator-update-event/<int:event_id>/', views.coordinator_update_event, name='coordinator_update_event'),
     path('coordinator-delete-event/<int:event_id>/', views.coordinator_delete_event, name='coordinator_delete_event'),
 
@@ -272,30 +219,10 @@ urlpatterns = [
     path('notifs/<str:group>/', views.group_notifs, name='group_notifs'),
     path('volunteer-notifications/', views.volunteer_notifs, name='volunteer_notifs'),
 
-    
- 
 
-    # path('complaints/volunteer-complaints-send/', views.volunteer_send_complaint, name='volunteer_send_complaint'),
-    # path('complaints/volunteer-complaints/', views.volunteer_complaint_list, name='volunteer_complaint_list'),
-
-    # # Staff complaint URLs
-    # path('complaints/staff-complaints-send/', views.staff_send_complaint, name='staff_send_complaint'),
-    # path('complaints/staff-complaints/', views.staff_complaint_list, name='staff_complaint_list'),
-
-    # # Admin complaint reply URLs
-    # path('complaints/admin-complaints/', views.admin_complaint_list, name='admin_complaint_list'),
-    # path('complaints/admin-reply-complaint/<int:complaint_id>/', views.admin_reply_complaint, name='admin_reply_complaint'),
-
-
-
-
-
-
-
-
-
-
-
+    #REPORT URL
+    path('reports/beneficiary-support/',views.beneficiary_support_report, name='beneficiary_support_report'),
+    path('reports/monthly-report-form/', views.monthly_report, name='monthly_report'),
 
 
     

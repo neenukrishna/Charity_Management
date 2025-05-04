@@ -72,8 +72,8 @@
   <!-- Navbar (Optional) -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="#">       
-         <i class="fas fa-hands-helping me-2"></i>AKG Charitable Society
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-hands-helping me-2"></i>AKG Charitable Society
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
         <span class="navbar-toggler-icon"></span>
@@ -97,9 +97,7 @@
       <h2>Register for Palliative Care</h2>
       <div class="row justify-content-center">
         <div class="col-md-8">
-          <!-- For Django, include {% csrf_token %} to prevent CSRF errors -->
-          <!-- action="" means it will POST to the same URL this page is served on -->
-          <form action="" method="POST">
+          <form id="palliativeForm" action="" method="POST" novalidate>
             {% csrf_token %}
             <!-- Patient Name -->
             <div class="mb-3">
@@ -110,6 +108,9 @@
                 id="patientName"
                 name="patientName"
                 required
+                pattern="^[A-Za-z\s]+$"
+                minlength="3"
+                title="Only letters and spaces allowed"
               />
             </div>
 
@@ -122,6 +123,9 @@
                 id="age"
                 name="age"
                 required
+                min="0"
+                max="120"
+                title="Enter a valid age between 0 and 120"
               />
             </div>
 
@@ -162,6 +166,9 @@
                 id="contactNumber"
                 name="contactNumber"
                 required
+                pattern="^[6-9]\d{9}$"
+                inputmode="numeric"
+                title="Enter a 10-digit number starting with 6, 7, 8, or 9"
               />
             </div>
 
@@ -173,6 +180,8 @@
                 class="form-control"
                 id="email"
                 name="email"
+                pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
+                title="Enter a valid email address"
               />
             </div>
 
@@ -187,6 +196,8 @@
                 name="medicalCondition"
                 rows="3"
                 required
+                pattern="^[A-Za-z0-9\s,\.\-]+$"
+                title="Only letters, numbers, commas, dots, and dashes allowed"
               ></textarea>
             </div>
 
@@ -200,6 +211,8 @@
                 id="additionalDetails"
                 name="additionalDetails"
                 rows="4"
+                pattern="^[A-Za-z0-9\s,\.\-]*$"
+                title="Only letters, numbers, commas, dots, and dashes allowed"
               ></textarea>
             </div>
 
@@ -224,5 +237,35 @@
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
   ></script>
+  <script>
+    document.getElementById('palliativeForm').addEventListener('submit', function(e) {
+      const letters = /^[A-Za-z\s]+$/;
+      const phoneRe = /^[6-9]\d{9}$/;
+      const emailRe = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+      const condRe = /^[A-Za-z0-9\s,\.\-]+$/;
+      const addRe = /^[A-Za-z0-9\s,\.\-]*$/;
+      const v = {
+        name: this.patientName.value.trim(),
+        age: Number(this.age.value),
+        gender: this.gender.value,
+        address: this.address.value.trim(),
+        phone: this.contactNumber.value.trim(),
+        email: this.email.value.trim(),
+        condition: this.medicalCondition.value.trim(),
+        details: this.additionalDetails.value.trim()
+      };
+
+      if (v.name.length < 3)          { alert('Full Name must be at least 3 characters long'); e.preventDefault(); return; }
+      if (!letters.test(v.name)) { alert('Patient Name: only letters and spaces'); e.preventDefault(); return; }
+      if (!this.age.value || v.age < 0 || v.age > 120) { alert('Enter a valid age between 0 and 120'); e.preventDefault(); return; }
+      if (!v.gender) { alert('Please select Gender'); e.preventDefault(); return; }
+      if (!v.address) { alert('Address is required'); e.preventDefault(); return; }
+      if (!phoneRe.test(v.phone)) { alert('Contact Number: Enter a valid phone number and be 10 digits'); e.preventDefault(); return; }
+      if (v.email && !emailRe.test(v.email)) { alert('Enter a valid email address'); e.preventDefault(); return; }
+      if (!condRe.test(v.condition)) { alert('Medical Condition: Enter your medical condition if nothing to specify fill No '); e.preventDefault(); return; }
+      if (v.details && !addRe.test(v.details)) { alert('Additional Details: only letters, numbers, commas, dots, dashes'); e.preventDefault(); return; }
+      // all validations passed
+    });
+  </script>
 </body>
 </html>

@@ -20,22 +20,13 @@
       padding-top: 70px;
     }
     /* Navbar */
-    .navbar {
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(10px);
-    }
-    .navbar-brand, .nav-link {
-      color: var(--dark-color) !important;
-      font-weight: 600;
-    }
-    .nav-link:hover {
-      color: var(--primary-color) !important;
-    }
+    .navbar { box-shadow: 0 2px 15px rgba(0,0,0,0.1); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); }
+    .navbar-brand, .nav-link { color: var(--dark-color) !important; font-weight: 600; }
+    .nav-link:hover { color: var(--primary-color) !important; }
     /* Hero Section */
     .hero-section {
       background: linear-gradient(135deg, rgba(37,99,235,0.95) 0%, rgba(16,185,129,0.95) 100%),
-                  url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center;
+                  url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center;
       background-size: cover;
       min-height: 50vh;
       display: flex;
@@ -45,48 +36,16 @@
       color: white;
       padding: 40px 0;
     }
-    .hero-section h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-    }
-    .hero-section p {
-      font-size: 1.25rem;
-    }
+    .hero-section h1 { font-size: 3rem; margin-bottom: 0.5rem; }
+    .hero-section p { font-size: 1.25rem; }
     /* Volunteer Section */
-    .volunteer-section {
-      padding: 60px 0;
-    }
-    .volunteer-desc {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: var(--dark-color);
-    }
-    .volunteer-desc h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      color: var(--primary-color);
-    }
-    .volunteer-form {
-      background: #fff;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .volunteer-form h2 {
-      font-size: 1.75rem;
-      margin-bottom: 20px;
-      color: var(--primary-color);
-    }
-    .form-control:focus {
-      border-color: var(--primary-color);
-      box-shadow: none;
-    }
-    footer {
-      background: var(--dark-color);
-      color: #94a3b8;
-      padding: 20px 0;
-      text-align: center;
-    }
+    .volunteer-section { padding: 60px 0; }
+    .volunteer-desc { font-size: 1.1rem; line-height: 1.6; color: var(--dark-color); }
+    .volunteer-desc h2 { font-size: 2rem; margin-bottom: 20px; color: var(--primary-color); }
+    .volunteer-form { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .volunteer-form h2 { font-size: 1.75rem; margin-bottom: 20px; color: var(--primary-color); }
+    .form-control:focus { border-color: var(--primary-color); box-shadow: none; }
+    footer { background: var(--dark-color); color: #94a3b8; padding: 20px 0; text-align: center; }
   </style>
 </head>
 <body>
@@ -109,7 +68,7 @@
       </div>
     </div>
   </nav>
-  
+
   <!-- Hero Section -->
   <section class="hero-section" id="volunteer-hero">
     <div class="container text-center">
@@ -117,38 +76,30 @@
       <p class="lead">Your compassion can change lives</p>
     </div>
   </section>
-  
-  <!-- Volunteer Content Section -->
+
+  <!-- Volunteer Section -->
   <section class="volunteer-section">
     <div class="container">
       <div class="row g-4">
-        <!-- Description Column -->
+        <!-- Description -->
         <div class="col-md-6">
           <div class="volunteer-desc">
             <h2>Make a Difference</h2>
-            <p>
-              At AKG Charitable Society, Kakkodi, Kozhikode, we believe that every act of kindness creates a ripple of hope. Volunteering with us means joining a community dedicated to uplifting those in need through compassionate service.
-            </p>
-            <p>
-              Whether you can spare a few hours a week or commit to long-term service, your contribution is invaluable. We provide training and support to empower you as a vital part of our team, ensuring you make a lasting impact.
-            </p>
-            <p>
-              Your skills, time, and passion can help us extend our services to more individuals in crisis, offering them hope and a chance for a better tomorrow.
-            </p>
-            <p>
-              <strong>Join us and be the change you wish to see in the world!</strong>
-            </p>
+            <p>At AKG Charitable Society, Kakkodi, Kozhikode, we believe every act of kindness creates a ripple of hope. Volunteering with us means joining a community dedicated to uplifting those in need through compassionate service.</p>
+            <p>Whether you can spare a few hours a week or commit to long-term service, your contribution is invaluable. We provide training and support to empower you as a vital part of our team, ensuring you make a lasting impact.</p>
+            <p>Your skills, time, and passion can help us extend our services to more individuals in crisis, offering them hope and a chance for a better tomorrow.</p>
+            <p><strong>Join us and be the change you wish to see in the world!</strong></p>
           </div>
         </div>
-        <!-- Form Column -->
+        <!-- Form -->
         <div class="col-md-6">
           <div class="volunteer-form">
             <h2>Volunteer Form</h2>
-            <form action="{% url 'volunteer' %}" method="post" enctype="multipart/form-data">
+            <form id="volunteerForm" action="{% url 'volunteer' %}" method="post" enctype="multipart/form-data" novalidate>
               {% csrf_token %}
               <div class="mb-3">
                 <label for="fullName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="fullName" name="full_name" required>
+                <input type="text" class="form-control" id="fullName" name="full_name" required pattern="^[A-Za-z\s]+$"  minlength="3" title="Only letters and spaces allowed">
               </div>
               <div class="mb-3">
                 <label for="emailAddress" class="form-label">Email Address</label>
@@ -156,7 +107,7 @@
               </div>
               <div class="mb-3">
                 <label for="phoneNumber" class="form-label">Phone Number</label>
-                <input type="tel" class="form-control" id="phoneNumber" name="phone" required>
+                <input type="tel" class="form-control" id="phoneNumber" name="phone" required pattern="^[6-9]\d{9}$" inputmode="numeric" title="Enter a 10-digit number starting with 6, 7, 8, or 9">
               </div>
               <div class="mb-3">
                 <label for="dob" class="form-label">Date of Birth</label>
@@ -172,26 +123,24 @@
               </div>
               <div class="mb-3">
                 <label for="place" class="form-label">Place</label>
-                <input type="text" class="form-control" id="place" name="place" required>
+                <input type="text" class="form-control" id="place" name="place" required pattern="^[A-Za-z\s]+$" title="Only letters and spaces allowed">
               </div>
               <div class="mb-3">
                 <label for="post" class="form-label">Post</label>
-                <input type="text" class="form-control" id="post" name="post" required>
+                <input type="text" class="form-control" id="post" name="post" required pattern="^[A-Za-z\s]+$" title="Only letters and spaces allowed">
               </div>
               <div class="mb-3">
                 <label for="pin" class="form-label">Pin</label>
-                <input type="text" class="form-control" id="pin" name="pin" required>
+                <input type="text" class="form-control" id="pin" name="pin" required pattern="^6\d{5}$" inputmode="numeric" title="PIN must start with 6 and be 6 digits">
               </div>
               <div class="mb-3">
                 <label for="district" class="form-label">District</label>
-                <input type="text" class="form-control" id="district" name="district" required>
+                <input type="text" class="form-control" id="district" name="district" required pattern="^[A-Za-z\s]+$" title="Only letters and spaces allowed">
               </div>
-              <!-- Updated Availability Field -->
               <div class="mb-3">
                 <label for="availability_date" class="form-label">Availability Date</label>
                 <input type="date" class="form-control" id="availability_date" name="availability_date" required>
               </div>
-              <!-- New Volunteering Program Field -->
               <div class="mb-3">
                 <label for="volunteering_in" class="form-label">Volunteering Program</label>
                 <select class="form-select" id="volunteering_in" name="volunteering_in" required>
@@ -203,12 +152,10 @@
                   <option value="Guidance & Counseling">Guidance & Counseling</option>
                   <option value="Others">Others</option>
                 </select>
-                
-                
               </div>
               <div class="mb-3">
                 <label for="proof" class="form-label">Upload Proof (if any)</label>
-                <input type="file" class="form-control" id="proof" name="proof">
+                <input type="file" class="form-control" id="proof" name="proof" accept="image/*,application/pdf">
               </div>
               <button type="submit" class="btn btn-primary w-100">Submit Application</button>
             </form>
@@ -217,15 +164,74 @@
       </div>
     </div>
   </section>
-  
+
   <!-- Footer -->
   <footer>
-    <div class="container">
-      <p>&copy; 2023 AKG Charitable Society, Kakkodi, Kozhikode. All rights reserved.</p>
+    <div class="container text-center">
+      <p>&copy; 2025 AKG Charitable Society, Kakkodi, Kozhikode. All rights reserved.</p>
     </div>
   </footer>
-  
-  <!-- Bootstrap 5 JS Bundle -->
+
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('volunteerForm');
+      const dobInput = document.getElementById('dob');
+
+      // Compute bounds
+      const today = new Date();
+      const fifteenYearsAgo = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+      const minAllowed = new Date(1900, 0, 1).toISOString().split('T')[0];
+      const maxAllowed = fifteenYearsAgo.toISOString().split('T')[0];
+
+      // Change listener on DOB
+      dobInput.addEventListener('change', () => {
+        const dobVal = dobInput.value;
+        if (!dobVal) return;
+        if (dobVal > maxAllowed || dobVal > today.toISOString().split('T')[0]) {
+          alert('Please select a valid DOB: at least 15 years old and not in the future.');
+          dobInput.value = '';
+          dobInput.focus();
+        }
+      });
+
+      // Form submit validation
+      form.addEventListener('submit', function(e) {
+        const letters = /^[A-Za-z\s]+$/;
+        const phone = /^[6-9]\d{9}$/;
+        const pin = /^6\d{5}$/;
+        const vals = {
+          name: document.getElementById('fullName').value.trim(),
+          email: document.getElementById('emailAddress').value.trim(),
+          phone: document.getElementById('phoneNumber').value.trim(),
+          dob: dobInput.value,
+          gender: document.getElementById('gender').value,
+          place: document.getElementById('place').value.trim(),
+          post: document.getElementById('post').value.trim(),
+          pin: document.getElementById('pin').value.trim(),
+          district: document.getElementById('district').value.trim(),
+          availability: document.getElementById('availability_date').value,
+          program: document.getElementById('volunteering_in').value
+        };
+
+        if (v.name.length < 3)          { alert('Full Name must be at least 3 characters long'); e.preventDefault(); return; }
+        if (!letters.test(vals.name))         { alert('Full Name: only letters and spaces allowed.'); e.preventDefault(); return; }
+        if (!vals.email.includes('@') || !vals.email.includes('.')) { alert('Please enter a valid email address.'); e.preventDefault(); return; }
+        if (!phone.test(vals.phone))          { alert('Phone number must be 10 digits.'); e.preventDefault(); return; }
+        if (!vals.dob)                        { alert('Please select your date of birth.'); e.preventDefault(); return; }
+        if (vals.dob > maxAllowed)            { alert('You must be at least 15 years old.'); e.preventDefault(); return; }
+        if (vals.dob > today.toISOString().split('T')[0]) { alert('Date of birth cannot be in the future.'); e.preventDefault(); return; }
+        if (!vals.gender)                     { alert('Please select your gender.'); e.preventDefault(); return; }
+        if (!letters.test(vals.place))        { alert('Place: only letters and spaces allowed.'); e.preventDefault(); return; }
+        if (!letters.test(vals.post))         { alert('Post: only letters and spaces allowed.'); e.preventDefault(); return; }
+        if (!pin.test(vals.pin))              { alert('PIN must start with 6 and be 6 digits long.'); e.preventDefault(); return; }
+        if (!letters.test(vals.district))     { alert('District: only letters and spaces allowed.'); e.preventDefault(); return; }
+        if (!vals.availability)               { alert('Please select an availability date.'); e.preventDefault(); return; }
+        if (vals.availability < today.toISOString().split('T')[0]) { alert('Availability date cannot be in the past.'); e.preventDefault(); return; }
+        if (!vals.program)                    { alert('Please select a volunteering program.'); e.preventDefault(); return; }
+      });
+    });
+  </script>
 </body>
 </html>
