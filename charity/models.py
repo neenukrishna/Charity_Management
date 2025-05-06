@@ -1,5 +1,5 @@
 from django.db import models
-from django.conf import settings  # To use CustomUser
+from django.conf import settings  
 from django.contrib.auth.models import AbstractUser
 from django.utils.timezone import now
 from django.utils import timezone
@@ -38,9 +38,6 @@ class CustomUser(AbstractUser):
     
 #----------------------------------------------------------Donation----------------------------------------------------------------
 
-# --- Donation model for donation records (if needed) ---
-
-# Donation type and status choices
 DONATION_TYPE_CHOICES = (
     ('monetary', 'Monetary'),
     ('Medical Expenses', 'Medical Expenses'),
@@ -100,7 +97,6 @@ class Donation(models.Model):
 
 
 class DonationProduct(models.Model):
-    # Updated CATEGORY_CHOICES to include details for "Other Donations"
     CATEGORY_CHOICES = (
         ('Medical Expenses', 'Medical Expenses'),
         ('Nourish the Needy', 'Nourish the Needy'),
@@ -375,16 +371,6 @@ class Payment(models.Model):
     def __str__(self):
         return f"Payment - {self.donation.donation_type}"
     
-# class Notification(models.Model):
-#     notification_id = models.BigAutoField(primary_key=True)  # Explicit primary key
-#     message = models.TextField()
-#     date_time = models.DateTimeField(auto_now_add=True)  # Automatically adds current timestamp
-#     user_id = models.BigIntegerField()
-#     group = models.CharField(max_length=20, null=True, blank=True)
-
-
-#     def __str__(self):
-#         return self.title
 
 
 class Feedback(models.Model):
@@ -424,19 +410,7 @@ class Staff(models.Model):
 
     def __str__(self):
         return f"{self.role} - {self.email}"
-
-class ChatMessage(models.Model):
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_messages')
-    message = models.TextField()
-    timestamp = models.DateTimeField(default=now)
-
-    def __str__(self):
-        
-        return f"Message from {self.sender.fullname} to {self.receiver.fullname}"
-    
-    
-    
+   
 class Contact(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -446,27 +420,6 @@ class Contact(models.Model):
     def __str__(self):
         return self.name
     
-    
-# charity/models.py
-from django.db import models
-
-
-
-  
-# Palliative Care Model
-class PalliativeCare(models.Model):
-    palliative_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE)
-    date = models.DateField()
-    needs = models.TextField()
-    status = models.CharField(max_length=50, choices=[('Ongoing', 'Ongoing'), ('Completed', 'Completed')])
-
-    def __str__(self):
-        return f"Palliative Care - {self.user.fullname}"
-
-
-
 class PalliativePatient(models.Model):
     patientName = models.CharField(max_length=100)
     age = models.PositiveIntegerField()
@@ -513,23 +466,7 @@ class Task(models.Model):
     def __str__(self):
         return f"{self.task_description} - {self.volunteer.full_name}"
     
-
 class FieldArea(models.Model):
-    area_id = models.AutoField(primary_key=True)
-    area_name = models.CharField(max_length=255)
-    location = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    status = models.CharField(
-        max_length=50,
-        choices=[('Unassigned', 'Unassigned'), ('Assigned', 'Assigned'), ('Completed', 'Completed')],
-        default='Unassigned'
-    )
-
-    def __str__(self):
-        return self.area_name
-    
-
-class FieldAssignment(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('completed', 'Completed')
@@ -563,17 +500,4 @@ class Notif(models.Model):
     def __str__(self):
         return f"Notif for {self.user} at {self.date_time}"
     
-    
-class Complaint(models.Model):
-    sender = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='complaints'
-    )
-    message = models.TextField()
-    reply = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    replied_at = models.DateTimeField(blank=True, null=True)
-
-    def __str__(self):
-        return f"Complaint from {self.sender.username} on {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+ 

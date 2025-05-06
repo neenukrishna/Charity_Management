@@ -113,7 +113,6 @@ from .models import Event
 from .models import Volunteer
 from .models import BloodDonor
 from .models import BeneficiarySupport
-from .models import PalliativeCare
 from .models import Inventory
 from .models import Payment
 from .models import FieldData
@@ -133,7 +132,6 @@ admin.site.register(BloodDonor)
 admin.site.register(FieldData)
 admin.site.register(Feedback,FeedbackAdmin)
 # admin.site.register(Inventory,InventoryAdmin)
-admin.site.register(PalliativeCare)
 # admin.site.register(Notification)
 admin.site.register(Payment)
 # admin.site.register(BeneficiarySupport)

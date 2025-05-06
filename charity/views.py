@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .models import CustomUser,FieldData, Volunteer,Task,FieldAssignment,FieldArea,Notif
+from .models import CustomUser,FieldData, Volunteer,Task,FieldArea,Notif
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
-from .models import Donation,Event,Volunteer,BloodDonor,Payment, BeneficiarySupport, PalliativeCare, Inventory,  FieldData, Feedback,Inventory, FieldData,Staff,Sponsorship,DonationProduct,Contact,PalliativePatient
+from .models import Donation,Event,Volunteer,BloodDonor,Payment, BeneficiarySupport, Inventory,  FieldData, Feedback,Inventory, FieldData,Staff,Sponsorship,DonationProduct,Contact,PalliativePatient
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import ChatMessage, CustomUser
+from .models import  CustomUser
 from decimal import Decimal
 from django.contrib import messages
 from django import forms
@@ -367,9 +367,6 @@ def manage_donations(request):
     return render(request, 'manage_donations.html', context)
 
 
-# def is_admin_or_staff(user):
-#     return user.is_authenticated and (user.is_staff or user.user_type == "staff")  # Ensure user_type exists
-
 @login_required
 @user_passes_test(is_admin)
 def manage_staff(request):
@@ -687,37 +684,6 @@ def add_emergency_request(request):
     return render(request, 'add_emergency_request.html') 
 
 
-#--------------------------------------------ADD PALLIATIVE CARE---------------------------------------------------------------------------
-
-@login_required
-@user_passes_test(is_admin)
-def add_palliative_care(request):
-    if request.method == 'POST':
-        # Get data from the form
-        user = request.user  # Admin or logged-in user adding the request
-        volunteer_id = request.POST.get('volunteer_id')
-        volunteer = Volunteer.objects.get(id=volunteer_id)
-        date = request.POST.get('date')
-        needs = request.POST.get('needs')
-        status = request.POST.get('status')
-
-        # Create the new palliative care case
-        PalliativeCare.objects.create(
-            user=user,
-            volunteer=volunteer,
-            date=date,
-            needs=needs,
-            status=status
-        )
-
-        messages.success(request, "Palliative Care case added successfully!")
-        return redirect('manage_palliative_care')  # Redirect to manage palliative care cases page
-    
-    # Get all volunteers to show in the form
-    volunteers = Volunteer.objects.all()
-    return render(request, 'add_palliative_care.html', {'volunteers': volunteers})  # Render the form for GET request
-
-
 
 #--------------------------------------------ADD VOLUNTEER---------------------------------------------------------------------------
 
@@ -758,9 +724,9 @@ def add_volunteer(request):
         )
 
         messages.success(request, "Volunteer added successfully!")
-        return redirect('manage_volunteers')  # Redirect to manage volunteers page
+        return redirect('manage_volunteers')  
     
-    return render(request, 'add_volunteer.html')  # Render the form for GET request
+    return render(request, 'add_volunteer.html')  
 
 
 
@@ -788,9 +754,9 @@ def add_inventory(request):
         )
 
         messages.success(request, "Inventory record added successfully!")
-        return redirect('manage_inventory')  # Redirect to manage inventory page
+        return redirect('manage_inventory')  
     
-    # Get all donations and beneficiaries to display in the form
+   
     donations = Donation.objects.all()
     beneficiaries = BeneficiarySupport.objects.all()
     return render(request, 'add_inventory.html', {'donations': donations, 'beneficiaries': beneficiaries})
@@ -832,7 +798,7 @@ def add_field_data(request):
         )
 
         messages.success(request, "Field data added successfully!")
-        return redirect('manage_field_data')  # Redirect to manage field data page
+        return redirect('manage_field_data')  
     
     # Get all volunteers to display in the form
     volunteers = Volunteer.objects.all()
@@ -863,7 +829,7 @@ def send_feedback_reply(request, feedback_id):
         return redirect('manage_feedbacks')
 
     return redirect('manage_feedbacks')
- # Make sure this is the correct model
+ 
  
  
  #------------------------------------------ADD STAFF------------------------------------------
@@ -881,7 +847,6 @@ def generate_random_password(length=8):
 @login_required
 def add_staff(request):
     if request.method == "POST":
-        # Extract data from the POST request
         full_name = request.POST.get("fullname")
         role = request.POST.get("role")
         email = request.POST.get("email")
@@ -895,7 +860,6 @@ def add_staff(request):
         join_date = request.POST.get("join_date")
         status = request.POST.get("status")
         
-        # Generate a random password automatically
         generated_password = generate_random_password(length=10)  # adjust length if needed
         hashed_password = make_password(generated_password)
         
@@ -946,8 +910,6 @@ def add_staff(request):
 @login_required
 def make_donation(request):
     if request.method == 'POST':
-        # Process the donation form data here.
-        # For example, you could retrieve form data and create a Donation object.
         donation_type = request.POST.get('donation_type')
         amount = request.POST.get('amount')
         donation_details = request.POST.get('donation_details')
@@ -987,7 +949,6 @@ def submit_feedback(request):
 
 #-------------------------------------staff section----------------------------------------------------------------------------------
 def staff_dashboard(request):
-    # Check if the staff member is logged in.
     if 'staff_id' not in request.session:
         return redirect("login")
     
@@ -1063,8 +1024,6 @@ def change_password(request):
         staff_member.password = make_password(new_password)
         staff_member.save()
         
-        # If your staff model is integrated with Django's auth system, update the session auth hash:
-        # update_session_auth_hash(request, staff_member)
         
         messages.success(request, "Password changed successfully!")
         return redirect('staff_profile')
@@ -1135,8 +1094,7 @@ def staff_manage_volunteers(request):
 
 
 def staff_manage_blood_donors(request):
-    # Restrict access to staff users only.
-  # You may redirect to an error page or staff dashboard as needed.
+    
 
     # Retrieve search parameters from GET request.
     search_blood_group = request.GET.get('blood_group', '')
@@ -1166,9 +1124,6 @@ def staff_manage_blood_donors(request):
 
 
 def staff_manage_donations(request):
-    # Restrict access to staff users only.
-   # Alternatively, you can raise a 403 error.
-
     # Retrieve search parameters from GET request.
     donation_type = request.GET.get('donation_type', '')
     details = request.GET.get('details', '')
@@ -1198,10 +1153,6 @@ def staff_manage_donations(request):
 
 
 def staff_manage_palliative_cases(request):
-    # Restrict access to staff users only.
-   # Alternatively, you can raise a 403 error or redirect elsewhere.
-
-    # Retrieve all palliative care registrations from the database.
     palliative_cases = PalliativePatient.objects.all()
 
     context = {
@@ -3449,7 +3400,7 @@ def assign_field_to_volunteer(request, volunteer_id):
         else:
             try:
                 completion_date = datetime.strptime(completion_date_str, '%Y-%m-%d').date()
-                FieldAssignment.objects.create(
+                FieldArea.objects.create(
                     volunteer=volunteer,
                     responsibilities=responsibilities,
                     location=location,
@@ -3470,7 +3421,7 @@ def assignment_success(request):
 @login_required
 def view_field_assignments_coordinator(request):
     """Display all assigned field areas with updated status."""
-    assignments = FieldAssignment.objects.select_related('volunteer').order_by('-assigned_at')
+    assignments = FieldArea.objects.select_related('volunteer').order_by('-assigned_at')
 
     context = {
         'assignments': assignments,
@@ -3480,7 +3431,7 @@ def view_field_assignments_coordinator(request):
 @login_required
 def mark_assignment_completed(request, assignment_id):
     """Update the status of the field assignment to completed."""
-    assignment = get_object_or_404(FieldAssignment, id=assignment_id, volunteer=request.user.volunteer)
+    assignment = get_object_or_404(FieldArea, id=assignment_id, volunteer=request.user.volunteer)
 
     if request.method == 'POST':
         if assignment.status != 'completed':
@@ -3509,7 +3460,7 @@ def view_assigned_fields(request):
         return redirect('home')  # Or another appropriate page
 
     # Get all assignments for this volunteer, most recent first
-    assignments = FieldAssignment.objects.filter(volunteer=volunteer).order_by('-assigned_at')
+    assignments = FieldArea.objects.filter(volunteer=volunteer).order_by('-assigned_at')
     context = {
         'volunteer': volunteer,
         'assignments': assignments,
@@ -3805,7 +3756,7 @@ def monthly_report(request):
 
     # GET request - show month selection form
     current_year = datetime.now().year
-    years = range(current_year - 1, current_year + 10)
+    years = range(current_year - 1, current_year + 30)
     return render(request, 'reports/monthly_report_form.html', {
         'years': years,
         'months': [
@@ -3818,7 +3769,8 @@ def monthly_report(request):
     
 
 
-#-------------------------------beneficiary report ----------------------------------------------------------------------------
+#-------------------------------beneficiary report ----------------
+# ------------------------------------------------------------
 
 @login_required
 @user_passes_test(lambda u: u.is_staff or u.is_superuser)
@@ -3973,6 +3925,6 @@ def beneficiary_support_report(request):
 
     # GET: render form
     now = datetime.now()
-    years = range(now.year - 1, now.year + 5)
+    years = range(now.year - 1, now.year + 25)
     months = [(i, datetime(2000, i, 1).strftime('%B')) for i in range(1, 13)]
     return render(request, 'reports/beneficiary_support_form.html', {'years': years, 'months': months})

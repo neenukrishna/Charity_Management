@@ -40,7 +40,6 @@ urlpatterns = [
     path('add-donation/', views.add_donation, name='add_donation'),
     path('add-blood-donor/', views.add_blood_donor, name='add_blood_donor'),
     path('add-emergency-request/', views.add_emergency_request, name='add_emergency_request'),
-    path('add-palliative-care/', views.add_palliative_care, name='add_palliative_care'),
     path('add-inventory/', views.add_inventory, name='add_inventory'),
     path('add-field-data/', views.add_field_data, name='add_field_data'),
     path('send-feedback-reply/<int:feedback_id>/', views.send_feedback_reply, name='send_feedback_reply'),
