@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsor Event Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+    <h3>Pay ₹{{ sponsorship_amount }}</h3>
+
+    <form id="payment-form">
+        <script
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            data-key="{{ razorpay_key }}"
+            data-amount="{{ amount }}"
+            data-currency="{{ currency }}"
+            data-order_id="{{ razorpay_order_id }}"
+            data-buttontext="Pay with Razorpay"
+            data-name="CharityConnect"
+            data-description="Sponsorship for {{ event.event_type }}"
+            data-image=""
+            data-prefill.name="{{ request.user.get_full_name }}"
+            data-prefill.email="{{ request.user.email }}"
+            data-theme.color="#28a745">
+        </script>
+    </form>
+
+    <a href="{% url 'view_events' %}" class="btn btn-secondary mt-3">Cancel</a>
+
+    <script>
+        // Get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        var razorpayOptions = {
+            "key": "{{ razorpay_key }}",
+            "amount": "{{ amount }}", // Amount in paise
+            "currency": "{{ currency }}",
+            "name": "CharityConnect",
+            "description": "Sponsorship for {{ event.event_type }}",
+            "image": "",
+            "order_id": "{{ razorpay_order_id }}",
+            "handler": function (response) {
+                fetch("{% url 'sponsorship_payment_success' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        payment_id: response.razorpay_payment_id,
+                        event_id: {{ event.event_id }},
+                        amount: {{ sponsorship_amount|floatformat:2 }}
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert("Payment successful!");
+                        window.location.href = "{% url 'account_dashboard' %}";
+                    }
+                })
+                .catch(error => {
+                    console.error("Payment saving error:", error);
+                    alert("Payment succeeded, but failed to save.");
+                });
+            },
+            "prefill": {
+                "name": "{{ request.user.get_full_name }}",
+                "email": "{{ request.user.email }}"
+            },
+            "theme": {
+                "color": "#28a745"
+            }
+        };
+
+        var rzp1 = new Razorpay(razorpayOptions);
+        rzp1.open();
+    </script>
+
+</body>
+</html>
