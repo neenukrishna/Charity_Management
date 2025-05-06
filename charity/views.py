@@ -641,8 +641,6 @@ def add_staff(request):
 
 #---------------------------------------------------started user views ---------------------------------------------------------------------
 
-
-
 @login_required
 def make_donation(request):
     if request.method == 'POST':
@@ -655,9 +653,6 @@ def make_donation(request):
         return redirect('user_home')  
     
     return render(request, 'donation.html')
-
-
-
 
 
 def register_blood_donation(request):
@@ -899,9 +894,6 @@ def staff_manage_palliative_cases(request):
 
 
 def staff_urgent_requests(request):
-    # Restrict access to staff users only.
-   # Alternatively, return a 403 Forbidden response.
-
     # Retrieve filter parameters from the GET request.
     assistance_type = request.GET.get('assistance_type', '')
     # We no longer get emergency_level from GET since we want urgent requests only
@@ -933,8 +925,6 @@ def staff_urgent_requests(request):
 
 
 def staff_manage_emergency_support(request):
-    # Restrict access to staff users only.
-     # Or return a 403 Forbidden response
 
     # Retrieve filter parameters from the GET request.
     emergency_type = request.GET.get('emergency_type', '')
