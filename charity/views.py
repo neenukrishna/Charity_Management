@@ -541,191 +541,6 @@ def manage_field_data(request):
 
 
 
-#--------------------------------------------ADD DONATION---------------------------------------------------------------------------
-
-@login_required
-@user_passes_test(is_admin)
-def add_donation(request):
-    if request.method == 'POST':
-        # Get data from the form
-        donation_type = request.POST.get('donation_type')
-        amount = request.POST.get('amount')
-        donation_details = request.POST.get('donation_details')
-        quantity = request.POST.get('quantity')
-        status = request.POST.get('status')
-        
-        # Create the new donation
-        donation = Donation.objects.create(
-            user=request.user,  # Admin or logged-in user can add donations
-            donation_type=donation_type,
-            amount=amount,
-            donation_details=donation_details,
-            quantity=quantity,
-            status=status
-        )
-        
-        messages.success(request, "Donation added successfully!")
-        return redirect('manage_donations')  # Redirect back to the manage donations page
-
-    return render(request, 'add_donation.html') 
-
-
-
-
-
-
-#--------------------------------------------ADD EMERGENCY REQUEST---------------------------------------------------------------------------
-
-@login_required
-@user_passes_test(is_admin)
-def add_emergency_request(request):
-    if request.method == 'POST':
-        # Get data from the form
-        emergency_type = request.POST.get('emergency_type')
-        details = request.POST.get('details')
-        response = request.POST.get('response')
-        emergency_level = request.POST.get('emergency_level')
-        status = request.POST.get('status')
-        proof = request.FILES.get('proof')  # Handle file upload
-        
-        # Create the new emergency request
-        BeneficiarySupport.objects.create(
-            user=request.user,  # Admin or logged-in user adding the request
-            emergency_type=emergency_type,
-            details=details,
-            response=response,
-            emergency_level=emergency_level,
-            status=status,
-            proof=proof
-        )
-
-        messages.success(request, "Emergency request added successfully!")
-        return redirect('manage_emergency_support')  # Redirect to manage emergency requests page
-    
-    return render(request, 'add_emergency_request.html') 
-
-
-
-#--------------------------------------------ADD VOLUNTEER---------------------------------------------------------------------------
-
-def add_volunteer(request):
-    if request.method == 'POST':
-        # Get data from the form
-        full_name = request.POST.get('full_name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        dob = request.POST.get('dob')
-        gender = request.POST.get('gender')
-        place = request.POST.get('place')
-        post = request.POST.get('post')
-        pin = request.POST.get('pin')
-        district = request.POST.get('district')
-        availability_date = request.POST.get('availability_date')  # Correct field name
-        volunteering_in = request.POST.get('volunteering_in')  # Add this field if needed
-        assigned_task = request.POST.get('assigned_task')
-        proof = request.FILES.get('proof')  # Handle file upload
-        status = request.POST.get('status')
-
-        # Create the new volunteer
-        Volunteer.objects.create(
-            full_name=full_name,
-            email=email,
-            phone=phone,
-            dob=dob,
-            gender=gender,
-            place=place,
-            post=post,
-            pin=pin,
-            district=district,
-            availability_date=availability_date,  # Correct field name
-            volunteering_in=volunteering_in,
-            assigned_task=assigned_task,
-            proof=proof,
-            status=status
-        )
-
-        messages.success(request, "Volunteer added successfully!")
-        return redirect('manage_volunteers')  
-    
-    return render(request, 'add_volunteer.html')  
-
-
-
-#--------------------------------------------INVENTORY---------------------------------------------------------------------------
-
-@login_required
-@user_passes_test(is_admin)
-def add_inventory(request):
-    if request.method == 'POST':
-        # Get data from the form
-        donation_id = request.POST.get('donation_id')
-        total_quantity = request.POST.get('total_quantity')
-        allocated_quantity = request.POST.get('allocated_quantity')
-        beneficiary_id = request.POST.get('beneficiary_id')
-
-        donation = Donation.objects.get(id=donation_id)
-        beneficiary = BeneficiarySupport.objects.get(id=beneficiary_id)
-
-        # Create the new inventory record
-        Inventory.objects.create(
-            donation=donation,
-            total_quantity=total_quantity,
-            allocated_quantity=allocated_quantity,
-            beneficiary=beneficiary
-        )
-
-        messages.success(request, "Inventory record added successfully!")
-        return redirect('manage_inventory')  
-    
-   
-    donations = Donation.objects.all()
-    beneficiaries = BeneficiarySupport.objects.all()
-    return render(request, 'add_inventory.html', {'donations': donations, 'beneficiaries': beneficiaries})
-
-
-
-#--------------------------------------------FIELD DATA---------------------------------------------------------------------------
-
-@login_required
-@user_passes_test(is_admin)
-def add_field_data(request):
-    if request.method == 'POST':
-        # Get data from the form
-        volunteer_id = request.POST.get('volunteer_id')
-        full_name = request.POST.get('full_name')
-        place = request.POST.get('place')
-        post = request.POST.get('post')
-        pin = request.POST.get('pin')
-        district = request.POST.get('district')
-        email = request.POST.get('email')
-        details = request.POST.get('details')
-        status = request.POST.get('status')
-        proof = request.FILES.get('proof')  # Handle file upload
-
-        volunteer = Volunteer.objects.get(id=volunteer_id)
-
-        # Create the new field data record
-        FieldData.objects.create(
-            volunteer=volunteer,
-            full_name=full_name,
-            place=place,
-            post=post,
-            pin=pin,
-            district=district,
-            email=email,
-            details=details,
-            status=status,
-            proof=proof
-        )
-
-        messages.success(request, "Field data added successfully!")
-        return redirect('manage_field_data')  
-    
-    # Get all volunteers to display in the form
-    volunteers = Volunteer.objects.all()
-    return render(request, 'add_field_data.html', {'volunteers': volunteers})
-
-
 #--------------------------------------------SEND FEEDBACK REPLY---------------------------------------------------------------------------
 
 @login_required
@@ -1772,6 +1587,196 @@ def field_data_collection(request):
     else:
         # For GET, simply render the template; if you need to pass an empty dictionary for the form fields, you can.
         return render(request, 'home/field_data_collection.html')
+    
+    
+    
+    
+    
+#--------------------------------------------ADD DONATION---------------------------------------------------------------------------
+
+@login_required
+@user_passes_test(is_admin)
+def add_donation(request):
+    if request.method == 'POST':
+        # Get data from the form
+        donation_type = request.POST.get('donation_type')
+        amount = request.POST.get('amount')
+        donation_details = request.POST.get('donation_details')
+        quantity = request.POST.get('quantity')
+        status = request.POST.get('status')
+        
+        # Create the new donation
+        donation = Donation.objects.create(
+            user=request.user,  # Admin or logged-in user can add donations
+            donation_type=donation_type,
+            amount=amount,
+            donation_details=donation_details,
+            quantity=quantity,
+            status=status
+        )
+        
+        messages.success(request, "Donation added successfully!")
+        return redirect('manage_donations')  # Redirect back to the manage donations page
+
+    return render(request, 'add_donation.html') 
+
+
+
+
+
+
+#--------------------------------------------ADD EMERGENCY REQUEST---------------------------------------------------------------------------
+
+@login_required
+@user_passes_test(is_admin)
+def add_emergency_request(request):
+    if request.method == 'POST':
+        # Get data from the form
+        emergency_type = request.POST.get('emergency_type')
+        details = request.POST.get('details')
+        response = request.POST.get('response')
+        emergency_level = request.POST.get('emergency_level')
+        status = request.POST.get('status')
+        proof = request.FILES.get('proof')  # Handle file upload
+        
+        # Create the new emergency request
+        BeneficiarySupport.objects.create(
+            user=request.user,  # Admin or logged-in user adding the request
+            emergency_type=emergency_type,
+            details=details,
+            response=response,
+            emergency_level=emergency_level,
+            status=status,
+            proof=proof
+        )
+
+        messages.success(request, "Emergency request added successfully!")
+        return redirect('manage_emergency_support')  # Redirect to manage emergency requests page
+    
+    return render(request, 'add_emergency_request.html') 
+
+
+
+#--------------------------------------------ADD VOLUNTEER---------------------------------------------------------------------------
+
+def add_volunteer(request):
+    if request.method == 'POST':
+        # Get data from the form
+        full_name = request.POST.get('full_name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        dob = request.POST.get('dob')
+        gender = request.POST.get('gender')
+        place = request.POST.get('place')
+        post = request.POST.get('post')
+        pin = request.POST.get('pin')
+        district = request.POST.get('district')
+        availability_date = request.POST.get('availability_date')  # Correct field name
+        volunteering_in = request.POST.get('volunteering_in')  # Add this field if needed
+        assigned_task = request.POST.get('assigned_task')
+        proof = request.FILES.get('proof')  # Handle file upload
+        status = request.POST.get('status')
+
+        # Create the new volunteer
+        Volunteer.objects.create(
+            full_name=full_name,
+            email=email,
+            phone=phone,
+            dob=dob,
+            gender=gender,
+            place=place,
+            post=post,
+            pin=pin,
+            district=district,
+            availability_date=availability_date,  # Correct field name
+            volunteering_in=volunteering_in,
+            assigned_task=assigned_task,
+            proof=proof,
+            status=status
+        )
+
+        messages.success(request, "Volunteer added successfully!")
+        return redirect('manage_volunteers')  
+    
+    return render(request, 'add_volunteer.html')  
+
+
+
+#--------------------------------------------INVENTORY---------------------------------------------------------------------------
+
+@login_required
+@user_passes_test(is_admin)
+def add_inventory(request):
+    if request.method == 'POST':
+        # Get data from the form
+        donation_id = request.POST.get('donation_id')
+        total_quantity = request.POST.get('total_quantity')
+        allocated_quantity = request.POST.get('allocated_quantity')
+        beneficiary_id = request.POST.get('beneficiary_id')
+
+        donation = Donation.objects.get(id=donation_id)
+        beneficiary = BeneficiarySupport.objects.get(id=beneficiary_id)
+
+        # Create the new inventory record
+        Inventory.objects.create(
+            donation=donation,
+            total_quantity=total_quantity,
+            allocated_quantity=allocated_quantity,
+            beneficiary=beneficiary
+        )
+
+        messages.success(request, "Inventory record added successfully!")
+        return redirect('manage_inventory')  
+    
+   
+    donations = Donation.objects.all()
+    beneficiaries = BeneficiarySupport.objects.all()
+    return render(request, 'add_inventory.html', {'donations': donations, 'beneficiaries': beneficiaries})
+
+
+
+#--------------------------------------------FIELD DATA---------------------------------------------------------------------------
+
+@login_required
+@user_passes_test(is_admin)
+def add_field_data(request):
+    if request.method == 'POST':
+        # Get data from the form
+        volunteer_id = request.POST.get('volunteer_id')
+        full_name = request.POST.get('full_name')
+        place = request.POST.get('place')
+        post = request.POST.get('post')
+        pin = request.POST.get('pin')
+        district = request.POST.get('district')
+        email = request.POST.get('email')
+        details = request.POST.get('details')
+        status = request.POST.get('status')
+        proof = request.FILES.get('proof')  # Handle file upload
+
+        volunteer = Volunteer.objects.get(id=volunteer_id)
+
+        # Create the new field data record
+        FieldData.objects.create(
+            volunteer=volunteer,
+            full_name=full_name,
+            place=place,
+            post=post,
+            pin=pin,
+            district=district,
+            email=email,
+            details=details,
+            status=status,
+            proof=proof
+        )
+
+        messages.success(request, "Field data added successfully!")
+        return redirect('manage_field_data')  
+    
+    # Get all volunteers to display in the form
+    volunteers = Volunteer.objects.all()
+    return render(request, 'add_field_data.html', {'volunteers': volunteers})
+
+
 # #--------------------------------------------------------------------------------------------------
 
 
