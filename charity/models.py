@@ -261,7 +261,7 @@ class BeneficiarySupport(models.Model):
         default='Pending'
     )
     
-    # Additional Assistance Details
+   
     allocation_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     completion_status = models.CharField(max_length=20, default='Pending')  # (Pending, Resolved)
     approval_status = models.CharField(max_length=20, default='Pending')  # e.g., Pending, Approved, Rejected
@@ -279,7 +279,7 @@ class BeneficiarySupport(models.Model):
         null=True
     )
     
-    # Bank details (optional)
+    
     account_holder = models.CharField(max_length=255, blank=True, null=True)
     bank_name = models.CharField(max_length=255, blank=True, null=True)
     account_number = models.CharField(max_length=50, blank=True, null=True)

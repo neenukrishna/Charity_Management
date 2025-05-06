@@ -2322,7 +2322,7 @@ def checkout(request):
                 amount=item['price'] * item['quantity'],
                 donation_details=item['name'],
                 quantity=item['quantity'],
-                status='Paid'
+                status='Approved'
             )
             if donation.donation_type != 'monetary':
                 Inventory.objects.create(
