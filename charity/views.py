@@ -541,50 +541,6 @@ def manage_field_data(request):
 
 
 
-#--------------------------------------------ADD USER---------------------------------------------------------------------------
-
-@login_required
-@user_passes_test(is_admin)
-def add_user(request):
-    if request.method == 'POST':
-        # Get the form data from the request
-        fullname = request.POST.get('fullname')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        place = request.POST.get('place')
-        post = request.POST.get('post')
-        pin = request.POST.get('pin')
-        district = request.POST.get('district')
-        gender = request.POST.get('gender')
-        user_type = request.POST.get('user_type')
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-
-        # Check if the passwords match
-        if password == confirm_password:
-            # Create the user and hash the password
-            user = CustomUser.objects.create(
-                fullname=fullname,
-                email=email,
-                phone=phone,
-                place=place,
-                post=post,
-                pin=pin,
-                district=district,
-                gender=gender,
-                user_type=user_type,
-                username=username,
-                password=make_password(password)  # Hash the password before saving
-            )
-            return redirect('manage_users')  # Redirect to the manage users page
-        else:
-            # Show error message if passwords do not match
-            error_message = "Passwords do not match!"
-            return render(request, 'add_user.html', {'error_message': error_message})
-
-    return render(request, 'add_user.html')  # Render the form if it's a GET request
-
 
 #--------------------------------------------ADD DONATION---------------------------------------------------------------------------
 
@@ -615,40 +571,6 @@ def add_donation(request):
     return render(request, 'add_donation.html') 
 
 
-
-
-#--------------------------------------------ADD BLOOD DONOR---------------------------------------------------------------------------
-def add_blood_donor(request):
-    if request.method == 'POST':
-        # Get data from the form
-        full_name = request.POST.get('full_name')
-        blood_group = request.POST.get('blood_group')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        place = request.POST.get('place')
-        post = request.POST.get('post')
-        pin = request.POST.get('pin')
-        district = request.POST.get('district')
-        gender = request.POST.get('gender')
-        dob = request.POST.get('dob')
-        
-        # Create the new blood donor
-        BloodDonor.objects.create(
-            full_name=full_name,
-            blood_group=blood_group,
-            email=email,
-            phone=phone,
-            place=place,
-            post=post,
-            pin=pin,
-            district=district,
-            gender=gender,
-            dob=dob
-        )
-        
-        return redirect('manage_blood_donors')  # Redirect to manage blood donors page
-    
-    return render(request, 'add_blood_donor.html')  # Render the form if it's a GET request
 
 
 
