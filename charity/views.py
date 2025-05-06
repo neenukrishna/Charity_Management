@@ -160,7 +160,6 @@ def staff_dashboard(request):
 
 #---------------------------------------------------REGISTER-LOGIN--------------------------------------------------------------------
 
-# User Registration View (Without Forms)
 def register(request):
     if request.method == 'POST':
         fullname = request.POST.get('fullname')
